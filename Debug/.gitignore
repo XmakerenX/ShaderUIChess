@@ -1,0 +1,4 @@
+*.pdb
+/ShaderUIChess.exe
+/ShaderUIChess.exe.embed.manifest
+*.ilk

@@ -1,0 +1,14 @@
+*.write.1.tlog
+*.read.1.tlog
+*.obj
+*.command.1.tlog
+*.pdb
+*.idb
+*.rc
+*.vcxprojResolveAssemblyReference.cache
+/ShaderUIChess.exe
+/ShaderUIChess.exe.embed.manifest
+*.exe.embed.manifest.res
+*.exe.intermediate.manifest
+*.log
+*.lastbuildstate
