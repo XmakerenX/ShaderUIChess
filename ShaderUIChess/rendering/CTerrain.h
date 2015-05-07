@@ -34,7 +34,7 @@ public:
 	void		setFrameSqaure	(DWORD faceCount);
 	HRESULT		drawSquare		(ULONG squareNum, ID3DXEffect * effect, UINT numPass, D3DXMATRIX ViewProj);
 
-private:
+protected:
 	CMyMesh	*			m_squareMesh;
 	std::vector<ULONG>	m_attribSquares[2];
 	ULONG				m_selectSquare;

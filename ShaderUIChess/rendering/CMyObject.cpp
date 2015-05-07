@@ -105,6 +105,7 @@ void CMyObject::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3D
 {
 	ULONG * pAtrributeMap;
 	ULONG nAttributeCount;
+	HRESULT hr;
 	//int wtf;
 
 	if (m_useCustomAttribMap)//check if to use custom attributes for this object or the default ones used in mesh creation 
@@ -129,21 +130,21 @@ void CMyObject::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3D
 				//wtf = pd3dDevice->Release();
 			}
 
-			effect->SetMatrix(m_matWorldViewProjH, &(getWorldMatrix() * ViewProj) );
-			effect->SetMatrix(m_matWorldH, &getWorldMatrix());
+			hr = effect->SetMatrix(m_matWorldViewProjH, &(getWorldMatrix() * ViewProj) );
+			hr = effect->SetMatrix(m_matWorldH, &getWorldMatrix());
 
 			D3DXMATRIX worldInverseTranspose;
 			D3DXMatrixInverse(&worldInverseTranspose, 0, &getWorldMatrix());
 			D3DXMatrixTranspose(&worldInverseTranspose, &worldInverseTranspose);
-			effect->SetMatrix(m_matWorldTH, &worldInverseTranspose);
+			hr = effect->SetMatrix(m_matWorldTH, &worldInverseTranspose);
 			//effect->SetMatrix("matWorldViewProj", &(getWorldMatrix() * ViewProj) );
 			//effect->SetMatrix("matWorld", &getWorldMatrix());
 
-			effect->BeginPass(numPass);
+			hr = effect->BeginPass(numPass);
 
 			m_pMesh->DrawSubset(i);//found the correct attribute draw it 
 
-			effect->EndPass();
+			hr = effect->EndPass();
 			break;//no need to keep scaning as we have found the attribute
 		}
 	}

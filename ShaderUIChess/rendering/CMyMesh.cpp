@@ -91,10 +91,10 @@ HRESULT CMyMesh::LoadMeshFromX(LPCSTR pFileName, DWORD Options, LPDIRECT3DDEVICE
 	D3DXMATERIAL* pMaterials = (D3DXMATERIAL*)pMatBuffer->GetBufferPointer();
 	D3DXEFFECTINSTANCE * pEffects   = (D3DXEFFECTINSTANCE*)pEffectBuffer->GetBufferPointer();
 
-	for (UINT i=0; i<numMaterials; i++)
+	for (UINT i=0; i < numMaterials; i++)
 	{
 		if (ManageAttribs)
-		{
+			{
 			m_pAttribData[i].Material = pMaterials[i].MatD3D;
 			// Note : The X File specification contains no ambient material property.
 			//        We should ideally set this to full intensity to allow us to 
@@ -262,6 +262,7 @@ void CMyMesh::DrawSubset( ULONG AttributeID )
 	UINT              PassCount  = 0;
 	LPDIRECT3DDEVICE9 pD3DDevice = NULL;
 	LPD3DXEFFECT      pEffect    = NULL;
+	HRESULT hr;
 
 	// Set the attribute data
 	if ( m_pAttribData && AttributeID < m_nAttribCount )
@@ -294,7 +295,7 @@ void CMyMesh::DrawSubset( ULONG AttributeID )
 			if ( FAILED( pEffect->BeginPass( j ) ) ) continue;
 
 			// Draw this subset.
-			m_pMesh->DrawSubset( AttributeID );
+			hr = m_pMesh->DrawSubset( AttributeID );
 
 			// End the pass
 			pEffect->EndPass( );

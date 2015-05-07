@@ -1,0 +1,452 @@
+500| Dialog Width
+600| Dialog Height
+18| Dialog Caption Height
+Gendialog| Dialog Caption Text
+236| Current Control ID
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+201| Control ID
+18| Control X
+5| Control Y
+110| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+API Version| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+202| Control ID
+181| Control X
+6| Control Y
+300| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+API Version| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+203| Control ID
+18| Control X
+40| Control Y
+150| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Display Adapter| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+204| Control ID
+181| Control X
+40| Control Y
+300| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Display Adapter| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+205| Control ID
+18| Control X
+75| Control Y
+140| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Render Device| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+206| Control ID
+181| Control X
+75| Control Y
+300| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Render Device| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+3| Control Type
+207| Control ID
+181| Control X
+110| Control Y
+25| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+1| is CheckBox Checked
+0| RadioButton Button Group
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+208| Control ID
+217| Control X
+110| Control Y
+100| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Windowed| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+2| Control Type
+209| Control ID
+196| Control X
+140| Control Y
+25| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+0| is CheckBox Checked
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+210| Control ID
+210| Control X
+140| Control Y
+600| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Clip to device when window spans acroos multiple monitors| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+3| Control Type
+211| Control ID
+181| Control X
+170| Control Y
+25| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+0| is CheckBox Checked
+0| RadioButton Button Group
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+212| Control ID
+217| Control X
+170| Control Y
+110| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Full Screen| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+213| Control ID
+18| Control X
+205| Control Y
+150| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Adapter Format| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+214| Control ID
+221| Control X
+205| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Adapter Format| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+215| Control ID
+18| Control X
+240| Control Y
+105| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Resolution| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+216| Control ID
+181| Control X
+240| Control Y
+170| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Resolution| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+217| Control ID
+18| Control X
+275| Control Y
+125| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Refresh Rate| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+218| Control ID
+221| Control X
+275| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Refresh Rate| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+2| Control Type
+219| Control ID
+359| Control X
+240| Control Y
+25| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+0| is CheckBox Checked
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+220| Control ID
+390| Control X
+239| Control Y
+220| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Show All Aspect Ratios| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+221| Control ID
+20| Control X
+310| Control Y
+180| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Back Buffer Format| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+223| Control ID
+221| Control X
+310| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Back Buffer Format| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+224| Control ID
+20| Control X
+345| Control Y
+195| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Depth/Stencil Format| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+225| Control ID
+221| Control X
+345| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Depth/Stencil Format| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+226| Control ID
+22| Control X
+380| Control Y
+160| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Multisample Type| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+227| Control ID
+221| Control X
+380| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Multisample Type| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+228| Control ID
+22| Control X
+415| Control Y
+180| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Multisample Quality| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+229| Control ID
+221| Control X
+415| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Multisample Quality| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+230| Control ID
+16| Control X
+450| Control Y
+180| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Vertex Processing| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+231| Control ID
+221| Control X
+450| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Vertex Processing| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+232| Control ID
+22| Control X
+485| Control Y
+115| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Vertex Sync| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+4| Control Type
+234| Control ID
+221| Control X
+485| Control Y
+260| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Vertex Sync| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+100| ComboBox Drop Height
+16| ComboBox SBWidth
+3452816845| ComboBox Font Height
+0| ComboBox Items Size
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+235| Control ID
+42| Control X
+526| Control Y
+100| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+OK| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+236| Control ID
+315| Control X
+526| Control Y
+100| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Cancel| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////

@@ -37,6 +37,7 @@
 #include "GUI/COptionDialogUI.h"
 
 #include "rendering/CMySprite.h"
+#include "chess engine/board.h"
 // #include "GUI\CDialog3D.h"
 // #include "GUI\CDialogResourceManager3D.h"
 // #include "GUI\CStatic3D.h"
@@ -194,7 +195,6 @@ public:
 	//-------------------------------------------------------------------------
 	bool         InitInstance				(HINSTANCE hInstance, LPCTSTR lpCmdLine, int iCmdShow );
 	LRESULT		 WinProc					(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-	//void         OnGUIEvent					(HWND hWnd, UINT nEvent, int nControlID, void* pUserContext );
 
 	void		 OptionsControlClicked		(CButtonUI* pButton);
 	void		 OptionDialogOKClicked		(CButtonUI* pButton);
@@ -208,7 +208,10 @@ private:
 	// Private Static Functions For This Class
 	//-------------------------------------------------------------------------
 	static LRESULT CALLBACK StaticWndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
-	//static void    CALLBACK StaticOnGUIEvent(HWND hWnd, UINT nEvent, int nControlID, void* pUserContext );
+
+	static std::unordered_map<UINT,char*> InitDepthFormatMap();
+	static std::unordered_map<UINT,char*> InitMultiSampleMap();
+	static std::unordered_map<ULONG,char*> InitVertexProcMap();
 
 	//-------------------------------------------------------------------------
 	// Private  Functions that handle display window and the directx device
@@ -217,13 +220,9 @@ private:
 	bool		CreateDisplayWindow (HINSTANCE hInstance);
 	HRESULT		CreateDevice		(bool windowed);
 
-	static std::unordered_map<UINT,char*> InitDepthFormatMap();
-	static std::unordered_map<UINT,char*> InitMultiSampleMap();
-	static std::unordered_map<ULONG,char*> InitVertexProcMap();
-
 	BOOL		EnumDepthStencil	(D3DFORMAT depthFormats[], UINT formatsCount, UINT adapter, D3DDEVTYPE deviceType, D3DFORMAT backBufferFromat, std::vector<D3DFORMAT>& validDepths);
 	void		EnumMultiSample		(UINT adapter, D3DDEVTYPE deviceType, D3DFORMAT backBufferFormat, bool windowed, std::vector<D3DMULTISAMPLE_TYPE>& validMultiSampleTypes);
-	//bool		CreateGUIObjects	();
+	bool		CreateGUIObjects	();
 
 	void		resetDevice			(D3DPRESENT_PARAMETERS& d3dpp);
 
@@ -246,6 +245,7 @@ private:
 	//-------------------------------------------------------------------------
 	bool        BuildObjects    ( );
 	void		createObject	(CMyMesh* objMesh, OBJECT_PREFS* objectPref, ULONG* newAttribMap, ULONG atrributeCount );
+	void		addObject		(CMyObject* newObject);
 	//void        ReleaseObjects  ( );
 
 	//-------------------------------------------------------------------------
@@ -315,19 +315,9 @@ private:
 
 	// attributes data pools
 	CAssetManager			 m_assetManger;
-
-	CEditDialogUI			 m_EditDialog;
-	COptionDialogUI			 m_OptionsDialog;
-	ULONG					 m_GenControlNum;
-	ULONG					 m_curControlID;
-	bool					 m_controlInCreation;
-	bool					 m_controlRelocate;
-
-	CControlUI			   * m_pCurSelectedControl;
-
-
-
 	CTimer*					 m_timer;
+
+	COptionDialogUI			 m_OptionsDialog;
 
 	//-------------------------------------------------------------------------
 	// cameras pointers and settings
@@ -409,6 +399,7 @@ private:
 	boost::signals2::signal<void ()> m_keyboardSig;
 
 	RECT							 m_clientRC;
+
 // 	CDialog3D				 m_GuiDialog;
 // 	CDialog3D				 m_GuiSelectPawn;
 // 	CDialogResourceManager3D m_GuiDilaogResManger;

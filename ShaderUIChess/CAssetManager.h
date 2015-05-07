@@ -80,7 +80,7 @@ public:
 	long				  AllocMesh		   ( ULONG Count  = 1);
 
 	HRESULT				  AddMesh		   ( );
-	HRESULT			   	  AddMesh		   ( char meshPath[MAX_PATH], DWORD meshOptions = D3DXMESH_MANAGED);
+	HRESULT			   	  AddMesh		   ( const char meshPath[MAX_PATH], DWORD meshOptions = D3DXMESH_MANAGED);
 	HRESULT				  AddMesh		   ( MESH_ATTRIB_DATA AttribData[], ULONG attribCount, LPD3DXMESH pD3DMesh, char meshPath[MAX_PATH]);
 
 	CMyMesh *			  getMesh		   ( ULONG meshIndex);

@@ -97,7 +97,7 @@ HRESULT CAssetManager::AddMesh()
 // Desc : crate a mesh object and set it values based on the mesh file given
 // Note : Default loading options are D3DXMESH_MANAGED
 //-----------------------------------------------------------------------------
-HRESULT CAssetManager::AddMesh(char meshPath[MAX_PATH], DWORD meshOptions /*= D3DXMESH_MANAGED*/)
+HRESULT CAssetManager::AddMesh(const char meshPath[MAX_PATH], DWORD meshOptions /*= D3DXMESH_MANAGED*/)
 {
 	HRESULT hr;
 	long meshIndex;

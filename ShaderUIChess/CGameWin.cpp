@@ -11,7 +11,7 @@ const std::unordered_map<ULONG,char*> CGameWin::s_vertexProcString = InitVertexP
 //-----------------------------------------------------------------------------
 CGameWin::CGameWin() 
 	:Width(1024),Height(742)//640 480
-	,m_EditDialog(m_assetManger.getTimer()), m_OptionsDialog(m_adapterFormats, m_adpatersInfo)
+	, m_OptionsDialog(m_adapterFormats, m_adpatersInfo)
 {
 	m_gameRunning = true;
 
@@ -21,7 +21,7 @@ CGameWin::CGameWin()
 
 	m_windowed = true;
 
-	//clearing handles to win32 and dirctx objects
+	//clearing handles to win32 and directx objects
 	m_hWnd          = NULL;
 	m_pD3D          = NULL;
 	m_pD3DDevice    = NULL;
@@ -29,9 +29,7 @@ CGameWin::CGameWin()
 	m_hMenu         = NULL;
 	m_bLostDevice   = false;
 
-	//query system for best texture type
-	//m_fmtTexture = D3DFMT_UNKNOWN;
-	//TODO: make something later that will check for device caps 
+	//TODO: add something that will check device caps of textureformat...
 	//m_fmtTexture = D3DFMT_DXT3;
 	m_assetManger.SetTextureFormat(D3DFMT_DXT3);
 
@@ -90,14 +88,6 @@ CGameWin::CGameWin()
 	m_outlineEffect = NULL;
 	m_cameraIndex = 0;
 	m_numActiveLights = 0;
-
-	m_GenControlNum = 0;
-	m_curControlID = IDC_GENCONTROLID + m_GenControlNum;
-	m_controlInCreation = false;
-	m_controlRelocate= false;
-	m_pCurSelectedControl = nullptr;
-// 	m_GuiDialog.Init(&m_GuiDilaogResManger, &m_timer);
-// 	m_GuiSelectPawn.Init(&m_GuiDilaogResManger, &m_timer);
 }
 //-----------------------------------------------------------------------------
 // Name : CGameWin (destructor)
@@ -105,6 +95,7 @@ CGameWin::CGameWin()
 
 CGameWin::~CGameWin()
 {
+	//TODO: check if there nothing needed to be cleaned
 	//delete m_pCamera;
 	//Release();
 }
@@ -128,8 +119,8 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (m_OptionsDialog.MsgProc(hWnd, message, wParam, lParam, m_timer))
 		return 0;
 
-	if (m_EditDialog.MsgProc(hWnd,message,wParam,lParam, m_timer) )
-		return 0;
+// 	if (m_EditDialog.MsgProc(hWnd,message,wParam,lParam, m_timer) )
+// 		return 0;
 
 	// Determine message type
 	switch (message)
@@ -224,6 +215,126 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	} // End Message Switch
 
 	return 0;
+}
+
+//-----------------------------------------------------------------------------
+// Name : OptionsControlClicked ()
+//-----------------------------------------------------------------------------
+void CGameWin::OptionsControlClicked(CButtonUI* pButton)
+{
+	m_OptionsDialog.setVisible(!m_OptionsDialog.getVisible());
+}
+
+//-----------------------------------------------------------------------------
+// Name : OptionDialogOKClicked ()
+//-----------------------------------------------------------------------------
+void CGameWin::OptionDialogOKClicked(CButtonUI* pButton)
+{
+	D3DPRESENT_PARAMETERS deviceParams;
+
+	if (m_OptionsDialog.getRadioButton(IDC_WINRADIO)->getChecked())
+		m_windowed = true;
+	else
+		m_windowed = false;
+
+	UINT adapterIndex =  (UINT)m_OptionsDialog.getComboBox(IDC_DISPADAPCOM)->GetSelectedData();
+	UINT modeIndex = (UINT)m_OptionsDialog.getComboBox(IDC_RESOLUTIONCOM)->GetSelectedData();
+
+	if (m_windowed)
+	{
+
+
+// 		std::string s;
+// 		DWORD n;
+// 
+// 		s = "new line \n";
+// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+// 		std::stringstream out;
+// 		out << rc.left;
+// 		s = out.str() + '\n';
+// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+// 
+// 		std::stringstream out2;
+// 		out2 << rc.top;
+// 		s = out2.str() + '\n';
+// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+// 
+// 		std::stringstream out3;
+// 		out3 << rc.right - rc.left;
+// 		s = out3.str() + '\n';
+// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+// 
+// 		std::stringstream out4;
+// 		out4 << rc.bottom - rc.top;
+// 		s = out4.str() + '\n';
+// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+
+		deviceParams.BackBufferWidth = Width;
+		deviceParams.BackBufferHeight = Height;
+	}
+	else
+	{
+		m_nViewX = 0;
+		m_nViewY = 0;
+		//adapterIndex = (UINT)m_OptionsDialog.getComboBox(IDC_DISPADAPCOM)->GetSelectedData();
+		//modeIndex = (UINT)m_OptionsDialog.getComboBox(IDC_RESOLUTIONCOM)->GetSelectedData();
+		m_nViewWidth = m_adpatersInfo[adapterIndex].displayModes[modeIndex].Width;
+		m_nViewHeight = m_adpatersInfo[adapterIndex].displayModes[modeIndex].Height;
+
+		deviceParams.BackBufferWidth = m_nViewWidth;
+		deviceParams.BackBufferHeight = m_nViewHeight;
+
+		DWORD n;
+		std::string s;
+		std::stringstream out;
+		out << m_nViewWidth;
+		s = out.str() + '\n';
+		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+
+		std::stringstream out2;
+		out2 << m_nViewHeight;
+		s = out2.str() + '\n';
+		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+	}
+
+	deviceParams.BackBufferFormat = D3DFMT_A8R8G8B8;
+	deviceParams.BackBufferCount = 1;
+
+	D3DMULTISAMPLE_TYPE multiSampleType = 
+		*(static_cast<D3DMULTISAMPLE_TYPE*>(m_OptionsDialog.getComboBox(IDC_MULSAMPLECOM)->GetSelectedData()));
+	deviceParams.MultiSampleType = multiSampleType;
+	deviceParams.MultiSampleQuality = 0;
+	deviceParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	deviceParams.hDeviceWindow = m_hWnd;
+	deviceParams.Windowed = m_windowed;
+	D3DDEVTYPE deviceType = *( static_cast<D3DDEVTYPE*>(m_OptionsDialog.getComboBox(IDC_RENDERDEVCOM)->GetSelectedData() ) );
+	UINT deviceIndex;
+	for (UINT i = 0; i < m_adpatersInfo[adapterIndex].deviceTypes.size(); i++)
+	{
+		if (deviceType == m_adpatersInfo[adapterIndex].deviceTypes[i].deviceType)
+		{
+			deviceIndex = i;
+			break;
+		}
+		
+	}
+
+	deviceParams.EnableAutoDepthStencil = m_adpatersInfo[adapterIndex].deviceTypes[deviceIndex].bDepthEnable[m_windowed];
+	deviceParams.AutoDepthStencilFormat = *(static_cast<D3DFORMAT*>(m_OptionsDialog.getComboBox(IDC_DPETHSTENCOM)->GetSelectedData()));
+	deviceParams.Flags                  = 0;
+
+	if (!m_windowed)
+	{
+		deviceParams.FullScreen_RefreshRateInHz = (UINT)m_OptionsDialog.getComboBox(IDC_REFRATECOM)->GetSelectedData();
+	}
+	else
+		deviceParams.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+
+	deviceParams.PresentationInterval       = D3DPRESENT_INTERVAL_IMMEDIATE;
+
+	m_curD3dpp = deviceParams;
+	m_deviceReset = true;
+	resetDevice(m_curD3dpp);
 }
 
 //-----------------------------------------------------------------------------
@@ -328,21 +439,58 @@ LRESULT CALLBACK CGameWin::StaticWndProc(HWND hWnd, UINT Message, WPARAM wParam,
 }
 
 //-----------------------------------------------------------------------------
+// Name : InitDepthFormatMap ()
+//-----------------------------------------------------------------------------
+std::unordered_map<UINT,char*> CGameWin::InitDepthFormatMap()
+{
+	std::unordered_map<UINT,char*> m;
+
+	m[D3DFMT_D24S8] = "D3DFMT_D24S8";
+	m[D3DFMT_D16] = "D3DFMT_D16";
+
+	return m;
+}
+
+//-----------------------------------------------------------------------------
+// Name : InitMultiSampleMap ()
+//-----------------------------------------------------------------------------
+std::unordered_map<UINT,char*> CGameWin::InitMultiSampleMap()
+{
+	std::unordered_map<UINT,char*> m;
+
+	m[D3DMULTISAMPLE_NONE]       = "None";
+	m[D3DMULTISAMPLE_2_SAMPLES]  = "x2";
+	m[D3DMULTISAMPLE_4_SAMPLES]  = "x4";
+	m[D3DMULTISAMPLE_8_SAMPLES]  = "x8";
+	m[D3DMULTISAMPLE_16_SAMPLES] = "x16";
+
+	return m;
+}
+
+//-----------------------------------------------------------------------------
+// Name : InitVertexProcMap ()
+//-----------------------------------------------------------------------------
+std::unordered_map<ULONG,char*> CGameWin::InitVertexProcMap()
+{
+	std::unordered_map<ULONG,char*> m;
+
+	m[D3DCREATE_HARDWARE_VERTEXPROCESSING] = "Hardware Vertex Processing";
+	m[D3DCREATE_SOFTWARE_VERTEXPROCESSING] = "Software Vertex Processing";
+
+	return m;
+}
+
+//-----------------------------------------------------------------------------
 // Name : CreateDisplay 
 // Desc : creates the window for the game and the directx device
 //-----------------------------------------------------------------------------
 bool CGameWin::CreateDisplay(HINSTANCE hInstance,bool windowed)
 {
-	D3DDEVTYPE deviceType=D3DDEVTYPE_HAL;
-
 	if ( !CreateDisplayWindow(hInstance) )
 		return false;
 
 	if ( FAILED( CreateDevice(windowed) ) )
 		return false;
-
-	// 	if ( !CreateGUIObjects() )
-	// 		return false;
 
 	return true;
 }
@@ -826,95 +974,6 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 }
 
 //-----------------------------------------------------------------------------
-// Name : InitDepthFormatMap ()
-//-----------------------------------------------------------------------------
-std::unordered_map<UINT,char*> CGameWin::InitDepthFormatMap()
-{
-	std::unordered_map<UINT,char*> m;
-
-	m[D3DFMT_D24S8] = "D3DFMT_D24S8";
-	m[D3DFMT_D16] = "D3DFMT_D16";
-
-	return m;
-}
-
-//-----------------------------------------------------------------------------
-// Name : InitMultiSampleMap ()
-//-----------------------------------------------------------------------------
-std::unordered_map<UINT,char*> CGameWin::InitMultiSampleMap()
-{
-	std::unordered_map<UINT,char*> m;
-
-	m[D3DMULTISAMPLE_NONE]       = "None";
-	m[D3DMULTISAMPLE_2_SAMPLES]  = "x2";
-	m[D3DMULTISAMPLE_4_SAMPLES]  = "x4";
-	m[D3DMULTISAMPLE_8_SAMPLES]  = "x8";
-	m[D3DMULTISAMPLE_16_SAMPLES] = "x16";
-
-	return m;
-}
-
-//-----------------------------------------------------------------------------
-// Name : InitVertexProcMap ()
-//-----------------------------------------------------------------------------
-std::unordered_map<ULONG,char*> CGameWin::InitVertexProcMap()
-{
-	std::unordered_map<ULONG,char*> m;
-
-	m[D3DCREATE_HARDWARE_VERTEXPROCESSING] = "Hardware Vertex Processing";
-	m[D3DCREATE_SOFTWARE_VERTEXPROCESSING] = "Software Vertex Processing";
-
-	return m;
-}
-
-//-----------------------------------------------------------------------------
-// Name : BuildObjects 
-// Desc : creates all the object for the current scene
-//-----------------------------------------------------------------------------
- bool CGameWin::BuildObjects()
-{
-	HRESULT hr;
-
-	CreateLights(m_outlineEffect);
-
-	//
-	// Set lighting related render states.
-	//
-	setRenderStates();
-
-	// TODO: check if m_hWnd is set to valid value!
-	//m_EditDialog.SetCallback(StaticOnGUIEvent);
-	//m_GenDialog.SetCallback (StaticOnGUIEvent);
-	//m_OptionsDialog.SetCallback(StaticOnGUIEvent);
-
-	//-----------------------------------------------------------------------------
-	// Dialog initialization
-	//-----------------------------------------------------------------------------
-	m_EditDialog.init(500,735,18, "Edit Dialog","", d3d::GREEN, m_hWnd, m_assetManger);
-	m_EditDialog.setLocation(550,0);
-
-	m_EditDialog.CreateDialogUI(m_assetManger);
-
-	CButtonUI* pOptionsButton = nullptr;
-	pOptionsButton = m_EditDialog.getButton(IDC_OPTIONSBUTTON);
-	pOptionsButton->connectToClick( boost::bind(&CGameWin::OptionsControlClicked, this, _1) );
-
-	//-----------------------------------------------------------------------------
-	// initialization of Options Dialog
-	//-----------------------------------------------------------------------------
-	m_OptionsDialog.init(100,100, 18, "Gendlin", "dialog.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
-	m_OptionsDialog.LoadDialogFromFile("settings.txt", m_timer);
-	m_OptionsDialog.CreateDialogUI();
-	m_OptionsDialog.setVisible(false);
-
-	CButtonUI* pOptionsOKbutton = nullptr;
-	pOptionsOKbutton = m_OptionsDialog.getButton(IDC_OKBUTTON);
-	pOptionsOKbutton->connectToClick( boost::bind(&CGameWin::OptionDialogOKClicked, this, _1) );
-
-	return true;
-}
-
-//-----------------------------------------------------------------------------
 // Name : FrameAdvance 
 // Desc : calls every time a frame need to be rendered
 //        handles the rendering of all the objects in the scene
@@ -957,20 +1016,16 @@ void CGameWin::FrameAdvance(float timeDelta)
 
 	RECT rc;//rect that says where the text should be drawn
 
-	HRESULT hRet = S_FALSE;
-
-	//ProcessInput(timeDelta,angle,height);
-
-	if (m_bPicking)
-		hRet = pick(cursor,faceCount);
+	ProcessInput(timeDelta,angle,height);
 
 	addDebugText("cursor X:", cursor.x);
 	addDebugText("Y:", cursor.y);
 
-	if (hRet == S_OK)
-		m_debugString+=" Hit!!";
-	else
-		m_debugString+=" miss me NANA BANANA";
+	if (m_bPicking)
+		if (pick(cursor,faceCount))
+			m_debugString += " Hit!!";
+		else
+			m_debugString += " miss me NANA BANANA";
 
 	addDebugText("face index:", faceCount);
 
@@ -991,7 +1046,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 	// Draw the scene:
 	//
 	//m_pD3DDevice->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, 0x00000000, 1.0f, 0);
-	m_pD3DDevice->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, d3d::GRAY, 1.0f, 0);
+	m_pD3DDevice->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, d3d::GREEN, 1.0f, 0);
 
 	m_pD3DDevice->BeginScene();
 
@@ -1083,7 +1138,6 @@ void CGameWin::FrameAdvance(float timeDelta)
 // 	SetRect(&rcDest, 550, 0, 1050, 15);
 // 	pFont->DrawTextA(sprite2, "Test!", -1, &rcDest, DT_LEFT , d3d::CYAN);
 
-	m_EditDialog.OnRender(timeDelta,  D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 	m_OptionsDialog.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 
  	CMySprite* pMySprite = m_assetManger.getMySprite();
@@ -1263,6 +1317,92 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 }
 
 //-----------------------------------------------------------------------------
+// Name : BuildObjects 
+// Desc : creates all the object for the current scene
+//-----------------------------------------------------------------------------
+ bool CGameWin::BuildObjects()
+{
+	HRESULT hr;
+
+	ULONG			  AttribID;
+
+	CMyMesh * piecesMesh[6];//hold pointers to the chess pieces in order to safely send it to the board
+
+	m_assetManger.AllocMesh(7);		//allocating space for 6 pieces meshes and 1 for the board mesh 
+
+	//creating chess pieces mesh
+	for (int i = 0; i < 6; i++)
+	{
+		//create an empty mesh in the data pool
+		m_assetManger.AddMesh(piecesMeshesPath[i]);
+		//gives the pointer to that new mesh we just created
+		piecesMesh[i] =  m_assetManger.getLastLoadedMesh();
+	}
+
+	//setting board object settings
+	OBJECT_PREFS boardObjSetting; 
+
+	boardObjSetting.pos		= D3DXVECTOR3(-15.0f, -10.0f, 0.0f);
+	boardObjSetting.rotAngels  = D3DXVECTOR3(0,0,0);
+	boardObjSetting.scale      = D3DXVECTOR3(6.0f, 1.0f, 6.0f);
+
+	TERRAIN_PREFS boardSettings;
+	boardSettings.minBounds = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+	boardSettings.maxBounds = D3DXVECTOR3(8.0f, 8.0f, 8.0f); // at the moment has no effect on the terrain
+	boardSettings.numCellsWide = 8;
+	boardSettings.numCellsHigh = 8;
+	boardSettings.objPrefs = boardObjSetting;
+
+	int distantFromBoard = abs( m_pCameras[0]->GetPosition().z) ;
+
+	m_rotLimits.minX = boardObjSetting.pos.x - distantFromBoard;
+	m_rotLimits.maxX = 8 * 6 + boardObjSetting.pos.x + distantFromBoard;
+	m_rotLimits.minZ = boardObjSetting.pos.z - distantFromBoard;
+	m_rotLimits.maxZ = 8 * 6 + boardObjSetting.pos.z + distantFromBoard;
+
+	//allocating board mesh
+	m_assetManger.AddMesh();
+	CMyMesh* pBoardMesh = m_assetManger.getLastLoadedMesh();
+	pBoardMesh->SetDataFormat(VERTEX_FVF,sizeof(USHORT));
+
+	//getting attribute ID of the black matrial
+	AttribID   = m_assetManger.getAttributeID(NULL,&d3d::RED_MTRL,NULL);
+	
+	CMyObject* pGameBoard = new board (m_pD3DDevice,m_assetManger, pBoardMesh, boardSettings, piecesMesh, AttribID,
+		boost::bind(&CGameWin::addObject, this, _1 ) );
+
+	//addObject(pGameBoard);
+
+	CreateLights(m_outlineEffect);
+
+	setRenderStates();
+
+	CreateGUIObjects();
+	
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Name : CreateGUIObjects ()
+//-----------------------------------------------------------------------------
+bool CGameWin::CreateGUIObjects()
+{
+	//-----------------------------------------------------------------------------
+	// initialization of Options Dialog
+	//-----------------------------------------------------------------------------
+	m_OptionsDialog.init(100,100, 18, "Options", "dialog.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_OptionsDialog.LoadDialogFromFile("settings.txt", m_timer);
+	m_OptionsDialog.CreateDialogUI();
+	m_OptionsDialog.setVisible(false);
+
+	CButtonUI* pOptionsOKbutton = nullptr;
+	pOptionsOKbutton = m_OptionsDialog.getButton(IDC_OKBUTTON);
+	pOptionsOKbutton->connectToClick( boost::bind(&CGameWin::OptionDialogOKClicked, this, _1) );
+
+	return true;
+}
+
+//-----------------------------------------------------------------------------
 // Name : createObject ()
 // Desc : creates a object that will be added to the current scene
 //-----------------------------------------------------------------------------
@@ -1276,6 +1416,14 @@ void CGameWin::createObject(CMyMesh* objMesh, OBJECT_PREFS* objectPref, ULONG* n
 	if (newAttribMap && atrributeCount > 0)
 		newObject->customiseAtrributes(newAttribMap, atrributeCount);
 
+	m_objects.push_back(newObject);
+}
+
+//-----------------------------------------------------------------------------
+// Name : addObject ()
+//-----------------------------------------------------------------------------
+void CGameWin::addObject(CMyObject* newObject)
+{
 	m_objects.push_back(newObject);
 }
 
@@ -1711,126 +1859,6 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
 // 
  	//}
 //}
-
-//-----------------------------------------------------------------------------
-// Name : OptionsControlClicked ()
-//-----------------------------------------------------------------------------
-void CGameWin::OptionsControlClicked(CButtonUI* pButton)
-{
-	m_OptionsDialog.setVisible(!m_OptionsDialog.getVisible());
-}
-
-//-----------------------------------------------------------------------------
-// Name : OptionDialogOKClicked ()
-//-----------------------------------------------------------------------------
-void CGameWin::OptionDialogOKClicked(CButtonUI* pButton)
-{
-	D3DPRESENT_PARAMETERS deviceParams;
-
-	if (m_OptionsDialog.getRadioButton(IDC_WINRADIO)->getChecked())
-		m_windowed = true;
-	else
-		m_windowed = false;
-
-	UINT adapterIndex =  (UINT)m_OptionsDialog.getComboBox(IDC_DISPADAPCOM)->GetSelectedData();
-	UINT modeIndex = (UINT)m_OptionsDialog.getComboBox(IDC_RESOLUTIONCOM)->GetSelectedData();
-
-	if (m_windowed)
-	{
-
-
-// 		std::string s;
-// 		DWORD n;
-// 
-// 		s = "new line \n";
-// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-// 		std::stringstream out;
-// 		out << rc.left;
-// 		s = out.str() + '\n';
-// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-// 
-// 		std::stringstream out2;
-// 		out2 << rc.top;
-// 		s = out2.str() + '\n';
-// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-// 
-// 		std::stringstream out3;
-// 		out3 << rc.right - rc.left;
-// 		s = out3.str() + '\n';
-// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-// 
-// 		std::stringstream out4;
-// 		out4 << rc.bottom - rc.top;
-// 		s = out4.str() + '\n';
-// 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-
-		deviceParams.BackBufferWidth = Width;
-		deviceParams.BackBufferHeight = Height;
-	}
-	else
-	{
-		m_nViewX = 0;
-		m_nViewY = 0;
-		//adapterIndex = (UINT)m_OptionsDialog.getComboBox(IDC_DISPADAPCOM)->GetSelectedData();
-		//modeIndex = (UINT)m_OptionsDialog.getComboBox(IDC_RESOLUTIONCOM)->GetSelectedData();
-		m_nViewWidth = m_adpatersInfo[adapterIndex].displayModes[modeIndex].Width;
-		m_nViewHeight = m_adpatersInfo[adapterIndex].displayModes[modeIndex].Height;
-
-		deviceParams.BackBufferWidth = m_nViewWidth;
-		deviceParams.BackBufferHeight = m_nViewHeight;
-
-		DWORD n;
-		std::string s;
-		std::stringstream out;
-		out << m_nViewWidth;
-		s = out.str() + '\n';
-		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-
-		std::stringstream out2;
-		out2 << m_nViewHeight;
-		s = out2.str() + '\n';
-		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-	}
-
-	deviceParams.BackBufferFormat = D3DFMT_A8R8G8B8;
-	deviceParams.BackBufferCount = 1;
-
-	D3DMULTISAMPLE_TYPE multiSampleType = 
-		*(static_cast<D3DMULTISAMPLE_TYPE*>(m_OptionsDialog.getComboBox(IDC_MULSAMPLECOM)->GetSelectedData()));
-	deviceParams.MultiSampleType = multiSampleType;
-	deviceParams.MultiSampleQuality = 0;
-	deviceParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	deviceParams.hDeviceWindow = m_hWnd;
-	deviceParams.Windowed = m_windowed;
-	D3DDEVTYPE deviceType = *( static_cast<D3DDEVTYPE*>(m_OptionsDialog.getComboBox(IDC_RENDERDEVCOM)->GetSelectedData() ) );
-	UINT deviceIndex;
-	for (UINT i = 0; i < m_adpatersInfo[adapterIndex].deviceTypes.size(); i++)
-	{
-		if (deviceType == m_adpatersInfo[adapterIndex].deviceTypes[i].deviceType)
-		{
-			deviceIndex = i;
-			break;
-		}
-		
-	}
-
-	deviceParams.EnableAutoDepthStencil = m_adpatersInfo[adapterIndex].deviceTypes[deviceIndex].bDepthEnable[m_windowed];
-	deviceParams.AutoDepthStencilFormat = *(static_cast<D3DFORMAT*>(m_OptionsDialog.getComboBox(IDC_DPETHSTENCOM)->GetSelectedData()));
-	deviceParams.Flags                  = 0;
-
-	if (!m_windowed)
-	{
-		deviceParams.FullScreen_RefreshRateInHz = (UINT)m_OptionsDialog.getComboBox(IDC_REFRATECOM)->GetSelectedData();
-	}
-	else
-		deviceParams.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
-	deviceParams.PresentationInterval       = D3DPRESENT_INTERVAL_IMMEDIATE;
-
-	m_curD3dpp = deviceParams;
-	m_deviceReset = true;
-	resetDevice(m_curD3dpp);
-}
 
 //-----------------------------------------------------------------------------
 // Name : initHandlesToShader ()
