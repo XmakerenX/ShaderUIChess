@@ -98,7 +98,9 @@ public:
 	//-------------------------------------------------------------------------
 	// Functions that detect if pawns can move or is it stuck in his place
 	//-------------------------------------------------------------------------
-	bool canPawnMove(BOARD_POINT pieceSqaure,int color,int curretPlayer);
+	bool canPawnMove	(BOARD_POINT pieceSqaure,int color,int curretPlayer);
+	void markPawnMoves	(BOARD_POINT pieceSqaure,int color,int curretPlayer);
+	void ScanPawnMoves	(BOARD_POINT pieceSqaure,int color,int curretPlayer, DIR_VEC dir);
 
 	//-------------------------------------------------------------------------
 	// Get methods for this class
@@ -132,13 +134,13 @@ private:
 
 	POINT attLoc;
 
-	float m_stepX;
-	float m_stepZ;
+// 	float m_stepX;
+// 	float m_stepZ;
 
 	UINT pieceCount;
 
 	D3DXVECTOR3 m_pos;
-	D3DXVECTOR3 m_meshScale; //stores the scale vector that was used during the creation of the board mesh
+	//D3DXVECTOR3 m_meshScale; //stores the scale vector that was used during the creation of the board mesh
 
 	int currentPlayer;
 	//vector<int> work;

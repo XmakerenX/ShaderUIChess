@@ -318,8 +318,10 @@ ULONG CAssetManager::getAttributeID(LPCTSTR strTextureFile, const OBJMATERIAL * 
 	{
 		// We know it doesn't exist, but we can still use
 		// collect texture to do the work for us.
-		AttribItem.TextureIndex = m_nTextureCount;
-		getTexture(strTextureFile );
+		if (getTexture(strTextureFile ))
+			AttribItem.TextureIndex = m_nTextureCount - 1;
+		else
+			AttribItem.TextureIndex = -1;
 
 	} // End if no texture match
 	else

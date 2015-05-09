@@ -88,6 +88,8 @@ CGameWin::CGameWin()
 	m_outlineEffect = NULL;
 	m_cameraIndex = 0;
 	m_numActiveLights = 0;
+
+	m_gameBoard = nullptr;
 }
 //-----------------------------------------------------------------------------
 // Name : CGameWin (destructor)
@@ -1034,6 +1036,18 @@ void CGameWin::FrameAdvance(float timeDelta)
 	else
 		m_debugString+="\n DRAW_OBJECTATTRIB\n";
 
+	m_debugString += m_gameBoard->getBoardStatus();
+
+	if (m_gameBoard->getKingThreat())
+		m_debugString += "\nking is in threat!";
+	else
+		m_debugString += "\nking is not in threat :)";
+
+	if (!m_gameBoard->isBoardActive())
+		m_debugString += "\ngame is over!";
+	else
+		m_debugString += "\ngame is still on :)";
+
 	D3DXVECTOR3 position( cosf(angle) * 7.0f, height, sinf(angle) * 7.0f );
 	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
 	D3DXVECTOR3 up(0.0f, 1.0f, 0.0f);
@@ -1326,6 +1340,46 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 
 	ULONG			  AttribID;
 
+	//-----------------------------------------------------------------------------
+	// load objects attributes to insure right Rendering order
+	//-----------------------------------------------------------------------------
+	OBJMATERIAL Material;
+	ZeroMemory( &Material, sizeof(OBJMATERIAL));
+	Material.Diffuse = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+	Material.Ambient = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+
+	for (UINT i = 0; i < 2; i++)
+		m_assetManger.getAttributeID(Textures[i], &Material, NULL);
+
+	OBJMATERIAL matrial;
+
+	matrial = d3d::YELLOW_MTRL;
+	m_assetManger.getAttributeID(NULL, &matrial, NULL);
+
+	matrial = d3d::BLUE_MTRL;
+	m_assetManger.getAttributeID(NULL,&matrial,NULL);
+
+	matrial = d3d::RED_MTRL;
+	m_assetManger.getAttributeID(NULL,&matrial,NULL);
+
+	matrial = d3d::WHITE_MTRL;
+	//matrial.Diffuse.w = 1.0;
+	matrial.Diffuse.x = 0;
+	matrial.Diffuse.y = 0;
+	matrial.Diffuse.z = 0;
+	matrial.Diffuse.w = 0.0f;
+
+	matrial.Specular.x = 0;
+	matrial.Specular.y = 0;
+	matrial.Specular.z = 0;
+	matrial.Specular.w = 0;
+
+	//m_attribIDs[FRAME] = assetManger.getAttributeID("frame.png",&matrial,NULL);
+	m_assetManger.getAttributeID("bla.png",&matrial,NULL);
+	//-----------------------------------------------------------------------------
+	// End of load objects attributes
+	//-----------------------------------------------------------------------------
+
 	CMyMesh * piecesMesh[6];//hold pointers to the chess pieces in order to safely send it to the board
 
 	m_assetManger.AllocMesh(7);		//allocating space for 6 pieces meshes and 1 for the board mesh 
@@ -1371,7 +1425,10 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	CMyObject* pGameBoard = new board (m_pD3DDevice,m_assetManger, pBoardMesh, boardSettings, piecesMesh, AttribID,
 		boost::bind(&CGameWin::addObject, this, _1 ) );
 
-	//addObject(pGameBoard);
+	if (pGameBoard)
+		m_gameBoard = static_cast<board*>(pGameBoard);
+
+	addObject(pGameBoard);
 
 	CreateLights(m_outlineEffect);
 
@@ -1703,7 +1760,7 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
  	}
 	if (activeMeshIndex > -1)
 	{
-// 		gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
+ 		m_gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
 // 		if (gameBoard->isUnitPromotion())
 // 			m_GuiSelectPawn.SetVisible(true);
 	}

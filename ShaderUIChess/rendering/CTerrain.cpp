@@ -54,8 +54,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	USHORT numVertsX = numCellsWide+1;
 	USHORT numVertsZ = numCellsHigh+1;
 
-	float stepX = 1.0f;
-	float stepZ = 1.0f;
+	m_stepX = 1.0f;
+	m_stepZ = 1.0f;
+	m_meshScale = vecScale;
 
 	//preparing the vertex buffer for the terrain mesh
 	CMyVertex* pVertices = new CMyVertex[numVertsX * numVertsZ];
@@ -89,13 +90,13 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			Tu++;
 
 			// Increment x across
-			pos.x += stepX;
+			pos.x += m_stepX;
 			VertexCount++;
 		}
 
 		Tv++;
 		// Increment Z
-		pos.z+=stepZ;
+		pos.z += m_stepZ;
 	}
 	//end of  preparing the vertex buffer
 
@@ -229,13 +230,13 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			Tu++;
 
 			// Increment x across
-			pos.x += stepX;
+			pos.x += m_stepX;
 			VertexCount++;
 		}
 
 		Tv++;
 		// Increment Z
-		pos.z += stepZ;
+		pos.z += m_stepZ;
 	}
 
 	pIndices = new USHORT[6];
@@ -277,12 +278,15 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	m_squareMesh->BuildMesh(D3DXMESH_MANAGED,pDevice);
 
 	OBJMATERIAL matrial;
-	matrial = d3d::BLUE_MTRL;
-
-	m_attribIDs[MOVE] = assetManger.getAttributeID(NULL,&matrial,NULL);
 
 	matrial = d3d::YELLOW_MTRL;
 	m_attribIDs[SELECT] = assetManger.getAttributeID(NULL, &matrial, NULL);
+
+	matrial = d3d::BLUE_MTRL;
+	m_attribIDs[MOVE] = assetManger.getAttributeID(NULL,&matrial,NULL);
+
+// 	matrial = d3d::YELLOW_MTRL;
+// 	m_attribIDs[SELECT] = assetManger.getAttributeID(NULL, &matrial, NULL);
 
 	matrial = d3d::RED_MTRL;
 	m_attribIDs[ATTACK] = assetManger.getAttributeID(NULL,&matrial,NULL);

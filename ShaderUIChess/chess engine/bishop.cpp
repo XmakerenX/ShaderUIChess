@@ -16,10 +16,10 @@ bishop::bishop(CMyMesh * pMesh,OBJECT_PREFS* objectPrefs,int playerColor )
 :piece(pMesh, objectPrefs , playerColor)
 {
 	//type=BISHOP;
-	dx[0]=-1;
-	dx[1]=2;
-	dy[0]=dx[0];
-	dy[1]=dx[1];
+	dx[0] = -1;
+	dx[1] =  2;
+	dy[0] = dx[0];
+	dy[1] = dx[1];
 }
 bool bishop::validateNewPos(int dx,int dy, BOARD_POINT startSqaure, BOARD_POINT targetSquare,piece * SBoard[boardY][boardX])
 {

@@ -311,6 +311,7 @@ private:
 	CTerrain			   * m_pTerrain;
 	int						 activeMeshIndex;
 
+	board				   * m_gameBoard;
 	//	board                  * gameBoard;
 
 	// attributes data pools

@@ -41,7 +41,12 @@ bool king::validateNewPos(int dx,int dy, BOARD_POINT startSqaure, BOARD_POINT ta
 	}
 
 	if ((dx == -2 || dx == 3) && dy == 0 && m_onStartPoint) //check if the player tried to do a castling move
-		return true;
+	{
+		DIR_VEC castlingDir;
+		castlingDir.x = dx / abs(dx);
+		castlingDir.y = 0;
+		return isPieceInWay(startSqaure,targetSquare,castlingDir,SBoard);
+	}
 
  	return false;
 }

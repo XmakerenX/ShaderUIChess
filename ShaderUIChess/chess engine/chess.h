@@ -14,6 +14,17 @@ typedef struct _BOARD_POINT
 
 typedef struct _DIR_VEC
 {
+	_DIR_VEC::_DIR_VEC()
+	{
+		;
+	}
+
+	_DIR_VEC::_DIR_VEC(int newX, int newY)
+	{
+		x = newX;
+		y = newY;
+	}
+
 	int x;
 	int y;
 }DIR_VEC;

@@ -124,7 +124,7 @@ board::board(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManager, CMyMesh *pB
 	:CTerrain(pDevice, assetManager, pBoardMesh, boardSetting)
 {
 	connectToPieceCreated(subscriber);
-	m_pieceCreatedSig(this);
+	//m_pieceCreatedSig(this);
 
 	int playerColor = WHITE;
 
@@ -241,6 +241,8 @@ bool board::validateMove(BOARD_POINT startLoc,BOARD_POINT newLoc)
 	int dx = startLoc.row - newLoc.row;
 	int dy = startLoc.col - newLoc.col;
 
+	bool castlingValid = false;
+
 	if (currentPawn != NULL)//checks the currentPawn isn't null just to be safe
 	{
 		if (currentPawn->validateNewPos(dx,dy,startLoc,newLoc,SBoard))
@@ -262,9 +264,32 @@ bool board::validateMove(BOARD_POINT startLoc,BOARD_POINT newLoc)
 					{
 						if (!castling(dx, dy))//check if castling is valid 
 							return false;//castling isn't valid and so is this move
+						else
+							castlingValid = true;
 					}
 					else
 						return false;
+			}
+
+			if (castlingValid)
+			{
+				BOARD_POINT newRookSquare;
+				int x = dx/abs(dx);
+				int y = startSquare.col;
+
+				x = startSquare.row - dx -x;
+
+				newRookSquare.col = y;
+				newRookSquare.row = x + 2 * (dx / abs(dx)) ;
+
+				piece * rookPiece = SBoard[y][x]; 
+
+				SBoard[y][x + (2 * dx)] = rookPiece;
+				SBoard[y][x] = NULL;
+
+				calcPieceBoardPos(newRookSquare,newCurPiecePos);
+				newCurPiecePos.y = m_pos.y + rookPiece->getYpos();
+				rookPiece->setPos(newCurPiecePos);
 			}
 
 			SBoard[newLoc.col][newLoc.row]      = currentPawn;
@@ -362,10 +387,19 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 					//not valid therefore sets startSquare to invalid value to reset piece movement process
 					startSquare.row = -1;
 					startSquare.col = -1;
+
+					m_attribSquares[ATTACK].clear();
+					m_attribSquares[MOVE].clear();
+					m_selectSquare = -1;
+
 					m_curStatus +="\n move was invalid start:"+out3.str()+","+out4.str()+" target:"+out.str()+","+out2.str();
 				}
 				else
 				{
+					m_attribSquares[ATTACK].clear();
+					m_attribSquares[MOVE].clear();
+					m_selectSquare = -1;
+
 					if (currentPawn->getType() == PAWN)
 					{
 						if (targetSqaure.col == 0 || targetSqaure.col == 7)
@@ -389,6 +423,12 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 				{
 					startSquare = pressedSqaure;
 					m_curStatus += "\n press is Valid";
+
+					m_attribSquares[ATTACK].clear();
+					m_attribSquares[MOVE].clear();
+					m_selectSquare = startSquare.row + (7 - startSquare.col) * m_numCellsWide;
+					markPawnMoves(startSquare, currentPawn->getColor(), currentPlayer);
+
 				}
 
 			}
@@ -743,6 +783,161 @@ bool board::canPawnMove(BOARD_POINT pieceSqaure,int color,int curretPlayer)
 		}
 	}
 	return false;
+}
+
+//-----------------------------------------------------------------------------
+// Name : markPawnMoves ()
+//-----------------------------------------------------------------------------
+void board::markPawnMoves(BOARD_POINT pieceSqaure,int color,int curretPlayer)
+{
+	int dxValues[2];
+	int dyValues[2];
+
+	startSquare = pieceSqaure;//getting the current Pawn we are checking for  square
+	currentPawn = SBoard[startSquare.col][startSquare.row];
+
+	currentPawn->getDx(dxValues);//getting the values of dx should run between in order to cover all possible moves
+	currentPawn->getDy(dyValues);//getting the values of dy should run between in order to cover all possible moves
+
+	switch (currentPawn->getType())
+	{
+	case PAWN:
+	case KING:
+	case KNIGHT:
+		{
+			for (int dy = dyValues[0]; dy < dyValues[1]; dy++)//scanning all possible squares that the pawn can move to 
+			{					  
+				for (int dx = dxValues[0]; dx < dxValues[1]; dx++)
+				{
+					if (dx != 0 || dy != 0)
+					{
+						BOARD_POINT possibleMoveLoc; 
+						possibleMoveLoc.row = startSquare.row - dx;//getting current possible square x,y that the pawn can move to
+						possibleMoveLoc.col = startSquare.col - dy;
+
+						if ( (possibleMoveLoc.row < 8 && possibleMoveLoc.row >=0) && (possibleMoveLoc.col < 8 && possibleMoveLoc.col >=0 ) )//checking that we are still in board range
+						{
+							targetSqaure = possibleMoveLoc;//getting the  current possible square
+							if(currentPawn->validateNewPos(dx,dy,startSquare,targetSqaure,SBoard))
+							{
+								if (!validateKingThreat(curretPlayer))//checking that the king
+								{
+									if (SBoard[targetSqaure.col][targetSqaure.row] != nullptr)
+									{
+										if (SBoard[targetSqaure.col][targetSqaure.row]->getColor() != currentPlayer)
+											m_attribSquares[ATTACK].push_back(targetSqaure.row + ( (7 - targetSqaure.col ) * m_numCellsWide));
+										else
+											m_attribSquares[MOVE].push_back(targetSqaure.row + ( (7 - targetSqaure.col) * m_numCellsWide));
+									}
+									else
+										m_attribSquares[MOVE].push_back(targetSqaure.row + ( ( 7 - targetSqaure.col) * m_numCellsWide));
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (currentPawn->getType() == KING)// && (dx == -2 || dx == 3))//king was moved to castling pos
+				if (!m_kingInThreat)//make sure the king is not in threat
+				{
+					BOARD_POINT possibleMoveLoc; 
+					possibleMoveLoc.row = startSquare.row - (-2);//getting current possible square x,y that the pawn can move to
+					possibleMoveLoc.col = startSquare.col - 0;
+
+					targetSqaure = possibleMoveLoc;
+
+					if (currentPawn->validateNewPos(-2, 0, startSquare, targetSqaure, SBoard) )
+						if (castling(-2, 0))//check if castling is valid
+							m_attribSquares[MOVE].push_back(targetSqaure.row + ( ( 7 - targetSqaure.col) * m_numCellsWide) );
+
+					possibleMoveLoc.row = startSquare.row - 3;//getting current possible square x,y that the pawn can move to
+					possibleMoveLoc.col = startSquare.col - 0;
+
+					targetSqaure = possibleMoveLoc;
+
+					if (currentPawn->validateNewPos(3, 0, startSquare, targetSqaure, SBoard) )
+						if (castling(3, 0))//check if castling is valid
+							m_attribSquares[MOVE].push_back(targetSqaure.row + ( ( 7 - targetSqaure.col) * m_numCellsWide) );
+				}
+
+		}break;
+
+	case BISHOP:
+		{
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(1,1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(-1,-1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(1,-1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(-1,1));
+		}break;
+
+	case ROOK:
+		{
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(1,0));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(0,1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(-1,0));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(0,-1));
+		}break;
+
+	case QUEEN:
+		{
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(1,1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(-1,-1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(1,-1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(-1,1));
+
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(1,0));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(0,1));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(-1,0));
+			ScanPawnMoves(pieceSqaure,color,curretPlayer, DIR_VEC(0,-1));
+		}break;
+
+	}
+
+
+}
+
+
+//-----------------------------------------------------------------------------
+// Name : ScanPawnMoves ()
+//-----------------------------------------------------------------------------
+void board::ScanPawnMoves(BOARD_POINT pieceSqaure,int color,int curretPlayer,DIR_VEC dir)
+{
+	BOARD_POINT possibleMoveLoc;
+	possibleMoveLoc = pieceSqaure;//getting the current Pawn we are checking for  square
+	startSquare = pieceSqaure;
+
+
+	possibleMoveLoc.row = possibleMoveLoc.row + dir.x;
+	possibleMoveLoc.col = possibleMoveLoc.col + dir.y;
+
+	while( (possibleMoveLoc.row < 8 && possibleMoveLoc.row >=0) && (possibleMoveLoc.col < 8 && possibleMoveLoc.col >=0 ) )
+	{
+		targetSqaure = possibleMoveLoc;//getting the  current possible square
+
+		int dx = startSquare.row - targetSqaure.row;
+		int dy = startSquare.col - targetSqaure.col;
+
+		if(currentPawn->validateNewPos(dx,dy,startSquare,targetSqaure,SBoard))
+		{
+			if (!validateKingThreat(curretPlayer))//checking that the king
+			{
+				if (SBoard[targetSqaure.col][targetSqaure.row] != nullptr)
+				{
+					if (SBoard[targetSqaure.col][targetSqaure.row]->getColor() != currentPlayer)
+					{
+						m_attribSquares[ATTACK].push_back(targetSqaure.row + ( (7 - targetSqaure.col ) * m_numCellsWide));
+						break;
+					}
+				}
+				else
+					m_attribSquares[MOVE].push_back(targetSqaure.row + ( ( 7 - targetSqaure.col) * m_numCellsWide));
+			}
+		}
+
+		possibleMoveLoc.row = possibleMoveLoc.row + dir.x;
+		possibleMoveLoc.col = possibleMoveLoc.col + dir.y;
+	}
 }
 
 //-----------------------------------------------------------------------------
@@ -1380,12 +1575,12 @@ bool board::castling(int dx , int dy)
 					return false;
 			}
 
-			SBoard[y][x + (2 * dx)] = rookPiece;
-			SBoard[y][x] = NULL;
-
-			calcPieceBoardPos(newRookSquare,newCurPiecePos);
-			newCurPiecePos.y = m_pos.y + rookPiece->getYpos();
-			rookPiece->setPos(newCurPiecePos);
+// 			SBoard[y][x + (2 * dx)] = rookPiece;
+// 			SBoard[y][x] = NULL;
+// 
+// 			calcPieceBoardPos(newRookSquare,newCurPiecePos);
+// 			newCurPiecePos.y = m_pos.y + rookPiece->getYpos();
+// 			rookPiece->setPos(newCurPiecePos);
 			return true;
 
 		}

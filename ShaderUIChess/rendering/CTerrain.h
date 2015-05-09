@@ -40,6 +40,10 @@ protected:
 	ULONG				m_selectSquare;
 	ULONG				m_fraemSqaure;
 
+	float				m_stepX;
+	float				m_stepZ;
+	D3DXVECTOR3		    m_meshScale; //stores the scale vector that was used during the creation of the board mesh
+
 	ULONG				m_attribIDs[4];
 
 	UINT				m_numCellsWide;

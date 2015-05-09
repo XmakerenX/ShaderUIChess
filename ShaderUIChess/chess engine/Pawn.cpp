@@ -13,8 +13,8 @@ Pawn::Pawn(CMyMesh * pMesh,OBJECT_PREFS* objectPrefs,int playerColor)
 	//type=PAWN;
 	dx[0]=-1;
 	dx[1]=2;
-	dy[0]=1;
-	dy[1]=2;
+	dy[0]=-2;
+	dy[1]=3;
 }
 
 Pawn::~Pawn(void)

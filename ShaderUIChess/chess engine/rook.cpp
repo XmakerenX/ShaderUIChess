@@ -11,10 +11,10 @@ rook::rook(CMyMesh * pMesh,OBJECT_PREFS* objectPrefs,int playerColor)
 :piece(pMesh, objectPrefs, playerColor)
 {
 	//type=ROOK;
-	dx[0]=-1;
-	dx[1]=2;
-	dy[0]=dx[0];
-	dy[1]=dx[1];
+	dx[0] = -1;
+	dx[1] =  2;
+	dy[0] = dx[0];
+	dy[1] = dx[1];
 }
 rook::~rook(void)
 {
