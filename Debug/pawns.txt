@@ -1,0 +1,54 @@
+500| Dialog Width
+100| Dialog Height
+18| Dialog Caption Height
+Gendialog| Dialog Caption Text
+204| Current Control ID
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+201| Control ID
+21| Control X
+10| Control Y
+100| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+Knight| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+202| Control ID
+140| Control X
+10| Control Y
+100| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+Bishop| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+203| Control ID
+259| Control X
+10| Control Y
+100| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+Rook| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+204| Control ID
+378| Control X
+10| Control Y
+100| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+Queen| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////

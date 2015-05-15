@@ -1,0 +1,54 @@
+200| Dialog Width
+320| Dialog Height
+18| Dialog Caption Height
+Gendialog| Dialog Caption Text
+204| Current Control ID
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+201| Control ID
+20| Control X
+10| Control Y
+150| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+New Game| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+202| Control ID
+20| Control X
+80| Control Y
+150| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+Continue| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+203| Control ID
+20| Control X
+150| Control Y
+150| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+Options| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+204| Control ID
+20| Control X
+220| Control Y
+150| Control Width
+50| Control Height
+1| is Control Visible
+1| is Control Enabled
+EXIT| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
