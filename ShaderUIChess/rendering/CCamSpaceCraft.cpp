@@ -228,13 +228,13 @@ void CCamSpaceCraft::Move(ULONG direction, float distance)
 	D3DXMATRIX Matrix;
 	D3DXVECTOR3 vecUp = m_vecUp;
 	 // Generate a look at matrix
-// 	 D3DXMatrixLookAtLH( &Matrix, &m_vecPos, &D3DXVECTOR3(9,0,24), &vecUp );
+ 	 D3DXMatrixLookAtLH( &Matrix, &m_vecPos, &D3DXVECTOR3(9,0,24), &vecUp );
 // 	
 // 	// Extract the vectors
-// 	m_vecRight = D3DXVECTOR3( Matrix._11, Matrix._21, Matrix._31 ); 
+ 	m_vecRight = D3DXVECTOR3( Matrix._11, Matrix._21, Matrix._31 ); 
 // 	//m_vecUp    = D3DXVECTOR3( Matrix._12, Matrix._22, Matrix._32 );
-// 	m_vecUp = D3DXVECTOR3 (0,1,0);
-// 	m_vecLook  = D3DXVECTOR3( Matrix._13, Matrix._23, Matrix._33 );
+	m_vecUp = D3DXVECTOR3 (0,1,0);
+ 	m_vecLook  = D3DXVECTOR3( Matrix._13, Matrix._23, Matrix._33 );
 
 	m_bViewDirty = true;
 	m_bFrustumDirty = true;

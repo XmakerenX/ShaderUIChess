@@ -1,8 +1,8 @@
-make pawns promotion menu.
-make main menu.
-add options menu to main menu.
-make starting screen "animation".
-fix the options menu to sussesfully change form fullscreen to windowed mode.
-change the pieces meshs to the new ones.
+make pawns promotion menu. -- Done :) just need better button grahic
+make main menu.		  -- Done :) just need better button graphic
+add options menu to main menu. -- Done :)
+make starting screen "animation". -- spinning around board need to figure what to do when it stops...
+fix the options menu to sussesfully change form fullscreen to windowed mode. -- UI and pick now work , need to use adjustRect to make it fully functional..
+change the pieces meshs to the new ones. 
 make the board look better , add wooden plate around it.
 make new UI textures.

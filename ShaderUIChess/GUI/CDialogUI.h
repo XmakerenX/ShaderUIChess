@@ -69,7 +69,7 @@ public:
 	HRESULT init	 (UINT width, UINT height, int nCaptionHeight, LPCTSTR captionText, char newTexturePath[MAX_PATH], D3DXCOLOR dialogColor, HWND hWnd, CAssetManager& assetManger);
 	HRESULT initDefControlElements(CAssetManager& assetManger);
 
-	virtual bool    MsgProc	 ( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer );
+	virtual bool    MsgProc	 ( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer, bool windowed );
 	void	OnMouseMove(POINT pt);
 
 	void    SendEvent(UINT nEvent, bool bTriggeredByUser, int nControlID, HWND hWnd = NULL );
@@ -143,6 +143,9 @@ public:
 	void	setVisible		 (bool bVisible);
 
 	POINT   getLocation	     ();
+	UINT	getWidth	     ();
+	UINT	getHeight		 ();
+
 	LONG	getCaptionHeight ();
 
 protected:

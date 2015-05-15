@@ -20,6 +20,8 @@ CGameWin::CGameWin()
 		m_pCameras[i]		= NULL;
 
 	m_windowed = true;
+	m_bReturnCamera = false;
+	m_bMoveCamera = false;
 
 	//clearing handles to win32 and directx objects
 	m_hWnd          = NULL;
@@ -118,7 +120,13 @@ bool CGameWin::InitInstance(HINSTANCE hInstance, LPCTSTR lpCmdLine, int iCmdShow
 //-----------------------------------------------------------------------------
 LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	if (m_OptionsDialog.MsgProc(hWnd, message, wParam, lParam, m_timer))
+	if (m_MainMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
+		return 0;
+
+	if (m_OptionsDialog.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
+		return 0;
+
+	if (m_GuiSelectPawn.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
 		return 0;
 
 // 	if (m_EditDialog.MsgProc(hWnd,message,wParam,lParam, m_timer) )
@@ -271,8 +279,17 @@ void CGameWin::OptionDialogOKClicked(CButtonUI* pButton)
 // 		s = out4.str() + '\n';
 // 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 
-		deviceParams.BackBufferWidth = Width;
-		deviceParams.BackBufferHeight = Height;
+		RECT rc; //= m_clientRC;
+		::GetClientRect( m_hWnd, &rc );
+		m_nViewX      = rc.left;
+		m_nViewY      = rc.top;
+		m_nViewWidth  = rc.right - rc.left;
+		m_nViewHeight = rc.bottom - rc.top;
+
+		deviceParams.BackBufferWidth = m_nViewWidth;
+		deviceParams.BackBufferHeight = m_nViewHeight;
+		//deviceParams.BackBufferWidth = Width;
+		//deviceParams.BackBufferHeight = Height;
 	}
 	else
 	{
@@ -804,8 +821,9 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 	m_pCameras[0] = new CCamSpaceCraft(NULL);
 	m_pCameras[0]->SetFOV( 45.0f );
 	m_pCameras[0]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
-	m_pCameras[0]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
-	//m_pCamera->SetLookAt( D3DXVECTOR3(9,0,24) );
+	//m_pCameras[0]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
+	m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+	m_pCameras[0]->SetLookAt( D3DXVECTOR3(9,0,24) );
 	m_pCameras[0]->UpdateRenderView( m_pD3DDevice );
 	m_pCameras[0]->UpdateRenderProj( m_pD3DDevice );
 
@@ -958,7 +976,9 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 		{
 			m_pCameras[m_cameraIndex]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f, m_pD3DDevice );
 			m_pCameras[m_cameraIndex]->SetFOV( 45.0f );
-			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
+			//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
+			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+			m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 			m_pCameras[m_cameraIndex]->UpdateRenderView( m_pD3DDevice );
 			m_pCameras[m_cameraIndex]->UpdateRenderProj( m_pD3DDevice );
 		}
@@ -989,15 +1009,15 @@ void CGameWin::FrameAdvance(float timeDelta)
 	{
 		if(m_windowed)
 		{
-			RECT rc = m_clientRC;
-			//::GetClientRect( m_hWnd, &rc );
+			RECT rc; //= m_clientRC;
+			::GetClientRect( m_hWnd, &rc );
 			m_nViewX      = rc.left;
 			m_nViewY      = rc.top;
 			m_nViewWidth  = rc.right - rc.left;
 			m_nViewHeight = rc.bottom - rc.top;
 			 
-			m_curD3dpp.BackBufferWidth = Width;
-			m_curD3dpp.BackBufferHeight = Height;
+			m_curD3dpp.BackBufferWidth = m_nViewWidth;
+			m_curD3dpp.BackBufferHeight = m_nViewHeight;
 		}
 		resetDevice(m_curD3dpp);
 	}
@@ -1019,6 +1039,59 @@ void CGameWin::FrameAdvance(float timeDelta)
 	RECT rc;//rect that says where the text should be drawn
 
 	ProcessInput(timeDelta,angle,height);
+
+	if (m_MainMenu.getVisible())
+	{
+		m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 2 * timeDelta);
+		m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
+		m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
+		//m_bReturnCamera = true;
+	}
+	else
+		if (m_bReturnCamera)
+		{
+			if (m_cameraDelta > 0)
+			{
+				m_bMoveCamera = true;
+				m_returnDir = false;
+				m_bReturnCamera = false;
+			}
+			else
+			{
+				m_bMoveCamera = true;
+				m_returnDir = true;
+				m_bReturnCamera = false;
+			}
+		}
+
+	if (m_bMoveCamera)
+	{
+		if (!m_returnDir)
+		{
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_LEFT, 24 * timeDelta);
+			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
+			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
+			if (m_cameraDelta > 0)
+			{
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
+				m_bMoveCamera = false;
+			}
+		}
+		else
+		{
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 24 * timeDelta);
+			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
+			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
+			if (m_cameraDelta > 0)
+			{
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
+				m_bMoveCamera = false;
+			}
+		}
+	}
+	
 
 	addDebugText("cursor X:", cursor.x);
 	addDebugText("Y:", cursor.y);
@@ -1153,6 +1226,8 @@ void CGameWin::FrameAdvance(float timeDelta)
 // 	pFont->DrawTextA(sprite2, "Test!", -1, &rcDest, DT_LEFT , d3d::CYAN);
 
 	m_OptionsDialog.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
+	m_GuiSelectPawn.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
+	m_MainMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 
  	CMySprite* pMySprite = m_assetManger.getMySprite();
  	pMySprite->render(m_highLightEffect);
@@ -1171,8 +1246,6 @@ void CGameWin::FrameAdvance(float timeDelta)
 		m_debugString.c_str(), -1, &rc,
 		DT_NOCLIP, D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
-
-//	m_GuiSelectPawn.OnRender(timeDelta);
 //	m_GuiDialog.OnRender(timeDelta);
 
 	hr = m_pD3DDevice->EndScene();
@@ -1456,6 +1529,31 @@ bool CGameWin::CreateGUIObjects()
 	pOptionsOKbutton = m_OptionsDialog.getButton(IDC_OKBUTTON);
 	pOptionsOKbutton->connectToClick( boost::bind(&CGameWin::OptionDialogOKClicked, this, _1) );
 
+	m_GuiSelectPawn.init(500,100, 18, "Select Pawn", "dialog.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_GuiSelectPawn.LoadDialogFromFile("pawns.txt", m_timer);
+	m_GuiSelectPawn.setVisible(false);
+	m_GuiSelectPawn.setLocation( (m_nViewWidth / 2) - m_GuiSelectPawn.getWidth() / 2, m_nViewHeight / 2 - m_GuiSelectPawn.getHeight() / 2);
+
+	m_GuiSelectPawn.getButton(IDC_KNIGHT)->connectToClick( boost::bind(&CGameWin::PromoteUnitToKnight, this, _1) );
+	m_GuiSelectPawn.getButton(IDC_BISHOP)->connectToClick( boost::bind(&CGameWin::PromoteUnitToBishop, this, _1) );
+	m_GuiSelectPawn.getButton(IDC_ROOK)->connectToClick( boost::bind(&CGameWin::PromoteUnitToRook, this, _1) );
+	m_GuiSelectPawn.getButton(IDC_QUEEN)->connectToClick( boost::bind(&CGameWin::PromoteUnitToQueen, this, _1) );
+
+	m_MainMenu.init(200,320, 18, "Main Menu", "dialog.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_MainMenu.LoadDialogFromFile("MainMenu.txt", m_timer);
+	m_MainMenu.setLocation( (m_nViewWidth / 2) - m_MainMenu.getWidth() / 2, m_nViewHeight / 2 - m_MainMenu.getHeight() / 2);
+
+	WIN32_FIND_DATA FindFileData;
+	HANDLE handle = FindFirstFile("board.sav", &FindFileData) ;
+	if(handle == INVALID_HANDLE_VALUE)
+		m_MainMenu.getButton(IDC_Continue)->setEnabled(false);
+
+	m_MainMenu.getButton(IDC_NEWGAME)->connectToClick( boost::bind(&CGameWin::NewGameClicked, this, _1) );
+	m_MainMenu.getButton(IDC_Continue)->connectToClick( boost::bind(&CGameWin::ContinueClicked, this, _1) );
+	m_MainMenu.getButton(IDC_OPTIONS)->connectToClick( boost::bind(&CGameWin::OptionsClicked, this, _1 ) );
+	m_MainMenu.getButton(IDC_EXIT)->connectToClick( boost::bind(&CGameWin::ExitClicked, this, _1) );
+	
+
 	return true;
 }
 
@@ -1518,6 +1616,12 @@ void CGameWin::ProcessInput(float timeDelta,float &angle,float &height)
 	if (keysBuffer[VK_RIGHT] & 0xF0)
 	{
 		direction |= CCamera::DIR_RIGHT;
+	}
+
+	if (keysBuffer[VK_ESCAPE] & 0xF0)
+	{
+		m_MainMenu.setVisible(!m_MainMenu.getVisible()); 
+		m_bReturnCamera = !m_MainMenu.getVisible();
 	}
 
 	m_pCameras[m_cameraIndex]->Move(direction, 2 * timeDelta);
@@ -1657,8 +1761,8 @@ void CGameWin::ProcessInput(float timeDelta,float &angle,float &height)
 		if ( X || Y ) 
 		{
 			//( (CCamSpaceCraft*)m_pCamera )->Rotate(Y, X, 0.0f);
-			//( (CCamSpaceCraft*)m_pCamera )->RotateAroundPoint(D3DXVECTOR3(9,0,24), X, Y, m_rotLimits);
-			((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Rotate( Y, X, 0.0f );
+			( (CCamSpaceCraft*)m_pCameras[m_cameraIndex] )->RotateAroundPoint(D3DXVECTOR3(9,0,24), X, Y, m_rotLimits);
+			//((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Rotate( Y, X, 0.0f );
 
 		} // End if any rotation
 	}
@@ -1695,7 +1799,8 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
 	GetCursorPos( &ptCursor );
 	cursor = ptCursor;
 
-	ScreenToClient( m_hWnd, &ptCursor );
+	if (m_windowed)
+		ScreenToClient( m_hWnd, &ptCursor );
 
 	cursor = ptCursor;
 
@@ -1761,10 +1866,95 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
 	if (activeMeshIndex > -1)
 	{
  		m_gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
-// 		if (gameBoard->isUnitPromotion())
-// 			m_GuiSelectPawn.SetVisible(true);
+ 		if (m_gameBoard->isUnitPromotion())
+ 			m_GuiSelectPawn.setVisible(true);
 	}
 	return S_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Name : PromoteUnitToKnight() 
+//-----------------------------------------------------------------------------
+void CGameWin::PromoteUnitToKnight(CButtonUI* pButton)
+{
+	m_gameBoard->PromoteUnit(KNIGHT);
+	m_GuiSelectPawn.setVisible(false);
+}
+
+//-----------------------------------------------------------------------------
+// Name : PromoteUnitToBishop() 
+//-----------------------------------------------------------------------------
+void CGameWin::PromoteUnitToBishop(CButtonUI* pButton)
+{
+	m_gameBoard->PromoteUnit(BISHOP);
+	m_GuiSelectPawn.setVisible(false);
+}
+
+//-----------------------------------------------------------------------------
+// Name : PromoteUnitToRook() 
+//-----------------------------------------------------------------------------
+void CGameWin::PromoteUnitToRook(CButtonUI* pButton)
+{
+	m_gameBoard->PromoteUnit(ROOK);
+	m_GuiSelectPawn.setVisible(false);
+}
+
+//-----------------------------------------------------------------------------
+// Name : PromoteUnitToQueen() 
+//-----------------------------------------------------------------------------
+void CGameWin::PromoteUnitToQueen(CButtonUI* pButton)
+{
+	m_gameBoard->PromoteUnit(QUEEN);
+	m_GuiSelectPawn.setVisible(false);
+}
+
+//-----------------------------------------------------------------------------
+// Name : NewGameClicked() 
+//-----------------------------------------------------------------------------
+void CGameWin::NewGameClicked(CButtonUI* pButton)
+{
+	if (m_gameBoard != NULL)
+	{
+		m_objects.clear();
+		m_MainMenu.setVisible(false);
+		m_bReturnCamera = true;
+		m_gameBoard->resetGame();
+		addObject(m_gameBoard);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Name : ContinueClicked() 
+//-----------------------------------------------------------------------------
+void CGameWin::ContinueClicked(CButtonUI* pButton)
+{
+	m_objects.clear();
+	m_gameBoard->LoadBoardFromFile();
+	m_MainMenu.setVisible(false);
+	m_bReturnCamera = true;
+	addObject(m_gameBoard);
+}
+
+//-----------------------------------------------------------------------------
+// Name : OptionsClicked() 
+//-----------------------------------------------------------------------------
+void CGameWin::OptionsClicked(CButtonUI* pButton)
+{
+	m_OptionsDialog.setVisible(true);
+	m_MainMenu.setVisible(false);
+	m_bReturnCamera = true;
+}
+
+//-----------------------------------------------------------------------------
+// Name : ExitClicked() 
+//-----------------------------------------------------------------------------
+void CGameWin::ExitClicked(CButtonUI* pButton)
+{
+	m_gameBoard->SaveBoardToFile();
+	m_MainMenu.setVisible(false);
+	m_bReturnCamera = true;
+
+	SendMessage(m_hWnd, WM_CLOSE, 0, 0);
 }
 
 //-----------------------------------------------------------------------------

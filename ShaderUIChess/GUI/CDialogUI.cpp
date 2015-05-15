@@ -600,7 +600,7 @@ void CDialogUI::SendEvent(UINT nEvent, bool bTriggeredByUser, int nControlID, HW
 // Name : MsgProc ()
 // Desc : process messages that were sent to the dialog
 //-----------------------------------------------------------------------------
-bool CDialogUI::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer )
+bool CDialogUI::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer , bool windowed)
 {
 	bool bHandled = false;
 	
@@ -669,7 +669,8 @@ bool CDialogUI::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTi
 
 			GetCursorPos(&mousePoint);
 			//ClientToScreen(hWnd,&mousePoint);
-			ScreenToClient(hWnd,&mousePoint);
+			if (windowed)
+				ScreenToClient(hWnd,&mousePoint);
 
 			mousePoint.x -= m_x;
 			mousePoint.y -= m_y;
@@ -702,7 +703,8 @@ bool CDialogUI::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTi
 			//next let controls handle the mouse message
 			POINT mousePoint;
 			GetCursorPos(&mousePoint);
-			ScreenToClient(hWnd,&mousePoint);
+			if (windowed)
+				ScreenToClient(hWnd,&mousePoint);
 			mousePoint.x -= m_x;
 			mousePoint.y -= m_y + getCaptionHeight();
 
@@ -750,7 +752,8 @@ bool CDialogUI::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTi
 			// check if we need to highlight a control as the mouse is over it
 			POINT mousePoint;
 			GetCursorPos(&mousePoint);
-			ScreenToClient(hWnd,&mousePoint);
+			if (windowed)
+				ScreenToClient(hWnd,&mousePoint);
 			//mousePoint.y -=  m_rcCaptionBox.bottom;
 // 			mousePoint.x -= m_x;
 // 			mousePoint.y -= m_y;
@@ -764,7 +767,8 @@ bool CDialogUI::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTi
 	case WM_LBUTTONDOWN:
 		{
 			GetCursorPos(&m_startDragPos);
-			ScreenToClient(hWnd,&m_startDragPos);
+			if (windowed)
+				ScreenToClient(hWnd,&m_startDragPos);
 
 			if (PtInRect(&m_rcCaptionBox, m_startDragPos))
 			{
@@ -792,7 +796,8 @@ bool CDialogUI::MsgProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTi
 			CControlUI* pCurSelectedControl = nullptr;
 
 			GetCursorPos(&mousePoint);
-			ScreenToClient(hWnd,&mousePoint);
+			if (windowed)
+				ScreenToClient(hWnd,&mousePoint);
 
 			mousePoint.x -= getLocation().x;
 			mousePoint.y -= getLocation().y + getCaptionHeight();
@@ -1394,6 +1399,22 @@ POINT CDialogUI::getLocation()
 {
 	POINT loc = {m_x,m_y};
 	return loc;
+}
+
+//-----------------------------------------------------------------------------
+// Name : getWidth()
+//-----------------------------------------------------------------------------
+UINT CDialogUI::getWidth()
+{
+	return m_width;
+}
+
+//-----------------------------------------------------------------------------
+// Name : getHeight()
+//-----------------------------------------------------------------------------
+UINT CDialogUI::getHeight()
+{
+	return m_height;
 }
 
 //-----------------------------------------------------------------------------

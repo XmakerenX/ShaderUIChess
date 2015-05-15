@@ -159,7 +159,7 @@ board::board(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManager, CMyMesh *pB
 	for (int i = 0; i < 2; i++)
 	{
 		for (int j = 0; j < boardX; j++)
-		{
+		{ 
 			createPiece(i ,j ,boardSetting.objPrefs.scale, BLACK, KING + 1, blkAttribID);
 			pawnsVec[UPPER].push_back(SBoard[i][j]);
 			//pawnsVec[UPPER].push_back( (piece*)pPieceObj[pieceCount++] );
@@ -220,6 +220,126 @@ void board::drawBoard(HDC& hdc,RECT* prc,HDC& hdcBuffer)
 // 			Start=1;
 // 	}
 			
+}
+
+//-----------------------------------------------------------------------------
+// Name : SaveBoardToFile ()
+//-----------------------------------------------------------------------------
+void board::SaveBoardToFile()
+{
+	std::ofstream saveFile;
+
+	saveFile.open("board.sav");
+
+	saveFile << m_kingInThreat << "| king in Threat" << "\n";
+	saveFile << pieceCount << "| piece Count" << "\n";
+	saveFile << currentPlayer << "| current player" << "\n";
+
+	for (UINT i = 0; i < boardY; i++)
+	{
+		for (UINT j = 0; j < boardX; j++)
+		{ 
+			if (SBoard[i][j] != nullptr)
+			{
+				saveFile << i << "| piece i" << "\n";
+				saveFile << j << "| piece j" << "\n";
+				saveFile << SBoard[i][j]->getColor() << "| piece Color" << "\n";
+				saveFile << SBoard[i][j]->getType() << "| piece Type" << "\n";
+			}
+		}
+	}
+
+	saveFile.close();
+}
+
+//-----------------------------------------------------------------------------
+// Name : LoadBoardFromFile ()
+//-----------------------------------------------------------------------------
+bool board::LoadBoardFromFile()
+{
+	std::ifstream inputFile;
+
+	// check if the files exists , if no file found abort!
+	WIN32_FIND_DATA FindFileData;
+	HANDLE handle = FindFirstFile("board.sav", &FindFileData) ;
+	if(handle == INVALID_HANDLE_VALUE)
+		return false;
+
+
+	ZeroMemory(SBoard, sizeof(piece*) * ( boardX * boardY ) );//clearing the board
+
+	ZeroMemory(&targetSqaure,sizeof(targetSqaure));
+
+	currentPawn = NULL;
+	prevPawn    = NULL;
+
+	kings[BOTTOM] = NULL;
+	kings[UPPER]  = NULL;
+
+	deadPawnsVec[UPPER].clear();
+	deadPawnsVec[BOTTOM].clear();
+
+
+	for (UINT j =0; j < 2; j++)//clearing the pieces
+	{
+		for (UINT i = 0; i < pawnsVec[j].size(); i++)
+		{
+			std::vector<piece*>& curPieceVec = pawnsVec[j];
+			delete curPieceVec[i];
+			curPieceVec[i] = NULL;
+		}
+	}
+
+	pawnsVec[UPPER].clear();
+	pawnsVec[BOTTOM].clear();
+
+	inputFile.open("board.sav");
+
+	inputFile >> m_kingInThreat;
+	inputFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	inputFile >> pieceCount;
+	inputFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	inputFile >> currentPlayer;
+	inputFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	do 
+	{
+		UINT i,j;
+		int color,type;
+
+		inputFile >> i;
+		inputFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		if (inputFile.eof() )
+			break;
+
+		inputFile >> j;
+		inputFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		inputFile >> color;
+		inputFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		inputFile >> type;
+		inputFile.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+		if (color != BLACK)
+		{
+			if (!createPiece(i,j, m_meshScale, color, type))
+				return false;
+			pawnsVec[BOTTOM].push_back( SBoard[i][j]);
+
+		}
+		else
+		{
+			if (!createPiece(i,j, m_meshScale, color, type, m_blkAttribID))
+				return false;
+			pawnsVec[UPPER].push_back( SBoard[i][j]);
+		}
+
+	} while (!inputFile.eof());
+
+	inputFile.close();
+
+	m_gameActive = true;
+
+	return true;
 }
 
 /////////////////////////////////////////
@@ -1475,6 +1595,7 @@ bool board::resetGame()
 		}
 	}
 
+	currentPlayer = 1;
 	m_gameActive = true;
 	m_kingInThreat = false;
 

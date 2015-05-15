@@ -44,6 +44,8 @@
 
 //#include "Pawnsdef.h" //pawns promotion Dilaog definitions of controls ID's
 #include "settingsDef.h"
+#include "pawnsDef.h"
+#include "MainMenuDef.h"
 
 const UINT MAX_ACTIVE_LIGHTS = 4;
 
@@ -111,74 +113,6 @@ class CMyObject;
 enum DrawingMethod{DRAW_SIMPLE,DRAW_ATTRIBOBJECT,DRAW_OBJECTATTRIB};
 
 const char	piecesMeshesPath[6][MAX_PATH] = {"pawn.x","knight.x","bishop.x","rook.x","queen.x","king.x"};//store the paths to the pieces meshes 
-
-// struct DEVICETYPEINFO
-// {
-// 	enum MODE{WINDOWED, FULLSCREEN};
-// 
-// 	D3DDEVTYPE deviceType;
-// 	std::string deviceDescription;
-// 	D3DFORMAT fomrat;
-// 
-// 	bool bHardwareAcceleration[2];
-// 	BOOL bDepthEnable[2];
-// 	std::vector<D3DFORMAT> validDepths[2];
-// 	std::vector<D3DMULTISAMPLE_TYPE> validMultiSampleTypes[2];
-// 	std::vector<DWORD> vpTypes;
-// };
-// 
-// struct DISPLAYMODE
-// {
-// 	UINT Width;
-// 	UINT Height;
-// 	std::vector<UINT> RefreshRates;
-// 	D3DFORMAT Format;
-// 
-// 	DISPLAYMODE::DISPLAYMODE(D3DDISPLAYMODE& displayMode)
-// 	{
-// 		this->Format = displayMode.Format;
-// 		this->Height = displayMode.Height;
-// 		this->RefreshRates.push_back(displayMode.RefreshRate);
-// 		this->Width = displayMode.Width;
-// 	}
-// };
-// 
-// struct ADAPTERINFO
-// {
-// 	UINT adapterNum;
-// 	std::string adapterDescription;
-// 
-// 	std::vector<DEVICETYPEINFO> deviceTypes;
-// 	std::vector<DISPLAYMODE> displayModes;
-// 
-// 	void addDisplayMode(D3DDISPLAYMODE& displayMode)
-// 	{
-// 		for (UINT i = 0; i < displayModes.size(); i++)
-// 		{
-// 			if (displayMode.Width == displayModes[i].Width && displayMode.Height == displayModes[i].Height)
-// 			{
-// 				displayModes[i].RefreshRates.push_back(displayMode.RefreshRate);
-// 				return;
-// 			}
-// 		}
-// 
-// 		displayModes.push_back(DISPLAYMODE(displayMode));
-// 	}
-// };
-// 
-// struct MODEINFO
-// {
-// 	MODEINFO::MODEINFO(D3DDISPLAYMODE newMode, D3DDEVTYPE newDeviceType)
-// 	{
-// 		mode = newMode;
-// 		deviceType = newDeviceType;
-// 	}
-// 
-// 	D3DDISPLAYMODE mode;
-// 	D3DDEVTYPE deviceType;
-// };
-
-
 
 class CGameWin
 {
@@ -254,6 +188,16 @@ private:
 	void		ProcessInput    (float timeDelta,float &angle,float &height);
 	HRESULT		pick		    (POINT& cursor,DWORD& faceCount);
 
+	void		PromoteUnitToKnight(CButtonUI* pButton);
+	void		PromoteUnitToBishop(CButtonUI* pButton);
+	void		PromoteUnitToRook  (CButtonUI* pButton);
+	void		PromoteUnitToQueen (CButtonUI* pButton);
+
+	void		NewGameClicked	   (CButtonUI* pButton);
+	void		ContinueClicked	   (CButtonUI* pButton);
+	void		OptionsClicked	   (CButtonUI* pButton);
+	void		ExitClicked		   (CButtonUI* pButton);
+
 	//-------------------------------------------------------------------------
 	// Functions that handle lights creation and shader handles
 	//-------------------------------------------------------------------------
@@ -318,13 +262,16 @@ private:
 	CAssetManager			 m_assetManger;
 	CTimer*					 m_timer;
 
-	COptionDialogUI			 m_OptionsDialog;
-
 	//-------------------------------------------------------------------------
 	// cameras pointers and settings
 	//-------------------------------------------------------------------------
 	CCamera                * m_pCameras[2];          // A cached copy of the camera attached to the player
 	UINT					 m_cameraIndex;
+	D3DXVECTOR3				 m_prevCameraPos;
+	float					 m_cameraDelta;
+	bool					 m_bReturnCamera;
+	bool					 m_bMoveCamera;
+	bool					 m_returnDir;
 	D3DVIEWPORT9			 m_viewPort;
 	CCamera				   * m_pProject;
 
@@ -402,7 +349,10 @@ private:
 	RECT							 m_clientRC;
 
 // 	CDialog3D				 m_GuiDialog;
-// 	CDialog3D				 m_GuiSelectPawn;
+	COptionDialogUI			 m_OptionsDialog;
+
+ 	CDialogUI				 m_GuiSelectPawn;
+	CDialogUI				 m_MainMenu;
 // 	CDialogResourceManager3D m_GuiDilaogResManger;
 
 };

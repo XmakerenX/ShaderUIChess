@@ -57,7 +57,7 @@ public:
 	CEditDialogUI(CTimer* timer);
 	virtual ~CEditDialogUI(void);
 
-	bool		 MsgProc					(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer );
+	bool		 MsgProc					(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer, bool windowed );
 	HRESULT		 OnRender					(float fElapsedTime, D3DXVECTOR3 vPos, LPD3DXEFFECT effect, CAssetManager& assetManger);
 
 	void		 CreateDialogUI				(CAssetManager& assetManager);

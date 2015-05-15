@@ -6,6 +6,9 @@
 
 #include <boost/signals2/signal.hpp>
 #include <boost/bind/bind.hpp>
+#undef min
+#undef max
+#include <fstream>
 
 #include "../rendering/CMyVertex.h"
 #include "../rendering/CMyObject.h"
@@ -63,6 +66,9 @@ public:
 	bool	resetGame();
 
 	void	drawBoard(HDC& hdc,RECT* prc,HDC& hdcBuffer);
+
+	void	SaveBoardToFile();
+	bool	LoadBoardFromFile();
 
 	//-------------------------------------------------------------------------
 	// Functions that control the pawn movement logic

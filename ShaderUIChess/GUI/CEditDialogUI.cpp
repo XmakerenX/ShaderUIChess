@@ -24,10 +24,10 @@ CEditDialogUI::~CEditDialogUI(void)
 //-----------------------------------------------------------------------------
 // Name : MsgProc ()
 //-----------------------------------------------------------------------------
-bool CEditDialogUI::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer )
+bool CEditDialogUI::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer, bool windowed )
 {
 	// Send the message first for the generated dialog
-	if (m_GenDialog.MsgProc(hWnd,uMsg, wParam, lParam, timer))
+	if (m_GenDialog.MsgProc(hWnd,uMsg, wParam, lParam, timer, windowed))
 		return 0;
 	else
 	{
@@ -102,7 +102,7 @@ bool CEditDialogUI::MsgProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, 
 		}
 
 		// do Regular Dialog Message handling
-		return CDialogUI::MsgProc(hWnd,uMsg,wParam,lParam,timer);
+		return CDialogUI::MsgProc(hWnd,uMsg,wParam,lParam,timer, windowed);
 	}
 }
 
