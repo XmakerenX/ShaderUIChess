@@ -31,6 +31,8 @@ CGameWin::CGameWin()
 	m_hMenu         = NULL;
 	m_bLostDevice   = false;
 
+	m_pFbxSdkManager = nullptr;
+
 	//TODO: add something that will check device caps of textureformat...
 	//m_fmtTexture = D3DFMT_DXT3;
 	m_assetManger.SetTextureFormat(D3DFMT_DXT3);
@@ -1580,6 +1582,76 @@ void CGameWin::createObject(CMyMesh* objMesh, OBJECT_PREFS* objectPref, ULONG* n
 void CGameWin::addObject(CMyObject* newObject)
 {
 	m_objects.push_back(newObject);
+}
+
+//-----------------------------------------------------------------------------
+// Name : LoadFbxFile ()
+//-----------------------------------------------------------------------------
+HRESULT CGameWin::LoadFbxFile()
+{
+
+	if(m_pFbxSdkManager == nullptr)
+	{
+		m_pFbxSdkManager = FbxManager::Create();
+
+		FbxIOSettings* pIOsettings = FbxIOSettings::Create(m_pFbxSdkManager, IOSROOT );
+		m_pFbxSdkManager->SetIOSettings(pIOsettings);
+	}
+
+	FbxImporter* pImporter = FbxImporter::Create(m_pFbxSdkManager,"");
+	FbxScene* pFbxScene = FbxScene::Create(m_pFbxSdkManager,"");
+
+	bool bSuccess = pImporter->Initialize("C:\\MyPath\\MyModel.fbx", -1, m_pFbxSdkManager->GetIOSettings() );
+	if(!bSuccess) return E_FAIL;
+
+	bSuccess = pImporter->Import(pFbxScene);
+	if(!bSuccess) return E_FAIL;
+
+	pImporter->Destroy();
+
+	FbxNode* pFbxRootNode = pFbxScene->GetRootNode();
+
+	if(pFbxRootNode)
+	{
+		for(int i = 0; i < pFbxRootNode->GetChildCount(); i++)
+		{
+			FbxNode* pFbxChildNode = pFbxRootNode->GetChild(i);
+
+			if(pFbxChildNode->GetNodeAttribute() == NULL)
+				continue;
+
+			FbxNodeAttribute::EType AttributeType = pFbxChildNode->GetNodeAttribute()->GetAttributeType();
+
+			if(AttributeType != FbxNodeAttribute::eMesh)
+				continue;
+
+			FbxMesh* pMesh = (FbxMesh*) pFbxChildNode->GetNodeAttribute();
+
+			FbxVector4* pVertices = pMesh->GetControlPoints();
+
+			pMesh->GetElementNormal()
+
+			for (int j = 0; j < pMesh->GetPolygonCount(); j++)
+			{
+				int iNumVertices = pMesh->GetPolygonSize(j);
+				assert( iNumVertices == 3 );
+
+				for (int k = 0; k < iNumVertices; k++)
+				{
+					int iControlPointIndex = pMesh->GetPolygonVertex(j, k);
+
+					MyVertex vertex;
+					vertex.pos[0] = (float)pVertices[iControlPointIndex].mData[0];
+					vertex.pos[1] = (float)pVertices[iControlPointIndex].mData[1];
+					vertex.pos[2] = (float)pVertices[iControlPointIndex].mData[2];
+					pOutVertexVector->push_back( vertex );
+				}
+			}
+
+		}
+
+	}
+	return S_OK;
 }
 
 //-----------------------------------------------------------------------------

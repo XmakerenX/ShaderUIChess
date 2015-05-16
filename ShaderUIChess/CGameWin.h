@@ -12,6 +12,7 @@
 #include <unordered_map>
 #include <boost/signals2/signal.hpp>
 #include <boost/bind.hpp>
+#include <fbxsdk.h>
 
 //common libs for the project
 #include "main.h"
@@ -182,6 +183,8 @@ private:
 	void		addObject		(CMyObject* newObject);
 	//void        ReleaseObjects  ( );
 
+	HRESULT		LoadFbxFile		();
+
 	//-------------------------------------------------------------------------
 	// Functions that process user input
 	//-------------------------------------------------------------------------
@@ -260,6 +263,7 @@ private:
 
 	// attributes data pools
 	CAssetManager			 m_assetManger;
+	FbxManager*				 m_pFbxSdkManager;
 	CTimer*					 m_timer;
 
 	//-------------------------------------------------------------------------
