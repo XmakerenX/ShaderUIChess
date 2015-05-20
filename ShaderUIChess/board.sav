@@ -1,6 +1,6 @@
 0| king in Threat
 0| piece Count
--1| current player
+1| current player
 0| piece i
 0| piece j
 -1| piece Color
@@ -50,6 +50,10 @@
 -1| piece Color
 0| piece Type
 1| piece i
+4| piece j
+-1| piece Color
+0| piece Type
+1| piece i
 5| piece j
 -1| piece Color
 0| piece Type
@@ -60,10 +64,6 @@
 1| piece i
 7| piece j
 -1| piece Color
-0| piece Type
-3| piece i
-4| piece j
-1| piece Color
 0| piece Type
 6| piece i
 0| piece j
@@ -83,6 +83,10 @@
 0| piece Type
 6| piece i
 4| piece j
+1| piece Color
+0| piece Type
+6| piece i
+5| piece j
 1| piece Color
 0| piece Type
 6| piece i

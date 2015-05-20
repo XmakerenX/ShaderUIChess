@@ -1364,8 +1364,8 @@ void CGameWin::setLight(LIGHT_PREFS& light, ID3DXEffect * effect, UINT index)
 //-----------------------------------------------------------------------------
 void CGameWin::setRenderStates() 
 {
-	m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
-	//m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+	//m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
+	m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
 	m_pD3DDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
 
 	m_pD3DDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
@@ -1474,7 +1474,9 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 
 	OBJECT_PREFS objPrefs;
 
-	objPrefs.pos = D3DXVECTOR3(-15.0f, -10.0f, 0.0f);
+	//m_pCameras[0]->SetLookAt( D3DXVECTOR3(9,0,24) );
+
+	objPrefs.pos = D3DXVECTOR3(9.0f, -10.0f, 24.0f);
 	objPrefs.scale = D3DXVECTOR3(8.0f, 8.0f, 8.0f);
 	objPrefs.rotAngels = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
@@ -1650,6 +1652,8 @@ HRESULT CGameWin::LoadFbxFile(const char filePath[MAX_PATH], std::vector<CMyMesh
 			OBJMATERIAL m;
 			
 			m = d3d::RED_MTRL;
+			//m = d3d::WHITE_MTRL;
+
 			ULONG attribId = m_assetManger.getAttributeID(NULL,&m,NULL);
 
 			for (int j = 0; j < pMesh->GetPolygonCount(); j++)
@@ -1668,14 +1672,13 @@ HRESULT CGameWin::LoadFbxFile(const char filePath[MAX_PATH], std::vector<CMyMesh
 					pVertices->x = (float)pFBXVertices[iControlPointIndex].mData[0];
 					pVertices->y = (float)pFBXVertices[iControlPointIndex].mData[1];
 					pVertices->z = (float)pFBXVertices[iControlPointIndex].mData[2];
-					curMesh->AddVertex(1, pVertices);
-					pIndices[k] = vertexCount;
 
 					ReadNormal(pMesh, iControlPointIndex, vertexCount, pVertices->Normal);
-					D3DXVECTOR3 temp = pVertices->Normal;
-					//pVertices->Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 					ReadUV(pMesh, iControlPointIndex, j, k, pVertices->tu, pVertices->tv);
-					
+
+					curMesh->AddVertex(1, pVertices);
+					pIndices[k] = vertexCount;
+				
 
 					delete pVertices;
 					pVertices = nullptr;
