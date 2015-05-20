@@ -183,7 +183,9 @@ private:
 	void		addObject		(CMyObject* newObject);
 	//void        ReleaseObjects  ( );
 
-	HRESULT		LoadFbxFile		();
+	HRESULT		LoadFbxFile		( const char filePath[MAX_PATH], std::vector<CMyMesh*>& pMeshes);
+	void		ReadNormal		( FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, D3DXVECTOR3& outNormal);
+	void		ReadUV			( FbxMesh* inMesh, int iControlPointIndex, int j, int k, float& u, float& v);
 
 	//-------------------------------------------------------------------------
 	// Functions that process user input

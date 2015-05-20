@@ -1468,6 +1468,18 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 		piecesMesh[i] =  m_assetManger.getLastLoadedMesh();
 	}
 
+	std::vector<CMyMesh*> lbxMeshes;
+
+	LoadFbxFile("king.fbx", lbxMeshes);
+
+	OBJECT_PREFS objPrefs;
+
+	objPrefs.pos = D3DXVECTOR3(-15.0f, -10.0f, 0.0f);
+	objPrefs.scale = D3DXVECTOR3(8.0f, 8.0f, 8.0f);
+	objPrefs.rotAngels = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	createObject(lbxMeshes[0],&objPrefs, nullptr, 0);
+
 	//setting board object settings
 	OBJECT_PREFS boardObjSetting; 
 
@@ -1587,9 +1599,9 @@ void CGameWin::addObject(CMyObject* newObject)
 //-----------------------------------------------------------------------------
 // Name : LoadFbxFile ()
 //-----------------------------------------------------------------------------
-HRESULT CGameWin::LoadFbxFile()
+HRESULT CGameWin::LoadFbxFile(const char filePath[MAX_PATH], std::vector<CMyMesh*>& pMeshes)
 {
-
+	// init fbxManger if it wasn't init
 	if(m_pFbxSdkManager == nullptr)
 	{
 		m_pFbxSdkManager = FbxManager::Create();
@@ -1601,7 +1613,7 @@ HRESULT CGameWin::LoadFbxFile()
 	FbxImporter* pImporter = FbxImporter::Create(m_pFbxSdkManager,"");
 	FbxScene* pFbxScene = FbxScene::Create(m_pFbxSdkManager,"");
 
-	bool bSuccess = pImporter->Initialize("C:\\MyPath\\MyModel.fbx", -1, m_pFbxSdkManager->GetIOSettings() );
+	bool bSuccess = pImporter->Initialize(filePath, -1, m_pFbxSdkManager->GetIOSettings() );
 	if(!bSuccess) return E_FAIL;
 
 	bSuccess = pImporter->Import(pFbxScene);
@@ -1627,31 +1639,189 @@ HRESULT CGameWin::LoadFbxFile()
 
 			FbxMesh* pMesh = (FbxMesh*) pFbxChildNode->GetNodeAttribute();
 
-			FbxVector4* pVertices = pMesh->GetControlPoints();
+			m_assetManger.AddMesh();
+			CMyMesh* curMesh = m_assetManger.getLastLoadedMesh();
+			curMesh->SetDataFormat(VERTEX_FVF,sizeof(USHORT));
+			
+			FbxVector4* pFBXVertices = pMesh->GetControlPoints();
 
-			pMesh->GetElementNormal()
+			UINT vertexCount = 0;
+
+			OBJMATERIAL m;
+			
+			m = d3d::RED_MTRL;
+			ULONG attribId = m_assetManger.getAttributeID(NULL,&m,NULL);
 
 			for (int j = 0; j < pMesh->GetPolygonCount(); j++)
 			{
 				int iNumVertices = pMesh->GetPolygonSize(j);
 				assert( iNumVertices == 3 );
 
+				USHORT* pIndices = new USHORT[iNumVertices];
+
 				for (int k = 0; k < iNumVertices; k++)
 				{
 					int iControlPointIndex = pMesh->GetPolygonVertex(j, k);
 
-					MyVertex vertex;
-					vertex.pos[0] = (float)pVertices[iControlPointIndex].mData[0];
-					vertex.pos[1] = (float)pVertices[iControlPointIndex].mData[1];
-					vertex.pos[2] = (float)pVertices[iControlPointIndex].mData[2];
-					pOutVertexVector->push_back( vertex );
+					CMyVertex* pVertices = new CMyVertex();
+
+					pVertices->x = (float)pFBXVertices[iControlPointIndex].mData[0];
+					pVertices->y = (float)pFBXVertices[iControlPointIndex].mData[1];
+					pVertices->z = (float)pFBXVertices[iControlPointIndex].mData[2];
+					curMesh->AddVertex(1, pVertices);
+					pIndices[k] = vertexCount;
+
+					ReadNormal(pMesh, iControlPointIndex, vertexCount, pVertices->Normal);
+					D3DXVECTOR3 temp = pVertices->Normal;
+					//pVertices->Normal = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+					ReadUV(pMesh, iControlPointIndex, j, k, pVertices->tu, pVertices->tv);
+					
+
+					delete pVertices;
+					pVertices = nullptr;
+					++vertexCount;
 				}
+
+				curMesh->AddFace(1, pIndices ,0);
+
+				delete []pIndices;
+				pIndices = nullptr;
 			}
 
+			curMesh->BuildMesh(D3DXMESH_MANAGED, m_pD3DDevice);
+			pMeshes.push_back(curMesh);
+
+			curMesh->setAttribMap(&attribId, 1);
 		}
 
 	}
 	return S_OK;
+}
+
+//-----------------------------------------------------------------------------
+// Name : ReadNormal 
+//-----------------------------------------------------------------------------
+void CGameWin::ReadNormal(FbxMesh* inMesh, int inCtrlPointIndex, int inVertexCounter, D3DXVECTOR3& outNormal)
+{
+	if(inMesh->GetElementNormalCount() < 1)
+	{
+		throw std::exception("Invalid Normal Number");
+	}
+
+	FbxGeometryElementNormal* vertexNormal = inMesh->GetElementNormal(0);
+	switch(vertexNormal->GetMappingMode())
+	{
+	case FbxGeometryElement::eByControlPoint:
+		switch(vertexNormal->GetReferenceMode())
+		{
+		case FbxGeometryElement::eDirect:
+			{
+				outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[0]);
+				outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[1]);
+				outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inCtrlPointIndex).mData[2]);
+			}
+			break;
+
+		case FbxGeometryElement::eIndexToDirect:
+			{
+				int index = vertexNormal->GetIndexArray().GetAt(inCtrlPointIndex);
+				outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[0]);
+				outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[1]);
+				outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[2]);
+			}
+			break;
+
+		default:
+			throw std::exception("Invalid Reference");
+		}
+		break;
+
+	case FbxGeometryElement::eByPolygonVertex:
+		switch(vertexNormal->GetReferenceMode())
+		{
+		case FbxGeometryElement::eDirect:
+			{
+				outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[0]);
+				outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[1]);
+				outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(inVertexCounter).mData[2]);
+			}
+			break;
+
+		case FbxGeometryElement::eIndexToDirect:
+			{
+				int index = vertexNormal->GetIndexArray().GetAt(inVertexCounter);
+				outNormal.x = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[0]);
+				outNormal.y = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[1]);
+				outNormal.z = static_cast<float>(vertexNormal->GetDirectArray().GetAt(index).mData[2]);
+			}
+			break;
+
+		default:
+			throw std::exception("Invalid Reference");
+		}
+		break;
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Name : ReadUV 
+//-----------------------------------------------------------------------------
+void CGameWin::ReadUV(FbxMesh* inMesh, int iControlPointIndex, int j, int k, float& u, float& v)
+{
+	FbxVector2 uv;
+
+	FbxGeometryElementUV* pUV = inMesh->GetElementUV( 0 );
+	if (pUV == nullptr)
+	{
+		return;
+	}
+	else
+	{
+		switch (pUV->GetMappingMode())
+		{
+		case FbxGeometryElement::eByControlPoint:
+			{
+				switch(pUV->GetReferenceMode())
+				{
+				case FbxGeometryElement::eDirect:
+					{
+						uv = pUV->GetDirectArray().GetAt(iControlPointIndex);
+					}break;
+				case FbxGeometryElement::eIndexToDirect:
+					{
+						int id = pUV->GetIndexArray().GetAt(iControlPointIndex);
+						uv = pUV->GetDirectArray().GetAt(id);
+					}break;
+				default:
+					break;
+				}
+			}break;
+
+
+		case FbxGeometryElement::eByPolygonVertex:
+		{
+						int textureUVIndex = inMesh->GetTextureUVIndex(j, k);
+						switch(pUV->GetReferenceMode())
+						{
+						case FbxGeometryElement::eDirect:
+						case FbxGeometryElement::eIndexToDirect:
+							{
+								uv = pUV->GetDirectArray().GetAt(textureUVIndex);
+							}break;
+
+						default:
+							break;
+						}
+		}break;
+
+		default:
+			break;
+		}
+
+		u = static_cast<float>(uv.mData[0]);
+		v = static_cast<float>(uv.mData[1]);
+	}
+
 }
 
 //-----------------------------------------------------------------------------
