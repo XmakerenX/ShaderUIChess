@@ -683,7 +683,7 @@ HRESULT CMyMesh::BuildMesh( ULONG Options, LPDIRECT3DDEVICE9 pDevice, bool Relea
 
 	} // End if release
 
-	// We're done :)
+	// We're done :);
 	return S_OK;
 }
 

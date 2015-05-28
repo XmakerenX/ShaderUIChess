@@ -1364,8 +1364,8 @@ void CGameWin::setLight(LIGHT_PREFS& light, ID3DXEffect * effect, UINT index)
 //-----------------------------------------------------------------------------
 void CGameWin::setRenderStates() 
 {
-	//m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
-	m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
+	m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_SOLID);
+	//m_pD3DDevice->SetRenderState(D3DRS_FILLMODE,D3DFILL_WIREFRAME);
 	m_pD3DDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
 
 	m_pD3DDevice->SetRenderState( D3DRS_LIGHTING, FALSE );
@@ -1470,6 +1470,11 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 
 	std::vector<CMyMesh*> lbxMeshes;
 
+	LoadFbxFile("pawn.fbx", lbxMeshes);
+	LoadFbxFile("knight.fbx", lbxMeshes);
+	LoadFbxFile("bishop.fbx", lbxMeshes);
+	LoadFbxFile("rook.fbx", lbxMeshes);
+	LoadFbxFile("queen.fbx", lbxMeshes);
 	LoadFbxFile("king.fbx", lbxMeshes);
 
 	OBJECT_PREFS objPrefs;
@@ -1480,7 +1485,21 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	objPrefs.scale = D3DXVECTOR3(8.0f, 8.0f, 8.0f);
 	objPrefs.rotAngels = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 
-	createObject(lbxMeshes[0],&objPrefs, nullptr, 0);
+	//createObject(lbxMeshes[0],&objPrefs, nullptr, 0);
+
+	assert( lbxMeshes.size() == 6);
+
+	for (int i = 0; i < 6; i++)
+	{
+		piecesMesh[i] =  lbxMeshes[i];
+	}
+
+// 	piecesMesh[3] = lbxMeshes[0];
+// 	piecesMesh[5] = lbxMeshes[1];
+// 	piecesMesh[4] = lbxMeshes[2];
+// 	piecesMesh[2] = lbxMeshes[3];
+// 	piecesMesh[1] = lbxMeshes[4];
+// 	piecesMesh[0] = lbxMeshes[5];
 
 	//setting board object settings
 	OBJECT_PREFS boardObjSetting; 
@@ -1508,8 +1527,16 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	CMyMesh* pBoardMesh = m_assetManger.getLastLoadedMesh();
 	pBoardMesh->SetDataFormat(VERTEX_FVF,sizeof(USHORT));
 
+	OBJMATERIAL m;
+	ZeroMemory(&m, sizeof(m));
+	m.Ambient = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
+	m.Diffuse = copyColorToVector(D3DCOLOR_RGBA(100, 63, 36, 255));
+	m.Emissive = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
+	m.Specular = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
+
 	//getting attribute ID of the black matrial
-	AttribID   = m_assetManger.getAttributeID(NULL,&d3d::RED_MTRL,NULL);
+	//AttribID   = m_assetManger.getAttributeID(NULL,&d3d::RED_MTRL,NULL);
+	AttribID   = m_assetManger.getAttributeID(NULL,&m,NULL);
 	
 	CMyObject* pGameBoard = new board (m_pD3DDevice,m_assetManger, pBoardMesh, boardSettings, piecesMesh, AttribID,
 		boost::bind(&CGameWin::addObject, this, _1 ) );
@@ -1651,9 +1678,18 @@ HRESULT CGameWin::LoadFbxFile(const char filePath[MAX_PATH], std::vector<CMyMesh
 
 			OBJMATERIAL m;
 			
-			m = d3d::RED_MTRL;
-			//m = d3d::WHITE_MTRL;
+			//m = d3d::RED_MTRL; R=245, G=245, B=220
+			m = d3d::WHITE_MTRL;
+			m.Ambient = copyColorToVector(D3DCOLOR_XRGB(250, 214, 152));
+			m.Diffuse = copyColorToVector(D3DCOLOR_RGBA(250, 214, 152, 255));
+			m.Emissive = copyColorToVector(D3DCOLOR_XRGB(250, 214, 152));
+			m.Specular = copyColorToVector(D3DCOLOR_XRGB(250, 214, 152));
 
+			//ZeroMemory( &m, sizeof(OBJMATERIAL));
+			//m.Diffuse = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+			//m.Ambient = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+
+			//ULONG attribId = m_assetManger.getAttributeID("wood.jpg",&m,NULL);
 			ULONG attribId = m_assetManger.getAttributeID(NULL,&m,NULL);
 
 			for (int j = 0; j < pMesh->GetPolygonCount(); j++)

@@ -23,7 +23,7 @@
 #include "rook.h"
 #include "Pawn.h"
 #include "queen.h"
-
+#include <d3dx9math.h>
 
 class Square;
 class king;
@@ -31,7 +31,8 @@ class king;
 // const int boardX = 8;
 // const int boardY = 8;
 //const char	Textures[2][MAX_PATH] = {"black.jpg","white.jpg"};//Textures that are used on the board 
-const D3DXVECTOR3 vecPieceScale = D3DXVECTOR3(0.125f,0.125f,0.125f); 
+//const D3DXVECTOR3 vecPieceScale = D3DXVECTOR3(0.125f,0.125f,0.125f); 
+const D3DXVECTOR3 vecPieceScale = D3DXVECTOR3(5.0f,5.0f,5.0f);
 
 enum COLORS{BLACK = -1,WHITE = 1};
 enum SIDES {UPPER, BOTTOM};

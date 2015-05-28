@@ -1344,37 +1344,47 @@ CMyObject* board::allocPiece(UINT pieceType, OBJECT_PREFS& curObjPrefs, int play
 
 	case PAWN:
 		{
-			curObjPrefs.pos.y = m_pos.y + Pawn::Ypos;
+			curObjPrefs.pos.y = m_pos.y/* + Pawn::Ypos*/;
 			pPieceObj = new Pawn(m_pPiecesMeshs[PAWN], &curObjPrefs, playerColor);
 		}break;
 
 	case KNIGHT:
 		{
-			curObjPrefs.pos.y     = m_pos.y + knight::Ypos;
+			curObjPrefs.pos.y     = m_pos.y/* + knight::Ypos*/;
 			pPieceObj = new knight(m_pPiecesMeshs[KNIGHT], &curObjPrefs, playerColor);
+			pPieceObj->setRotAngels(D3DXVECTOR3(0, D3DX_PI / 2, 0));
 		}break;
 
 	case BISHOP:
 		{
-			curObjPrefs.pos.y     = m_pos.y + bishop::Ypos;
+			curObjPrefs.pos.y     = m_pos.y/* + bishop::Ypos*/;
 			pPieceObj = new bishop(m_pPiecesMeshs[BISHOP], &curObjPrefs, playerColor);
 		}break;
 
 	case ROOK:
 		{
+			// manual fix for rook scale...
+			curObjPrefs.scale.x *= 0.269;
+			curObjPrefs.scale.y *= 0.422;
+			curObjPrefs.scale.z *= 0.269;
+
+// 			curObjPrefs.scale.x = 3.717f;
+// 			curObjPrefs.scale.y = 2.369f;
+// 			curObjPrefs.scale.y = 3.717f;
+
 			curObjPrefs.pos.y	  = m_pos.y + rook::Ypos;
 			pPieceObj = new rook(m_pPiecesMeshs[ROOK], &curObjPrefs, playerColor);
 		}break;
 
 	case QUEEN:
 		{
-			curObjPrefs.pos.y     = m_pos.y + queen::Ypos;
+			curObjPrefs.pos.y     = m_pos.y/* + queen::Ypos*/;
 			pPieceObj = new queen(m_pPiecesMeshs[QUEEN], &curObjPrefs, playerColor);
 		}break;
 
 	case KING:
 		{
-			curObjPrefs.pos.y     = m_pos.y + king::Ypos;
+			curObjPrefs.pos.y     = m_pos.y/* - king::Ypos + 6*/;
 			pPieceObj = new king(m_pPiecesMeshs[KING], &curObjPrefs, playerColor);
 
 
