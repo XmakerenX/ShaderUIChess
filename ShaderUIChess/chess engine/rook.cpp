@@ -1,7 +1,8 @@
 #include "rook.h"
 
 PIECES rook::type = ROOK;
-float  rook::Ypos = 3.3f;
+float  rook::Ypos = 2.1f;
+//float  rook::Ypos = 3.3f;
 
 rook::rook(void)
 {

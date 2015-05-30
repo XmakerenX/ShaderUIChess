@@ -63,7 +63,7 @@ public:
 	void	killPiece(piece * pPieceToKill, BOARD_POINT pieceSquare);
 	void	endTurn();
 	void    reverseMove();
-	void    calcPieceBoardPos(BOARD_POINT boardPos,D3DXVECTOR3& rPiecePos);
+	void    calcPieceBoardPos(BOARD_POINT boardPos,D3DXVECTOR3& rPiecePos, int pieceType);
 	bool	resetGame();
 
 	void	drawBoard(HDC& hdc,RECT* prc,HDC& hdcBuffer);

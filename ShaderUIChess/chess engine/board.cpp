@@ -407,16 +407,16 @@ bool board::validateMove(BOARD_POINT startLoc,BOARD_POINT newLoc)
 				SBoard[y][x + (2 * dx)] = rookPiece;
 				SBoard[y][x] = NULL;
 
-				calcPieceBoardPos(newRookSquare,newCurPiecePos);
-				newCurPiecePos.y = m_pos.y + rookPiece->getYpos();
+				calcPieceBoardPos(newRookSquare,newCurPiecePos, ROOK);
+				newCurPiecePos.y = m_pos.y/* + rookPiece->getYpos()*/;
 				rookPiece->setPos(newCurPiecePos);
 			}
 
 			SBoard[newLoc.col][newLoc.row]      = currentPawn;
 			SBoard[startLoc.col][startLoc.row]  = NULL;
-
-			calcPieceBoardPos(newLoc,newCurPiecePos);
-			newCurPiecePos.y = m_pos.y + currentPawn->getYpos();
+			
+			calcPieceBoardPos(newLoc,newCurPiecePos, currentPawn->getType());
+			newCurPiecePos.y = m_pos.y/* + currentPawn->getYpos()*/;
 			currentPawn->setPos(newCurPiecePos);
 
 			if(isKingInThreat(currentPlayer,false))// if king is under threat the move is illegal
@@ -478,12 +478,20 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 		else//if the pressed was not on the board than get the object position in the world and test if it is on the board
 		{	
 			//retrieve object position in the world
-			D3DXMATRIX objWorldMat = pickedObjected->m_mtxWorld;
+			D3DXMATRIX objWorldMat2 = pickedObjected->m_mtxRot * pickedObjected->m_mtxWorld;
+			D3DXMATRIX objWorldMat = pickedObjected->getWorldMatrix();
 			D3DXVECTOR3 objectPos = D3DXVECTOR3(objWorldMat._41,objWorldMat._42,objWorldMat._43);
+			D3DXVECTOR3 temp;
+			D3DXVec3TransformCoord(&temp, &objectPos, &pickedObjected->m_mtxRot);
+			objectPos = temp;
+
+// 			if (pickedObjected->)
+// 			objectPos.z -= 3;
 
 			//retrieve the square coordinates from the object position 
 			pressedSqaure.row = (objectPos .x - m_pos.x) / (m_stepX * m_meshScale.x); // ( object posX - board posX ) / (stepX * sclaeX) = row coordinate of the square 
-			pressedSqaure.col = ( (m_pos.z - objectPos.z) / (m_stepZ * m_meshScale.z ) ) + (boardY - 1) + 0.5;
+			//pressedSqaure.col = ( (m_pos.z - objectPos.z) / (m_stepZ * m_meshScale.z ) ) + (boardY - 1) + 0.5;
+			pressedSqaure.col = ( ( abs(m_pos.z - objectPos.z) * -1 ) / (m_stepZ * m_meshScale.z ) ) + (boardY - 1) + 0.5;
 		}
 		if (pressedSqaure.row == startSquare.row && pressedSqaure.col == startSquare.col)//the square was already selected
 			return;
@@ -661,14 +669,14 @@ void board::reverseMove()
 	SBoard[startSquare.col][startSquare.row]	    = currentPawn;
 
 	//reset the pieces to their old positions
-	calcPieceBoardPos(startSquare,currentPieceStartPos);
-	currentPieceStartPos.y = m_pos.y + currentPawn->getYpos();
+	calcPieceBoardPos(startSquare,currentPieceStartPos, currentPawn->getType());
+	currentPieceStartPos.y = m_pos.y /*+ currentPawn->getYpos()*/;
 	currentPawn->setPos(currentPieceStartPos);
 
 	if (prevPawn != NULL)
 	{
-		calcPieceBoardPos(targetSqaure,currentPieceCurPos);
-		currentPieceCurPos.y = m_pos.y + prevPawn->getYpos();
+		calcPieceBoardPos(targetSqaure,currentPieceCurPos, prevPawn->getType());
+		currentPieceCurPos.y = m_pos.y /*+ prevPawn->getYpos()*/;
 		prevPawn->setPos(currentPieceCurPos);
 	}
 
@@ -845,8 +853,8 @@ bool board::validateKingThreat(int curretPlayer)
 	SBoard[targetSqaure.col][targetSqaure.row] = currentPawn;
 	SBoard[startSquare.col][startSquare.row]   = NULL;
 	
-	calcPieceBoardPos(targetSqaure,curPieceNewPos);
-	curPieceNewPos.y = m_pos.y + currentPawn->getYpos();
+	calcPieceBoardPos(targetSqaure,curPieceNewPos, currentPawn->getType());
+	curPieceNewPos.y = m_pos.y/* + currentPawn->getYpos()*/;
 	currentPawn->setPos(curPieceNewPos);
 
 	if (!isKingInThreat(currentPlayer,false))
@@ -1350,15 +1358,26 @@ CMyObject* board::allocPiece(UINT pieceType, OBJECT_PREFS& curObjPrefs, int play
 
 	case KNIGHT:
 		{
+			// slight tweaks to make sure the knight is in the center of the square
 			curObjPrefs.pos.y     = m_pos.y/* + knight::Ypos*/;
+			curObjPrefs.pos.z += 3 * (-playerColor);
+
 			pPieceObj = new knight(m_pPiecesMeshs[KNIGHT], &curObjPrefs, playerColor);
-			pPieceObj->setRotAngels(D3DXVECTOR3(0, D3DX_PI / 2, 0));
+
+			// rotating the knight to it's right dir
+			if (playerColor == BLACK)
+				pPieceObj->setRotAngels(D3DXVECTOR3(0, D3DX_PI / 2, 0));
+			else
+				pPieceObj->setRotAngels((D3DXVECTOR3(0, (-D3DX_PI / 2) , 0)));
 		}break;
 
 	case BISHOP:
 		{
 			curObjPrefs.pos.y     = m_pos.y/* + bishop::Ypos*/;
 			pPieceObj = new bishop(m_pPiecesMeshs[BISHOP], &curObjPrefs, playerColor);
+
+			if (playerColor == WHITE)
+				pPieceObj->setRotAngels(D3DXVECTOR3(0, ( D3DX_PI) , 0));
 		}break;
 
 	case ROOK:
@@ -1373,6 +1392,7 @@ CMyObject* board::allocPiece(UINT pieceType, OBJECT_PREFS& curObjPrefs, int play
 // 			curObjPrefs.scale.y = 3.717f;
 
 			curObjPrefs.pos.y	  = m_pos.y + rook::Ypos;
+			//curObjPrefs.pos.z -= 0.25f;
 			pPieceObj = new rook(m_pPiecesMeshs[ROOK], &curObjPrefs, playerColor);
 		}break;
 
@@ -1533,10 +1553,14 @@ bool board::getKingThreat () const
 //-----------------------------------------------------------------------------
 // Name : calcPieceBoardPos ()
 //-----------------------------------------------------------------------------
-void board::calcPieceBoardPos(BOARD_POINT boardPos,D3DXVECTOR3& rPiecePos)
+void board::calcPieceBoardPos(BOARD_POINT boardPos,D3DXVECTOR3& rPiecePos, int pieceType)
 {
 	float xPos = m_pos.x + (boardPos.row * m_stepX * m_meshScale.x);//calculate pawn position in relation to the board 0,0 point
 	float zPos = m_pos.z + ( (boardY - boardPos.col - 1) * m_stepZ * m_meshScale.z );
+
+	if (pieceType == KNIGHT)
+		zPos += 3 * (-currentPlayer);
+
 	rPiecePos = D3DXVECTOR3(xPos + 3, 0 , zPos + 3);
 }
 
