@@ -281,6 +281,13 @@ void CGameWin::OptionDialogOKClicked(CButtonUI* pButton)
 // 		s = out4.str() + '\n';
 // 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 
+		RECT windowRect;
+		windowRect.top = 0;
+		windowRect.left = 0;
+		windowRect.right = Width;
+		windowRect.bottom = 768;
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 1024, 768, 0);
+
 		RECT rc; //= m_clientRC;
 		::GetClientRect( m_hWnd, &rc );
 		m_nViewX      = rc.left;

@@ -159,6 +159,7 @@ HRESULT CDialogUI::init(UINT width, UINT height, int nCaptionHeight, LPCTSTR cap
 // 	m_button.SetID(2);
 // 	m_button.setParent(this);
 	initDefControlElements(assetManger);
+	//initWoodControlElements(assetManger);
 
 	return S_OK;
 }
@@ -470,6 +471,321 @@ HRESULT CDialogUI::initDefControlElements(CAssetManager& assetManger)
 
 	// create the Slider control default GFX and adds to the vector
 	controlGFX.nControlType =  CControlUI::EDITBOX;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+}
+
+//-----------------------------------------------------------------------------
+// Name : initWoodControlElements ()
+//-----------------------------------------------------------------------------
+HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
+{
+	std::vector<ELEMENT_GFX>  elementGFXvec;
+	std::vector<ELEMENT_FONT> elementFontVec;
+	CONTROL_GFX	controlGFX;
+
+	UINT textureIndex, fontIndex;
+
+	// create the controls font
+	if (!assetManager.getFont(12, 12, FW_BOLD, FALSE, fontIndex))
+		return S_FALSE;
+
+	UINT nFontHeight = assetManager.getFontItem(fontIndex).height;
+	ELEMENT_FONT elementFont(fontIndex,nFontHeight, assetManager.getFontItem(fontIndex).width);
+
+	ELEMENT_GFX elementGFX;
+
+	//-------------------------------------
+	// Init Static elements
+	//-------------------------------------
+	// sets the Static default font
+	// this font is also used for all other controls ... for now..
+	// create the controls font
+	if (!assetManager.getFont(16, 8, FW_BOLD, FALSE, fontIndex))
+		return S_FALSE;
+
+	nFontHeight = assetManager.getFontItem(fontIndex).height;
+	ELEMENT_FONT elementFont2(fontIndex,nFontHeight, assetManager.getFontItem(fontIndex).width);
+
+	elementFontVec.push_back(elementFont2);
+
+	elementGFXvec.clear();
+
+	controlGFX.nControlType =  CControlUI::STATIC;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// Init Button elements
+	//-------------------------------------
+	// loads our wood GUI texture
+	elementGFXvec.clear();
+
+	if (!assetManager.getTexture("woodGUI.png", &textureIndex, false))
+		return S_FALSE;
+
+	// sets what parts of the texture to use for the button
+	RECT rcTexture, rcTexMouseOver;
+	SetRect(&rcTexture, 60, 265, 143, 298);
+	//SetRect(&rcTexture, 257, 71, 357, 139);
+	//InflateRect(&rcTexture, 10,10);
+
+	// add the main button element
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// add the mouse over button element
+	SetRect(&rcTexMouseOver, 60, 316, 143, 349);
+	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the button control default GFX and adds to the vector
+	controlGFX.nControlType =  CControlUI::BUTTON;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// Init CheckBox elements
+	//-------------------------------------
+	elementGFXvec.clear();
+	// sets what parts of the texture to use for the main element of the CheckBox
+	SetRect( &rcTexture, 60, 612, 77, 629 );
+	// add the main CheckBox element to the vector
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// sets what parts of the texture to use for the CheckBox mouse over
+	SetRect( &rcTexMouseOver, 120, 612, 137, 629 );
+	// add the mouse over CheckBox element to the vector
+	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the CheckBox control default GFX and adds to the vector
+	controlGFX.nControlType = CControlUI::CHECKBOX;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// Init RadioButton elements
+	//-------------------------------------
+	elementGFXvec.clear();
+
+	// sets what parts of the texture to use for the main element of the RadioButton
+	SetRect( &rcTexture, 60, 646, 77, 663 );
+	// add the main element of  RadioButton elements to the vector
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// sets what parts of the texture to use for the mouse over element of the RadioButton
+	SetRect( &rcTexMouseOver, 120, 646, 137, 663 );
+	// add the mouse over element of  RadioButton elements to the vector
+	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the RadioButton control default GFX and adds to the vector
+	controlGFX.nControlType =  CControlUI::RADIOBUTTON;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// Init ComboBox elements
+	//-------------------------------------
+	elementGFXvec.clear();
+
+	//-------------------------------------
+	// ComboBox - Main
+	//-------------------------------------
+	SetRect( &rcTexture, 60, 692, 285, 723 );
+
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//-------------------------------------
+	// ComboBox - Button
+	//-------------------------------------
+	SetRect( &rcTexture, 285, 692, 318, 725 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//-------------------------------------
+	// ComboBox - Dropdown
+	//-------------------------------------
+	SetRect( &rcTexture, 370, 674, 736, 702 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//-------------------------------------
+	// ComboBox - Selection
+	//-------------------------------------
+	SetRect( &rcTexture, 60, 761, 283, 795 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the ComboBox control default GFX and adds to the vector
+	controlGFX.nControlType =  CControlUI::COMBOBOX;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// Init ListBox elements
+	//-------------------------------------
+	elementGFXvec.clear();
+
+	//-------------------------------------
+	// ListBox - Main
+	//-------------------------------------
+	SetRect( &rcTexture, 370, 674, 736, 702 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//Element.SetFont( 0, D3DCOLOR_ARGB( 255, 0, 0, 0 ), DT_LEFT | DT_TOP );
+
+	//-------------------------------------
+	//ListBox - Selection
+	//-------------------------------------
+	SetRect( &rcTexture, 60, 761, 283, 795 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the ListBox control default GFX and adds to the vector
+	controlGFX.nControlType =  CControlUI::LISTBOX;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// Init Slider elements
+	//-------------------------------------
+	elementGFXvec.clear();
+
+	//-------------------------------------
+	// Slider - Track
+	//-------------------------------------
+	SetRect( &rcTexture, 82, 839, 197, 845 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//-------------------------------------
+	// Slider - Button
+	//-------------------------------------
+	SetRect( &rcTexture, 209, 836, 225, 855 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the Slider control default GFX and adds to the vector
+	controlGFX.nControlType =  CControlUI::SLIDER;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// EditBox
+	//-------------------------------------
+	elementGFXvec.clear();
+
+	// Element assignment:
+	//   0 - text area
+	//   1 - top left border
+	//   2 - top border
+	//   3 - top right border
+	//   4 - left border
+	//   5 - right border
+	//   6 - lower left border
+	//   7 - lower border
+	//   8 - lower right border
+
+	//Element.SetFont( 0, D3DCOLOR_ARGB( 255, 0, 0, 0 ), DT_LEFT | DT_TOP );
+
+	// Assign the style
+	SetRect( &rcTexture, 61, 763, 283, 793 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 59, 761, 61, 763 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 61, 761, 317, 763 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 317, 761, 319, 763 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 59, 763, 61, 792 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 317, 763, 319, 792 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 59, 792, 91, 794 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 61, 792, 317, 794 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	SetRect( &rcTexture, 317, 792, 319, 794 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the EditBox control default GFX and adds to the vector
+	controlGFX.nControlType =  CControlUI::EDITBOX;
+	controlGFX.elementsGFXvec = elementGFXvec;
+	controlGFX.elementsFontVec = elementFontVec;
+	m_DefControlsGFX.push_back(controlGFX);
+
+	//-------------------------------------
+	// Init ScrollBar elements
+	//-------------------------------------
+	elementGFXvec.clear();
+
+	//loads the CheckBox default texture
+	if (!assetManager.getTexture("tex.dds", &textureIndex))
+		return S_FALSE;
+
+	//-------------------------------------
+	// ScrollBar - Track
+	//-------------------------------------
+	int nScrollBarStartX = 196;
+	int nScrollBarStartY = 191;
+	SetRect( &rcTexture, nScrollBarStartX + 0, nScrollBarStartY + 21, nScrollBarStartX + 22, nScrollBarStartY + 32 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//-------------------------------------
+	// ScrollBar - Up Arrow
+	//-------------------------------------
+	SetRect( &rcTexture, nScrollBarStartX + 0, nScrollBarStartY + 1, nScrollBarStartX + 22, nScrollBarStartY + 21 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//-------------------------------------
+	// ScrollBar - Down Arrow
+	//-------------------------------------
+	SetRect( &rcTexture, nScrollBarStartX + 0, nScrollBarStartY + 32, nScrollBarStartX + 22, nScrollBarStartY + 53 );
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	//-------------------------------------
+	// ScrollBar - Button
+	//-------------------------------------
+	SetRect( &rcTexture, 220, 192, 238, 234 );
+	elementGFX.setGFX(textureIndex, rcTexture,rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// create the ScrollBar control default GFX and adds to the vector
+	controlGFX.nControlType =  CControlUI::SCROLLBAR;
 	controlGFX.elementsGFXvec = elementGFXvec;
 	controlGFX.elementsFontVec = elementFontVec;
 	m_DefControlsGFX.push_back(controlGFX);

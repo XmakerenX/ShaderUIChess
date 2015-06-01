@@ -20,6 +20,7 @@ LIGHT_PREFS d3d::InitDirectionalLight(D3DXVECTOR4& direction, D3DXCOLOR color)
 	//light.lightDir = D3DXVECTOR4(1.0f, -0.0f, 0.25f,0.0f);
 	light.lightDir = direction;
 	 
+	//light.lightAmbient = copyColorToVector(color) * 0.4f;
 	light.lightAmbient = copyColorToVector(color) * 0.4f;
 	light.lightDiffuse = copyColorToVector(color);
 	light.lightSpecular = copyColorToVector(color);

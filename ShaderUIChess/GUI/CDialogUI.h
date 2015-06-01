@@ -68,6 +68,7 @@ public:
 
 	HRESULT init	 (UINT width, UINT height, int nCaptionHeight, LPCTSTR captionText, char newTexturePath[MAX_PATH], D3DXCOLOR dialogColor, HWND hWnd, CAssetManager& assetManger);
 	HRESULT initDefControlElements(CAssetManager& assetManger);
+	HRESULT initWoodControlElements(CAssetManager& assetManager);
 
 	virtual bool    MsgProc	 ( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, CTimer* timer, bool windowed );
 	void	OnMouseMove(POINT pt);
