@@ -158,8 +158,8 @@ HRESULT CDialogUI::init(UINT width, UINT height, int nCaptionHeight, LPCTSTR cap
 // 	m_button.setLocation(300,100);
 // 	m_button.SetID(2);
 // 	m_button.setParent(this);
-	initDefControlElements(assetManger);
-	//initWoodControlElements(assetManger);
+	//initDefControlElements(assetManger);
+	initWoodControlElements(assetManger);
 
 	return S_OK;
 }
@@ -523,12 +523,12 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	// loads our wood GUI texture
 	elementGFXvec.clear();
 
-	if (!assetManager.getTexture("woodGUI.png", &textureIndex, false))
+	if (!assetManager.getTexture("woodGUI.png", &textureIndex, true))
 		return S_FALSE;
 
 	// sets what parts of the texture to use for the button
 	RECT rcTexture, rcTexMouseOver;
-	SetRect(&rcTexture, 60, 265, 143, 298);
+	SetRect(&rcTexture, 0, 0, 84, 34);
 	//SetRect(&rcTexture, 257, 71, 357, 139);
 	//InflateRect(&rcTexture, 10,10);
 
@@ -537,7 +537,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	elementGFXvec.push_back(elementGFX);
 
 	// add the mouse over button element
-	SetRect(&rcTexMouseOver, 60, 316, 143, 349);
+	SetRect(&rcTexMouseOver, 0, 34, 84, 68);
 	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
 	elementGFXvec.push_back(elementGFX);
 
@@ -552,13 +552,13 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	elementGFXvec.clear();
 	// sets what parts of the texture to use for the main element of the CheckBox
-	SetRect( &rcTexture, 60, 612, 77, 629 );
+	SetRect( &rcTexture, 0, 114, 16, 130 );
 	// add the main CheckBox element to the vector
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	// sets what parts of the texture to use for the CheckBox mouse over
-	SetRect( &rcTexMouseOver, 120, 612, 137, 629 );
+	SetRect( &rcTexMouseOver, 60, 112, 77, 131 );
 	// add the mouse over CheckBox element to the vector
 	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
 	elementGFXvec.push_back(elementGFX);
@@ -575,13 +575,13 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	elementGFXvec.clear();
 
 	// sets what parts of the texture to use for the main element of the RadioButton
-	SetRect( &rcTexture, 60, 646, 77, 663 );
+	SetRect( &rcTexture, 1, 145, 17, 161 );
 	// add the main element of  RadioButton elements to the vector
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	// sets what parts of the texture to use for the mouse over element of the RadioButton
-	SetRect( &rcTexMouseOver, 120, 646, 137, 663 );
+	SetRect( &rcTexMouseOver, 61, 145, 76, 161 );
 	// add the mouse over element of  RadioButton elements to the vector
 	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
 	elementGFXvec.push_back(elementGFX);
@@ -600,7 +600,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	// ComboBox - Main
 	//-------------------------------------
-	SetRect( &rcTexture, 60, 692, 285, 723 );
+	SetRect( &rcTexture, 97, 0, 323, 34 );
 
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
@@ -608,21 +608,21 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	// ComboBox - Button
 	//-------------------------------------
-	SetRect( &rcTexture, 285, 692, 318, 725 );
+	SetRect( &rcTexture, 323, 0, 367, 34 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	//-------------------------------------
 	// ComboBox - Dropdown
 	//-------------------------------------
-	SetRect( &rcTexture, 370, 674, 736, 702 );
+	SetRect( &rcTexture, 102, 116, 461, 331 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	//-------------------------------------
 	// ComboBox - Selection
 	//-------------------------------------
-	SetRect( &rcTexture, 60, 761, 283, 795 );
+	SetRect( &rcTexture, 359, 215, 586, 323 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
@@ -640,7 +640,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	// ListBox - Main
 	//-------------------------------------
-	SetRect( &rcTexture, 370, 674, 736, 702 );
+	SetRect( &rcTexture, 102, 116, 461, 331 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
@@ -649,7 +649,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	//ListBox - Selection
 	//-------------------------------------
-	SetRect( &rcTexture, 60, 761, 283, 795 );
+	SetRect( &rcTexture, 359, 215, 586, 323 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
@@ -667,14 +667,14 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	// Slider - Track
 	//-------------------------------------
-	SetRect( &rcTexture, 82, 839, 197, 845 );
+	SetRect( &rcTexture, 102, 84, 243, 90 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	//-------------------------------------
 	// Slider - Button
 	//-------------------------------------
-	SetRect( &rcTexture, 209, 836, 225, 855 );
+	SetRect( &rcTexture, 243, 81, 259, 100 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
@@ -703,39 +703,39 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//Element.SetFont( 0, D3DCOLOR_ARGB( 255, 0, 0, 0 ), DT_LEFT | DT_TOP );
 
 	// Assign the style
-	SetRect( &rcTexture, 61, 763, 283, 793 );
+	SetRect( &rcTexture, 91, 36, 321, 66 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 59, 761, 61, 763 );
+	SetRect( &rcTexture, 97, 34, 100, 37 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 61, 761, 317, 763 );
+	SetRect( &rcTexture, 100, 34, 354, 36 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 317, 761, 319, 763 );
+	SetRect( &rcTexture, 354, 34, 357, 37 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 59, 763, 61, 792 );
+	SetRect( &rcTexture, 97, 38, 99, 65 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 317, 763, 319, 792 );
+	SetRect( &rcTexture, 355, 37, 357, 65 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 59, 792, 91, 794 );
+	SetRect( &rcTexture, 97, 65, 100, 98 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 61, 792, 317, 794 );
+	SetRect( &rcTexture, 100, 66, 354, 68 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
-	SetRect( &rcTexture, 317, 792, 319, 794 );
+	SetRect( &rcTexture, 354, 65, 357, 68 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
