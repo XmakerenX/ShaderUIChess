@@ -1,5 +1,8 @@
 #include "CTerrain.h"
 
+//-----------------------------------------------------------------------------
+// Name : CTerrain (constructor)
+//-----------------------------------------------------------------------------
 CTerrain::CTerrain(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger,CMyMesh *pTerrainMesh,TERRAIN_PREFS& TerrianPref)
 :CMyObject(pTerrainMesh,&TerrianPref.objPrefs)
 {
@@ -23,6 +26,9 @@ CTerrain::CTerrain(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger,CMyMesh
 	createTerrain(pDevice, assetManger,TerrianPref.minBounds,TerrianPref.maxBounds,TerrianPref.numCellsWide,TerrianPref.numCellsHigh,TerrianPref.objPrefs.scale);
 }
 
+//-----------------------------------------------------------------------------
+// Name : CTerrain (destructor)
+//-----------------------------------------------------------------------------
 CTerrain::~CTerrain(void)
 {
 	if (m_squareMesh)
@@ -34,6 +40,9 @@ CTerrain::~CTerrain(void)
 	//Release();
 }
 
+//-----------------------------------------------------------------------------
+// Name : createTerrain ()
+//-----------------------------------------------------------------------------
 HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger, D3DXVECTOR3 minBounds, D3DXVECTOR3 maxBounds ,UINT numCellsWide, UINT numCellsHigh, D3DXVECTOR3 vecScale )
 {
 	HRESULT hRet;
@@ -47,6 +56,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 // 	float stepX=(maxBounds.x-minBounds.x)/numCellsWide;
 // 	float stepZ=(maxBounds.z-minBounds.z)/numCellsHigh;
 
+	//-------------------------------------
+	// Create board Mesh Vertices
+	//-------------------------------------
 	m_numCellsHigh = numCellsHigh;
 	m_numCellsWide = numCellsWide;
 	m_scaleVec = vecScale;
@@ -104,6 +116,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	int count = 0;
 	USHORT vIndex = 0;
 
+	//-------------------------------------
+	// Create board Mesh attribute data
+	//-------------------------------------
 	//creating the attribute data 
 	MESH_ATTRIB_DATA* pAttribData;
 	//ULONG AttribID[2]; not used anymore??
@@ -141,6 +156,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		m_pMesh->setAttribMap(attribMap, 2);
 	}
 
+	//-------------------------------------
+	// Create board Mesh index buffer
+	//-------------------------------------
 	//the max number of indices in the terrain is numCellsHigh * numCellsWide * how many indices per cell which in our case for now is 6 ...
 	USHORT* pIndices = new USHORT[6];
 	for (UINT z = 0; z < numCellsHigh; z++)
@@ -191,6 +209,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	}
 	//end of preparing the index buffer 
 
+	//---------------------------------------------------------
+	// finish adding all the vertices and build board mesh
+	//---------------------------------------------------------
 	if ( m_pMesh->AddVertex(VertexCount,pVertices) < 0)
 		return E_OUTOFMEMORY;
 	
@@ -200,25 +221,31 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	delete []pVertices;
 	delete []pIndices;
 
+	//---------------------------------------------------------
+	// Create board Frame vertices
+	//---------------------------------------------------------
 	VertexCount = 0;
 	Tu = 0.0f;
 	Tv = 0.0f;
 
 	D3DXVECTOR3 boardFramePos;
-	boardFramePos.x = pos.x - 8;
+	boardFramePos.x = pos.x - m_stepX - (2 / m_numCellsWide);
 	boardFramePos.y = pos.y;
-	boardFramePos.z = pos.z - 8;
+	boardFramePos.z = pos.z - m_stepZ - (2 / m_numCellsHigh);
 
 	pos = boardFramePos;
 
 	int boardFrameCells = (numVertsX * numVertsZ) + 4;
 	pVertices  = new CMyVertex[boardFrameCells];
 
+	//---------------------------------------------------------
+	// lower part of the board frame vertices
+	//---------------------------------------------------------
 	for (int z = 0; z < 2; z++)
 	{
-		Tu = 0.0f;
+		Tv = 0.0f;
 		
-		pos.x - boardFramePos.x;
+		pos.x = boardFramePos.x;
 
 		for (int x = 0; x < numVertsX + 2; x++)
 		{
@@ -233,16 +260,188 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			Tu++;
 
 			// Increment x across
-			if (x == numVertsX || numVertsX + 1)
-				pos.x += 2;
+			if (x == 0 || x == numVertsX)
+				pos.x += (2 / m_numCellsWide);
 
 			pos.x += m_stepX;
 			VertexCount++;
 		}
 
+		pos.z += m_stepZ + (2 / m_numCellsHigh);
+
 		Tv++;
 	}
 
+	Tu = 0.0f;
+	Tv = 0.0f;
+
+	boardFramePos.x = pos.x + m_stepX * m_numCellsWide;
+	boardFramePos.y = pos.y;
+	boardFramePos.z = pos.z + m_stepZ;
+
+	pos = boardFramePos;
+
+	//---------------------------------------------------------
+	// right part of the board frame vertices
+	//---------------------------------------------------------
+	for (int z = 2; z < numVertsZ + 2; z++)
+	{
+		Tv = 0.0f;
+
+		pos.x = boardFramePos.x;
+
+		for (int x = 0; x < 2; x++)
+		{
+			// Create the verts
+			pVertices[VertexCount].x = pos.x * vecScale.x;
+			pVertices[VertexCount].y = pos.y * vecScale.y;
+			pVertices[VertexCount].z = pos.z * vecScale.z;
+			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
+			pVertices[VertexCount].tu = Tu;
+			pVertices[VertexCount].tv = Tv;
+
+			Tu++;
+
+			// Increment x across
+			pos.x += m_stepX + (2 / m_numCellsWide);
+			VertexCount++;
+		}
+
+		if ( z == 9)
+			pos.z += (2 / m_numCellsHigh);
+
+		pos.z += m_stepZ;
+
+		Tv++;
+	}
+
+	boardFramePos.x = pos.x - m_stepX - (2 / m_numCellsWide);
+	boardFramePos.y = pos.y;
+	boardFramePos.z = pos.z + m_stepZ * numCellsHigh;
+
+	pos = boardFramePos;
+
+	//---------------------------------------------------------
+	// upper part of the board frame vertices
+	//---------------------------------------------------------
+	for (int z = 0; z < 2; z++)
+	{
+		Tv = 0.0f;
+
+		pos.x - boardFramePos.x;
+
+		for (int x = 0; x < numVertsX; x++)
+		{
+			// Create the verts
+			pVertices[VertexCount].x = pos.x * vecScale.x;
+			pVertices[VertexCount].y = pos.y * vecScale.y;
+			pVertices[VertexCount].z = pos.z * vecScale.z;
+			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
+			pVertices[VertexCount].tu = Tu;
+			pVertices[VertexCount].tv = Tv;
+
+			Tu++;
+
+			// Increment x across
+			if (x == 0)
+				pos.x += (2 / m_numCellsWide);
+
+			pos.x += m_stepX;
+			VertexCount++;
+		}
+
+		pos.z += m_stepZ + (2 / m_numCellsHigh);
+
+		Tv++;
+	}
+
+	boardFramePos.x = pos.x - m_stepX - (2 / m_numCellsWide);
+	boardFramePos.y = pos.y;
+	boardFramePos.z = pos.z + m_stepZ;
+
+	pos = boardFramePos;
+
+	//---------------------------------------------------------
+	// left part of the board frame vertices
+	//---------------------------------------------------------
+	for (int z = 2; z < numVertsZ; z++)
+	{
+		Tv = 0.0f;
+
+		pos.x = boardFramePos.x;
+
+		for (int x = 0; x < 2; x++)
+		{
+			// Create the verts
+			pVertices[VertexCount].x = pos.x * vecScale.x;
+			pVertices[VertexCount].y = pos.y * vecScale.y;
+			pVertices[VertexCount].z = pos.z * vecScale.z;
+			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
+			pVertices[VertexCount].tu = Tu;
+			pVertices[VertexCount].tv = Tv;
+
+			Tu++;
+
+			// Increment x across
+			pos.x += m_stepX + (2 / m_numCellsWide);
+			VertexCount++;
+		}
+
+		pos.z += m_stepZ;
+
+		Tv++;
+	}
+
+	//---------------------------------------------------------
+	// left part of the board frame indexes
+	//---------------------------------------------------------
+	pIndices = new USHORT[6];
+	for (UINT z = 0; z < numCellsHigh; z++)
+	{
+		for (UINT x = 0; x < numCellsWide; x++)
+		{
+			ULONG attribID;
+			// first triangle
+			pIndices[count++] = vIndex;
+			pIndices[count++] = vIndex+numVertsX;
+			pIndices[count++] = vIndex+numVertsX+1;
+
+			// second triangle
+			pIndices[count++] = vIndex;
+			pIndices[count++] = vIndex+numVertsX+1;
+			pIndices[count++] = vIndex+1;
+
+			if (vIndex % 2 == 0)
+			{
+				if (ManageAttribs)
+					attribID = 0;
+				else
+					attribID = 0;
+			}
+			else
+			{
+				if (ManageAttribs)
+					attribID = 1;
+				else
+					attribID = 1;
+			}
+
+			if ( m_pMesh->AddFace(2,pIndices,attribID) < 0)
+				return E_OUTOFMEMORY;
+
+			delete []pIndices;
+			count = 0;
+			pIndices = NULL;
+			pIndices = new USHORT[6];
+
+			vIndex++;
+		}
+		vIndex++;
+	}
+
+	//---------------------------------------------------------
+	// Create a Square mesh for highlighting selected squares
+	//---------------------------------------------------------
 	//creating a squre mesh
 	pos = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	VertexCount = 0;
@@ -254,6 +453,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	if (!pVertices)
 		return E_OUTOFMEMORY;
 
+	//---------------------------------------------------------
+	// Create square Vertices
+	//---------------------------------------------------------
 	for (UINT z = 0; z < 2; z++)
 	{
 		Tu = 0.0f;
@@ -281,6 +483,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		pos.z += m_stepZ;
 	}
 
+	//---------------------------------------------------------
+	// Create square indexes
+	//---------------------------------------------------------
 	pIndices = new USHORT[6];
 	vIndex = 0;
 	count = 0;
@@ -314,6 +519,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		vIndex++;
 	}
 
+	//---------------------------------------------------------
+	// build square mesh and attributes
+	//---------------------------------------------------------
 	if ( m_squareMesh->AddVertex(4,pVertices) < 0)
 		return E_OUTOFMEMORY;
 
@@ -360,6 +568,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	
 }
 
+//-----------------------------------------------------------------------------
+// Name : CreateSquare ()
+//-----------------------------------------------------------------------------
 HRESULT CTerrain::CreateSquare(CMyVertex* pVertices, USHORT& vIndex, D3DXVECTOR3 pos, D3DXVECTOR3 vecScale )
 {
 		int VertexCount = 0;
@@ -435,6 +646,9 @@ HRESULT CTerrain::CreateSquare(CMyVertex* pVertices, USHORT& vIndex, D3DXVECTOR3
 	}
 }
 
+//-----------------------------------------------------------------------------
+// Name : drawSubset ()
+//-----------------------------------------------------------------------------
 void CTerrain::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3DXEffect * effect, UINT numPass, D3DXMATRIX ViewProj)
 {
 	HRESULT hr;
@@ -510,6 +724,9 @@ void CTerrain::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3DX
 	//pd3dDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
+//-----------------------------------------------------------------------------
+// Name : drawSquare ()
+//-----------------------------------------------------------------------------
 HRESULT CTerrain::drawSquare(ULONG squareNum, ID3DXEffect * effect, UINT numPass, D3DXMATRIX ViewProj)
 {
 	HRESULT hRet;
@@ -542,6 +759,9 @@ HRESULT CTerrain::drawSquare(ULONG squareNum, ID3DXEffect * effect, UINT numPass
 	return hRet;
 }
 
+//-----------------------------------------------------------------------------
+// Name : setFrameSqaure ()
+//-----------------------------------------------------------------------------
 void CTerrain::setFrameSqaure(DWORD faceCount)
 {
 	ULONG sqaure = faceCount /2;
