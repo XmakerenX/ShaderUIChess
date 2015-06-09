@@ -27,8 +27,10 @@ public:
 
 	CTerrain(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger,CMyMesh *pTerrainMesh,TERRAIN_PREFS& TerrianPref);
 	virtual ~CTerrain(void);
-
+	
 	HRESULT		createTerrain	(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger, D3DXVECTOR3 minBounds, D3DXVECTOR3 maxBounds ,UINT numCellsWide, UINT numCellsHigh, D3DXVECTOR3 vecScale );
+	HRESULT		CreateSquare	(CMyVertex* pVertices, USHORT* pIndices, D3DXVECTOR3 pos, D3DXVECTOR3 vecScale);
+
 	void		drawSubset		(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3DXEffect * effect, UINT numPass, D3DXMATRIX ViewProj);
 
 	void		setFrameSqaure	(DWORD faceCount);

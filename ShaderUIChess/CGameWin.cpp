@@ -831,7 +831,7 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 	m_pCameras[0]->SetFOV( 45.0f );
 	m_pCameras[0]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
 	//m_pCameras[0]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
-	m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+	m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 	m_pCameras[0]->SetLookAt( D3DXVECTOR3(9,0,24) );
 	m_pCameras[0]->UpdateRenderView( m_pD3DDevice );
 	m_pCameras[0]->UpdateRenderProj( m_pD3DDevice );
@@ -986,7 +986,7 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 			m_pCameras[m_cameraIndex]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f, m_pD3DDevice );
 			m_pCameras[m_cameraIndex]->SetFOV( 45.0f );
 			//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
-			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 			m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 			m_pCameras[m_cameraIndex]->UpdateRenderView( m_pD3DDevice );
 			m_pCameras[m_cameraIndex]->UpdateRenderProj( m_pD3DDevice );
@@ -1082,7 +1082,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
 			if (m_cameraDelta > 0)
 			{
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
 			}
@@ -1094,7 +1094,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
 			if (m_cameraDelta > 0)
 			{
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,48.0f,-7.0f));
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
 			}
