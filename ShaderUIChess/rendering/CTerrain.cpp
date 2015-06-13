@@ -239,11 +239,13 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	VertexCount = 0;
 	Tu = 0.0f;
 	Tv = 0.0f;
+	
+	pos = D3DXVECTOR3(minBounds.x, 0, minBounds.y);
 
 	D3DXVECTOR3 boardFramePos;
-	boardFramePos.x = pos.x - m_stepX - (2 / m_numCellsWide);
+	boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
 	boardFramePos.y = pos.y;
-	boardFramePos.z = pos.z - m_stepZ - (2 / m_numCellsHigh);
+	boardFramePos.z = pos.z - m_stepZ - ((float)2 / vecScale.z);
 
 	D3DXVECTOR3 framePos;
 	framePos = boardFramePos;
@@ -258,14 +260,14 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	{
 		Tv = 0.0f;
 		
-		pos.x = boardFramePos.x;
+		framePos.x = boardFramePos.x;
 
 		for (int x = 0; x < numVertsX + 2; x++)
 		{
 			// Create the verts
-			pVertices[VertexCount].x = framePos.x * vecScale.x;
-			pVertices[VertexCount].y = framePos.y * vecScale.y;
-			pVertices[VertexCount].z = framePos.z * vecScale.z;
+			pVertices[VertexCount].x = framePos.x /** vecScale.x*/;
+			pVertices[VertexCount].y = framePos.y /** vecScale.y*/;
+			pVertices[VertexCount].z = framePos.z /** vecScale.z*/;
 			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
@@ -274,13 +276,13 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 			// Increment x across
 			if (x == 0 || x == numVertsX)
-				framePos.x += (2 / m_numCellsWide);
+				framePos.x += ((float)2 /  vecScale.x);
 
 			framePos.x += m_stepX;
 			VertexCount++;
 		}
 
-		framePos.z += m_stepZ + (2 / m_numCellsHigh);
+		framePos.z += m_stepZ + ((float)2 / vecScale.z);
 
 		Tv++;
 	}
@@ -301,14 +303,14 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	{
 		Tv = 0.0f;
 
-		pos.x = boardFramePos.x;
+		framePos.x = boardFramePos.x;
 
 		for (int x = 0; x < 2; x++)
 		{
 			// Create the verts
-			pVertices[VertexCount].x = framePos.x * vecScale.x;
-			pVertices[VertexCount].y = framePos.y * vecScale.y;
-			pVertices[VertexCount].z = framePos.z * vecScale.z;
+			pVertices[VertexCount].x = framePos.x /** vecScale.x*/;
+			pVertices[VertexCount].y = framePos.y/* * vecScale.y*/;
+			pVertices[VertexCount].z = framePos.z /** vecScale.z*/;
 			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
@@ -316,19 +318,19 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			Tu++;
 
 			// Increment x across
-			framePos.x += m_stepX + (2 / m_numCellsWide);
+			framePos.x += m_stepX + ((float)2 / vecScale.x);
 			VertexCount++;
 		}
 
 		if ( z == 9)
-			framePos.z += (2 / m_numCellsHigh);
+			framePos.z += ((float)2 / vecScale.z);
 
 		framePos.z += m_stepZ;
 
 		Tv++;
 	}
 
-	boardFramePos.x = pos.x - m_stepX - (2 / m_numCellsWide);
+	boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
 	boardFramePos.y = pos.y;
 	boardFramePos.z = pos.z + m_stepZ * numCellsHigh;
 
@@ -346,9 +348,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		for (int x = 0; x < numVertsX; x++)
 		{
 			// Create the verts
-			pVertices[VertexCount].x = framePos.x * vecScale.x;
-			pVertices[VertexCount].y = framePos.y * vecScale.y;
-			pVertices[VertexCount].z = framePos.z * vecScale.z;
+			pVertices[VertexCount].x = framePos.x /** vecScale.x*/;
+			pVertices[VertexCount].y = framePos.y /** vecScale.y*/;
+			pVertices[VertexCount].z = framePos.z /** vecScale.z*/;
 			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
@@ -357,18 +359,18 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 			// Increment x across
 			if (x == 0)
-				framePos.x += (2 / m_numCellsWide);
+				framePos.x += ((float)2 / vecScale.x);
 
 			framePos.x += m_stepX;
 			VertexCount++;
 		}
 
-		framePos.z += m_stepZ + (2 / m_numCellsHigh);
+		framePos.z += m_stepZ + ((float)2 / vecScale.z);
 
 		Tv++;
 	}
 
-	boardFramePos.x = pos.x - m_stepX - (2 / m_numCellsWide);
+	boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
 	boardFramePos.y = pos.y;
 	boardFramePos.z = pos.z + m_stepZ;
 
@@ -386,9 +388,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		for (int x = 0; x < 2; x++)
 		{
 			// Create the verts
-			pVertices[VertexCount].x = framePos.x * vecScale.x;
-			pVertices[VertexCount].y = framePos.y * vecScale.y;
-			pVertices[VertexCount].z = framePos.z * vecScale.z;
+			pVertices[VertexCount].x = framePos.x /** vecScale.x*/;
+			pVertices[VertexCount].y = framePos.y /** vecScale.y*/;
+			pVertices[VertexCount].z = framePos.z /** vecScale.z*/;
 			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
@@ -396,7 +398,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			Tu++;
 
 			// Increment x across
-			framePos.x += m_stepX + (2 / m_numCellsWide);
+			framePos.x += m_stepX + ((float)2 / vecScale.x);
 			VertexCount++;
 		}
 
@@ -404,6 +406,8 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 		Tv++;
 	}
+
+	vIndex = 0;
 
 	//---------------------------------------------------------
 	// lower part of the board frame indexes
@@ -480,12 +484,12 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		ULONG attribID;
 		// first triangle
 		pIndices[count++] = vIndex;
-		pIndices[count++] = vIndex+numVertsX + 2;
-		pIndices[count++] = vIndex+numVertsX + 2 + 1;
+		pIndices[count++] = vIndex+numVertsX;
+		pIndices[count++] = vIndex+numVertsX + 1;
 
 		// second triangle
 		pIndices[count++] = vIndex;
-		pIndices[count++] = vIndex+numVertsX + 2 + 1;
+		pIndices[count++] = vIndex+numVertsX + 1;
 		pIndices[count++] = vIndex+1;
 
 		attribID = 0;
@@ -506,7 +510,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//---------------------------------------------------------
 	// first triangle
 	pIndices[count++] = vIndex ; //rightEndingIndex
-	pIndices[count++] = vIndex+numVertsX + 2;
+	pIndices[count++] = vIndex+numVertsX;
 	pIndices[count++] = rightEndingIndex + 2;
 
 	// second triangle
