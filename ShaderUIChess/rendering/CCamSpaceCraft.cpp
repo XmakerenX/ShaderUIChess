@@ -232,7 +232,7 @@ void CCamSpaceCraft::Move(ULONG direction, float distance)
 // 	
 // 	// Extract the vectors
  	m_vecRight = D3DXVECTOR3( Matrix._11, Matrix._21, Matrix._31 ); 
-// 	//m_vecUp    = D3DXVECTOR3( Matrix._12, Matrix._22, Matrix._32 );
+ 	//m_vecUp    = D3DXVECTOR3( Matrix._12, Matrix._22, Matrix._32 );
 	m_vecUp = D3DXVECTOR3 (0,1,0);
  	m_vecLook  = D3DXVECTOR3( Matrix._13, Matrix._23, Matrix._33 );
 

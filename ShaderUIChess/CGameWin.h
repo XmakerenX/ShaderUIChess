@@ -49,6 +49,7 @@
 #include "MainMenuDef.h"
 
 const UINT MAX_ACTIVE_LIGHTS = 4;
+const char	SkyboxTex[6][256] = {"posz.jpg","posy.jpg","negx.jpg","posx.jpg","negy.jpg","negz.jpg"};
 
 class CMyObject;
 
@@ -157,7 +158,6 @@ private:
 
 	BOOL		EnumDepthStencil	(D3DFORMAT depthFormats[], UINT formatsCount, UINT adapter, D3DDEVTYPE deviceType, D3DFORMAT backBufferFromat, std::vector<D3DFORMAT>& validDepths);
 	void		EnumMultiSample		(UINT adapter, D3DDEVTYPE deviceType, D3DFORMAT backBufferFormat, bool windowed, std::vector<D3DMULTISAMPLE_TYPE>& validMultiSampleTypes);
-	bool		CreateGUIObjects	();
 
 	void		resetDevice			(D3DPRESENT_PARAMETERS& d3dpp);
 
@@ -179,6 +179,8 @@ private:
 	// Functions that control creation and release of game objects
 	//-------------------------------------------------------------------------
 	bool        BuildObjects    ( );
+	bool		CreateGUIObjects( );
+	HRESULT		CreateSkyBox	( );
 	void		createObject	(CMyMesh* objMesh, OBJECT_PREFS* objectPref, ULONG* newAttribMap, ULONG atrributeCount );
 	void		addObject		(CMyObject* newObject);
 	//void        ReleaseObjects  ( );
@@ -258,6 +260,7 @@ private:
 	//-------------------------------------------------------------------------
 	std::vector<CMyObject*>	 m_objects;
 	CTerrain			   * m_pTerrain;
+	CMyMesh				   * m_skyboxMesh;
 	int						 activeMeshIndex;
 
 	board				   * m_gameBoard;
