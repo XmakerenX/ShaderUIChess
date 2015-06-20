@@ -1118,17 +1118,17 @@ void CGameWin::FrameAdvance(float timeDelta)
 	else
 		m_debugString+="\n DRAW_OBJECTATTRIB\n";
 
-// 	m_debugString += m_gameBoard->getBoardStatus();
-// 
-// 	if (m_gameBoard->getKingThreat())
-// 		m_debugString += "\nking is in threat!";
-// 	else
-// 		m_debugString += "\nking is not in threat :)";
-// 
-// 	if (!m_gameBoard->isBoardActive())
-// 		m_debugString += "\ngame is over!";
-// 	else
-// 		m_debugString += "\ngame is still on :)";
+	m_debugString += m_gameBoard->getBoardStatus();
+
+	if (m_gameBoard->getKingThreat())
+		m_debugString += "\nking is in threat!";
+	else
+		m_debugString += "\nking is not in threat :)";
+
+	if (!m_gameBoard->isBoardActive())
+		m_debugString += "\ngame is over!";
+	else
+		m_debugString += "\ngame is still on :)";
 
 	D3DXVECTOR3 position( cosf(angle) * 7.0f, height, sinf(angle) * 7.0f );
 	D3DXVECTOR3 target(0.0f, 0.0f, 0.0f);
@@ -1545,13 +1545,13 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	//AttribID   = m_assetManger.getAttributeID(NULL,&d3d::RED_MTRL,NULL);
 	AttribID   = m_assetManger.getAttributeID(NULL,&m,NULL);
 	
-// 	CMyObject* pGameBoard = new board (m_pD3DDevice,m_assetManger, pBoardMesh, boardSettings, piecesMesh, AttribID,
-// 		boost::bind(&CGameWin::addObject, this, _1 ) );
-// 
-// 	if (pGameBoard)
-// 		m_gameBoard = static_cast<board*>(pGameBoard);
-// 
-// 	addObject(pGameBoard);
+	CMyObject* pGameBoard = new board (m_pD3DDevice,m_assetManger, pBoardMesh, boardSettings, piecesMesh, AttribID,
+		boost::bind(&CGameWin::addObject, this, _1 ) );
+
+	if (pGameBoard)
+		m_gameBoard = static_cast<board*>(pGameBoard);
+
+	addObject(pGameBoard);
 
 	CreateLights(m_outlineEffect);
 
@@ -1564,7 +1564,7 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	//m_pCameras[0]->SetLookAt( D3DXVECTOR3(9,0,24) );
 
 	skyboxPrefs.pos = D3DXVECTOR3(9.0f, -10.0f, 40.0f);
-	skyboxPrefs.scale = D3DXVECTOR3(10.0f, 10.0f, 10.0f);
+	skyboxPrefs.scale = D3DXVECTOR3(200.0f, 200.0f, 200.0f);
 	skyboxPrefs.rotAngels = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	
 	ZeroMemory( &Material, sizeof(OBJMATERIAL));
@@ -1652,35 +1652,35 @@ HRESULT CGameWin::CreateSkyBox()
 	//-------------------------------------    2--3
 	// Create cube Front face vertex           |  |
 	//-------------------------------------    0--1
-	// Vertex 0
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	// Vertex 3
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 0.0f ,1.0f);
 	pVertices[VertexCount].tu = 0;
 	pVertices[VertexCount++].tv = 0;
 
 	// Vertex 1
 	//pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 0.0f ,1.0f);
-	pVertices[VertexCount].tu = 1;
-	pVertices[VertexCount++].tv = 0;
+	pVertices[VertexCount].tu = 0;
+	pVertices[VertexCount++].tv = 1;
 
 	// Vertex 2
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 0.0f ,1.0f);
-	pVertices[VertexCount++].tu = 0;
-	pVertices[VertexCount].tv = 1;
+	pVertices[VertexCount++].tu = 1;
+	pVertices[VertexCount].tv = 0;
 
-	// Vertex 3
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	// Vertex 0
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 0.0f ,1.0f);
 	pVertices[VertexCount].tu = 1;
 	pVertices[VertexCount++].tv = 1;
@@ -1688,69 +1688,70 @@ HRESULT CGameWin::CreateSkyBox()
 	//-------------------------------------    2--3
 	// Create cube UP  face vertex             |  |
 	//-------------------------------------    0--1
-	// Vertex 0
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	// Vertex 3
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,-1.0f ,0.0f);
 	pVertices[VertexCount].tu = 0;
 	pVertices[VertexCount++].tv = 0;
 
 	// Vertex 1
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
-	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,-1.0f ,0.0f);
-	pVertices[VertexCount].tu = 1;
-	pVertices[VertexCount++].tv = 0;
-
-	// Vertex 2
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,-1.0f ,0.0f);
 	pVertices[VertexCount].tu = 0;
 	pVertices[VertexCount++].tv = 1;
 
-	// Vertex 3
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	// Vertex 2
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
+	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,-1.0f ,0.0f);
+	pVertices[VertexCount].tu = 1;
+	pVertices[VertexCount++].tv = 0;
+
+	// Vertex 0
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,-1.0f ,0.0f);
 	pVertices[VertexCount].tu = 1;
 	pVertices[VertexCount++].tv = 1;
 
+ 
 	//-------------------------------------    2--3
 	// Create cube LEFT  face vertex           |  |
 	//-------------------------------------    0--1
-	// Vertex 0
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	// Vertex 3
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(1.0f ,0.0f ,0.0f);
 	pVertices[VertexCount].tu = 0;
 	pVertices[VertexCount++].tv = 0;
 
 	// Vertex 1
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
-	pVertices[VertexCount].Normal = D3DXVECTOR3(1.0f ,0.0f ,0.0f);
-	pVertices[VertexCount].tu = 1;
-	pVertices[VertexCount++].tv = 0;
-
-	// Vertex 2
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(1.0f ,0.0f ,0.0f);
 	pVertices[VertexCount].tu = 0;
 	pVertices[VertexCount++].tv = 1;
 
-	// Vertex 3
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	// Vertex 2
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
+	pVertices[VertexCount].Normal = D3DXVECTOR3(1.0f ,0.0f ,0.0f);
+	pVertices[VertexCount].tu = 1;
+	pVertices[VertexCount++].tv = 0;
+
+	// Vertex 0
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(1.0f ,0.0f ,0.0f);
 	pVertices[VertexCount].tu = 1;
 	pVertices[VertexCount++].tv = 1;
@@ -1759,106 +1760,106 @@ HRESULT CGameWin::CreateSkyBox()
 	// Create cube RIGHT  face vertex          |  |
 	//-------------------------------------    0--1
 	// Vertex 0
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(-1.0f ,0.0f ,0.0f);
 	pVertices[VertexCount].tu = 0;
-	pVertices[VertexCount++].tv = 0;
+	pVertices[VertexCount++].tv = 1;
 
 	// Vertex 1
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
+	pVertices[VertexCount].Normal = D3DXVECTOR3(-1.0f ,0.0f ,0.0f);
+	pVertices[VertexCount].tu = 1;
+	pVertices[VertexCount++].tv = 1;
+
+	// Vertex 2
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
+	pVertices[VertexCount].Normal = D3DXVECTOR3(-1.0f ,0.0f ,0.0f);
+	pVertices[VertexCount].tu = 0;
+	pVertices[VertexCount++].tv = 0;
+
+	// Vertex 3
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(-1.0f ,0.0f ,0.0f);
 	pVertices[VertexCount].tu = 1;
 	pVertices[VertexCount++].tv = 0;
-
-	// Vertex 2
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
-	pVertices[VertexCount].Normal = D3DXVECTOR3(-1.0f ,0.0f ,0.0f);
-	pVertices[VertexCount].tu = 0;
-	pVertices[VertexCount++].tv = 1;
-
-	// Vertex 3
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
-	pVertices[VertexCount].Normal = D3DXVECTOR3(-1.0f ,0.0f ,0.0f);
-	pVertices[VertexCount].tu = 1;
-	pVertices[VertexCount++].tv = 1;
 
 	//-------------------------------------    2--3
 	// Create cube DOWN  face vertex           |  |
 	//-------------------------------------    0--1
 	// Vertex 0
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,1.0f ,0.0f);
-	pVertices[VertexCount].tu = 0;
+	pVertices[VertexCount].tu = 1;
 	pVertices[VertexCount++].tv = 0;
 
 	// Vertex 1
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z = - 10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,1.0f ,0.0f);
-	pVertices[VertexCount].tu = 1;
+	pVertices[VertexCount].tu = 0;
 	pVertices[VertexCount++].tv = 0;
 
 	// Vertex 2
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,1.0f ,0.0f);
-	pVertices[VertexCount].tu = 0;
+	pVertices[VertexCount].tu = 1;
 	pVertices[VertexCount++].tv = 1;
 
 	// Vertex 3
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z = - 1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,1.0f ,0.0f);
-	pVertices[VertexCount].tu = 1;
+	pVertices[VertexCount].tu = 0;
 	pVertices[VertexCount++].tv = 1;
 
 	//-------------------------------------    2--3
 	// Create cube BACK  face vertex           |  |
 	//-------------------------------------    0--1
 	// Vertex 0
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,0.0f ,-1.0f);
 	pVertices[VertexCount].tu = 0;
-	pVertices[VertexCount++].tv = 0;
+	pVertices[VertexCount++].tv = 1;
 
 	// Vertex 1
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y = - 1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y = - 10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
+	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,0.0f ,-1.0f);
+	pVertices[VertexCount].tu = 1;
+	pVertices[VertexCount++].tv = 1;
+
+	// Vertex 2
+	pVertices[VertexCount].x = - 10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
+	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,0.0f ,-1.0f);
+	pVertices[VertexCount].tu = 0;
+	pVertices[VertexCount++].tv = 0;
+
+	// Vertex 3
+	pVertices[VertexCount].x =   10.0f ;//* vecScale.x;
+	pVertices[VertexCount].y =   10.0f ;//* vecScale.y;
+	pVertices[VertexCount].z =   10.0f ;//* vecScale.z;
 	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,0.0f ,-1.0f);
 	pVertices[VertexCount].tu = 1;
 	pVertices[VertexCount++].tv = 0;
-
-	// Vertex 2
-	pVertices[VertexCount].x = - 1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
-	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,0.0f ,-1.0f);
-	pVertices[VertexCount].tu = 0;
-	pVertices[VertexCount++].tv = 1;
-
-	// Vertex 3
-	pVertices[VertexCount].x =   1.0f ;//* vecScale.x;
-	pVertices[VertexCount].y =   1.0f ;//* vecScale.y;
-	pVertices[VertexCount].z =   1.0f ;//* vecScale.z;
-	pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f ,0.0f ,-1.0f);
-	pVertices[VertexCount].tu = 1;
-	pVertices[VertexCount++].tv = 1;
 
 	//-------------------------------------    2--3
 	// Creating cube index buffer              |  |
@@ -2451,9 +2452,9 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
  	}
 	if (activeMeshIndex > -1)
 	{
-//  		m_gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
-//  		if (m_gameBoard->isUnitPromotion())
-//  			m_GuiSelectPawn.setVisible(true);
+ 		m_gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
+ 		if (m_gameBoard->isUnitPromotion())
+ 			m_GuiSelectPawn.setVisible(true);
 	}
 	return S_OK;
 }
@@ -2506,6 +2507,27 @@ void CGameWin::NewGameClicked(CButtonUI* pButton)
 		m_bReturnCamera = true;
 		m_gameBoard->resetGame();
 		addObject(m_gameBoard);
+
+		OBJMATERIAL Material;
+		OBJECT_PREFS skyboxPrefs;
+
+		skyboxPrefs.pos = D3DXVECTOR3(9.0f, -10.0f, 40.0f);
+		skyboxPrefs.scale = D3DXVECTOR3(200.0f, 200.0f, 200.0f);
+		skyboxPrefs.rotAngels = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+		ZeroMemory( &Material, sizeof(OBJMATERIAL));
+		Material.Diffuse = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+		Material.Ambient = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+
+		ULONG skyboxAttrib[6];
+
+		// FRONT UP LEFT RIGHT DOWN BACK
+		for (UINT i = 0; i < 6; i++)
+		{
+			skyboxAttrib[i] = m_assetManger.getAttributeID(SkyboxTex[i],&Material, NULL);
+		}
+
+		createObject(m_skyboxMesh, &skyboxPrefs, skyboxAttrib, 6);
 	}
 }
 
@@ -2519,6 +2541,27 @@ void CGameWin::ContinueClicked(CButtonUI* pButton)
 	m_MainMenu.setVisible(false);
 	m_bReturnCamera = true;
 	addObject(m_gameBoard);
+
+	OBJMATERIAL Material;
+	OBJECT_PREFS skyboxPrefs;
+
+	skyboxPrefs.pos = D3DXVECTOR3(9.0f, -10.0f, 40.0f);
+	skyboxPrefs.scale = D3DXVECTOR3(200.0f, 200.0f, 200.0f);
+	skyboxPrefs.rotAngels = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
+
+	ZeroMemory( &Material, sizeof(OBJMATERIAL));
+	Material.Diffuse = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+	Material.Ambient = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+
+	ULONG skyboxAttrib[6];
+
+	// FRONT UP LEFT RIGHT DOWN BACK
+	for (UINT i = 0; i < 6; i++)
+	{
+		skyboxAttrib[i] = m_assetManger.getAttributeID(SkyboxTex[i],&Material, NULL);
+	}
+
+	createObject(m_skyboxMesh, &skyboxPrefs, skyboxAttrib, 6);
 }
 
 //-----------------------------------------------------------------------------

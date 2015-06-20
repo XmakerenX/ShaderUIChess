@@ -49,7 +49,7 @@
 #include "MainMenuDef.h"
 
 const UINT MAX_ACTIVE_LIGHTS = 4;
-const char	SkyboxTex[6][256] = {"posz.jpg","posy.jpg","negx.jpg","posx.jpg","negy.jpg","negz.jpg"};
+const char	SkyboxTex[6][256] = {"posz.jpg","posy.jpg","posx.jpg","negx.jpg","negy.jpg","negz.jpg"};
 
 class CMyObject;
 
