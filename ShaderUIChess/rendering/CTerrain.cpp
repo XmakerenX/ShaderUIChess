@@ -609,8 +609,8 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	OBJMATERIAL matrial;
 
-	matrial = d3d::YELLOW_MTRL;
-	m_boardFrameAttrib = assetManger.getAttributeID(NULL, &matrial, NULL);
+	matrial = d3d::WHITE_MTRL;
+	m_boardFrameAttrib = assetManger.getAttributeID("woodFrame.png", &matrial, NULL);
 
 	//---------------------------------------------------------
 	// Create a Square mesh for highlighting selected squares
