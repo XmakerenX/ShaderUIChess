@@ -258,7 +258,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//---------------------------------------------------------
 	for (int z = 0; z < 2; z++)
 	{
-		Tv = 0.0f;
+		Tu = 0.0f;
 		
 		framePos.x = boardFramePos.x;
 
@@ -301,7 +301,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//---------------------------------------------------------
 	for (int z = 2; z < numVertsZ + 2; z++)
 	{
-		Tv = 0.0f;
+		Tu = 0.0f;
 
 		framePos.x = boardFramePos.x;
 
@@ -336,12 +336,15 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	framePos = boardFramePos;
 
+	Tu = 0.0f;
+	Tv = 0.0f;
+
 	//---------------------------------------------------------
 	// upper part of the board frame vertices
 	//---------------------------------------------------------
 	for (int z = 0; z < 2; z++)
 	{
-		Tv = 0.0f;
+		Tu = 0.0f;
 
 		framePos.x = boardFramePos.x;
 
@@ -376,12 +379,15 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	framePos = boardFramePos;
 
+	Tu = 0.0f;
+	Tv = 0.0f;
+
 	//---------------------------------------------------------
 	// left part of the board frame vertices
 	//---------------------------------------------------------
 	for (int z = 2; z < numVertsZ; z++)
 	{
-		Tv = 0.0f;
+		Tu = 0.0f;
 
 		framePos.x = boardFramePos.x;
 
