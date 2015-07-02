@@ -14,6 +14,7 @@ public:
 	void			frameAdvanced  ();
 	float			getTimeElapsed ();
 	float			getCurrentTime ();
+	float			getLastTime	   ();
 	unsigned long	getFPS		   ();
 
 private:

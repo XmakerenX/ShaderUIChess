@@ -94,3 +94,11 @@ float CTimer::getCurrentTime()
 
 	return currTime * m_TimeScale;
 }
+
+//-----------------------------------------------------------------------------
+// Name : getLastTime
+//-----------------------------------------------------------------------------
+float CTimer::getLastTime()
+{
+	return m_lastTime * m_TimeScale;
+}

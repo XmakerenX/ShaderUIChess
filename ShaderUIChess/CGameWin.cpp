@@ -2205,10 +2205,19 @@ void CGameWin::ProcessInput(float timeDelta,float &angle,float &height)
 		direction |= CCamera::DIR_RIGHT;
 	}
 
-	if (keysBuffer[VK_ESCAPE] & 0xF0)
+	if ( (keysBuffer[VK_ESCAPE] & 0xF0) )
 	{
-		m_MainMenu.setVisible(!m_MainMenu.getVisible()); 
-		m_bReturnCamera = !m_MainMenu.getVisible();
+		static float curTime = 0;
+		static float prevTime = 0;
+
+		curTime = m_timer->getLastTime();
+
+		if (curTime - prevTime >= 0.25f)
+		{
+			prevTime = m_timer->getLastTime();
+			m_MainMenu.setVisible(!m_MainMenu.getVisible()); 
+			m_bReturnCamera = !m_MainMenu.getVisible();
+		}
 	}
 
 	m_pCameras[m_cameraIndex]->Move(direction, 2 * timeDelta);

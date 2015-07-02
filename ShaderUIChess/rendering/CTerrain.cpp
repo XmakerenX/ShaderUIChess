@@ -243,9 +243,11 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	pos = D3DXVECTOR3(minBounds.x, 0, minBounds.y);
 
 	D3DXVECTOR3 boardFramePos;
-	boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
+	//boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
+	boardFramePos.x = pos.x - m_stepX + ((float)2 / vecScale.x);
 	boardFramePos.y = pos.y;
-	boardFramePos.z = pos.z - m_stepZ - ((float)2 / vecScale.z);
+	//boardFramePos.z = pos.z - m_stepZ - ((float)2 / vecScale.z);
+	boardFramePos.z = pos.z - m_stepZ + ((float)2 / vecScale.z);
 
 	D3DXVECTOR3 framePos;
 	framePos = boardFramePos;
@@ -276,13 +278,15 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 			// Increment x across
 			if (x == 0 || x == numVertsX)
-				framePos.x += ((float)2 /  vecScale.x);
+				//framePos.x += ((float)2 /  vecScale.x);
+				framePos.x -= ((float)2 / vecScale.x);
 
 			framePos.x += m_stepX;
 			VertexCount++;
 		}
 
-		framePos.z += m_stepZ + ((float)2 / vecScale.z);
+		//framePos.z += m_stepZ + ((float)2 / vecScale.z);
+		framePos.z += m_stepZ - ((float)2 / vecScale.z);
 
 		Tv++;
 	}
@@ -301,7 +305,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//---------------------------------------------------------
 	for (int z = 2; z < numVertsZ + 2; z++)
 	{
-		Tu = 0.0f;
+		Tu = 9.0f;
 
 		framePos.x = boardFramePos.x;
 
@@ -318,26 +322,29 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			Tu++;
 
 			// Increment x across
-			framePos.x += m_stepX + ((float)2 / vecScale.x);
+			//framePos.x += m_stepX + ((float)2 / vecScale.x);
+			framePos.x += m_stepX - ((float)2 / vecScale.x);
 			VertexCount++;
 		}
 
 		if ( z == 9)
-			framePos.z += ((float)2 / vecScale.z);
+			//framePos.z += ((float)2 / vecScale.z);
+			framePos.z -= ((float)2 / vecScale.z);
 
 		framePos.z += m_stepZ;
 
 		Tv++;
 	}
 
-	boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
+	//boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
+	boardFramePos.x = pos.x - m_stepX + ((float)2 / vecScale.x);
 	boardFramePos.y = pos.y;
 	boardFramePos.z = pos.z + m_stepZ * numCellsHigh;
 
 	framePos = boardFramePos;
 
 	Tu = 0.0f;
-	Tv = 0.0f;
+	Tv = 7.0f;
 
 	//---------------------------------------------------------
 	// upper part of the board frame vertices
@@ -362,18 +369,21 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 			// Increment x across
 			if (x == 0)
-				framePos.x += ((float)2 / vecScale.x);
+				//framePos.x += ((float)2 / vecScale.x);
+				framePos.x -= ((float)2 / vecScale.x );
 
 			framePos.x += m_stepX;
 			VertexCount++;
 		}
 
-		framePos.z += m_stepZ + ((float)2 / vecScale.z);
+		//framePos.z += m_stepZ + ((float)2 / vecScale.z);
+		framePos.z += m_stepZ - ((float)2 / vecScale.z);
 
 		Tv++;
 	}
 
-	boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
+	//boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
+	boardFramePos.x = pos.x - m_stepX + ((float)2 / vecScale.x);
 	boardFramePos.y = pos.y;
 	boardFramePos.z = pos.z + m_stepZ;
 
@@ -404,7 +414,8 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			Tu++;
 
 			// Increment x across
-			framePos.x += m_stepX + ((float)2 / vecScale.x);
+			//framePos.x += m_stepX + ((float)2 / vecScale.x);
+			framePos.x += m_stepX - ((float)2 / vecScale.x);
 			VertexCount++;
 		}
 
