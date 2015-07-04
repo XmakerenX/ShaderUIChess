@@ -8,7 +8,7 @@
 #include <string>
 #include "d3d.h"
 //const vars
-const char	Textures[2][256] = {"black.jpg","white.jpg"};
+const char	Textures[2][256] = {"black.png","white.jpg"};
 
 struct TERRAIN_PREFS //groups together all the preferences of the terrian
 {
@@ -39,6 +39,7 @@ protected:
 	CMyMesh	*			m_squareMesh;
 	CMyMesh *			m_boardFrameMesh;
 	ULONG				m_boardFrameAttrib;
+	ULONG				m_boardFrameAtribs[18];
 	std::vector<ULONG>	m_attribSquares[2];
 	ULONG				m_selectSquare;
 	ULONG				m_fraemSqaure;

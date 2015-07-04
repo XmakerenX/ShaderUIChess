@@ -27,6 +27,8 @@ CTerrain::CTerrain(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger,CMyMesh
 	m_boardFrameMesh->SetDataFormat(VERTEX_FVF, sizeof(USHORT) );
 
 	m_boardFrameAttrib = -1;
+	for (UINT i = 0; i < 18; i++)
+		m_boardFrameAtribs[i] = -1;
 
 	createTerrain(pDevice, assetManger,TerrianPref.minBounds,TerrianPref.maxBounds,TerrianPref.numCellsWide,TerrianPref.numCellsHigh,TerrianPref.objPrefs.scale);
 }
@@ -258,6 +260,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//---------------------------------------------------------
 	// lower part of the board frame vertices
 	//---------------------------------------------------------
+	Tv = 1.0f;
 	for (int z = 0; z < 2; z++)
 	{
 		Tu = 0.0f;
@@ -288,7 +291,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		//framePos.z += m_stepZ + ((float)2 / vecScale.z);
 		framePos.z += m_stepZ - ((float)2 / vecScale.z);
 
-		Tv++;
+		Tv--;
 	}
 
 	Tu = 0.0f;
@@ -303,14 +306,20 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//---------------------------------------------------------
 	// right part of the board frame vertices
 	//---------------------------------------------------------
+	Tv = 1.0f;
 	for (int z = 2; z < numVertsZ + 2; z++)
 	{
 		Tu = 9.0f;
 
 		framePos.x = boardFramePos.x;
 
+		if ( z == (numVertsZ + 1) )
+			//Tv = -6.0f;
+			Tv += 2;
+
 		for (int x = 0; x < 2; x++)
 		{
+
 			// Create the verts
 			pVertices[VertexCount].x = framePos.x /** vecScale.x*/;
 			pVertices[VertexCount].y = framePos.y/* * vecScale.y*/;
@@ -318,6 +327,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
+
 
 			Tu++;
 
@@ -333,7 +343,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 		framePos.z += m_stepZ;
 
-		Tv++;
+		Tv--;
 	}
 
 	//boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
@@ -344,19 +354,19 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	framePos = boardFramePos;
 
 	Tu = 0.0f;
-	Tv = 7.0f;
+	Tv = -6.0f;
 
 	//---------------------------------------------------------
 	// upper part of the board frame vertices
 	//---------------------------------------------------------
 	for (int z = 0; z < 2; z++)
 	{
-		Tu = 0.0f;
-
+		Tu = 16.0f;
 		framePos.x = boardFramePos.x;
 
 		for (int x = 0; x < numVertsX; x++)
 		{
+
 			// Create the verts
 			pVertices[VertexCount].x = framePos.x /** vecScale.x*/;
 			pVertices[VertexCount].y = framePos.y /** vecScale.y*/;
@@ -365,7 +375,10 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
 
-			Tu++;
+			if (x == 0)
+				Tu++;
+			else
+				Tu--;
 
 			// Increment x across
 			if (x == 0)
@@ -385,17 +398,17 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//boardFramePos.x = pos.x - m_stepX - ((float)2 / vecScale.x);
 	boardFramePos.x = pos.x - m_stepX + ((float)2 / vecScale.x);
 	boardFramePos.y = pos.y;
-	boardFramePos.z = pos.z + m_stepZ;
+	boardFramePos.z = pos.z /*+ m_stepZ*/;
 
 	framePos = boardFramePos;
 
 	Tu = 0.0f;
-	Tv = 0.0f;
+	Tv = 1.0f;
 
 	//---------------------------------------------------------
 	// left part of the board frame vertices
 	//---------------------------------------------------------
-	for (int z = 2; z < numVertsZ; z++)
+	for (int z = 0; z < numVertsZ + 1; z++)
 	{
 		Tu = 0.0f;
 
@@ -411,7 +424,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
 
-			Tu++;
+			Tu--;
 
 			// Increment x across
 			//framePos.x += m_stepX + ((float)2 / vecScale.x);
@@ -430,9 +443,11 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	// lower part of the board frame indexes
 	//---------------------------------------------------------
 	pIndices = new USHORT[6];
+
+	ULONG attribID = 0;
+
 	for (UINT x = 0; x < numCellsWide + 2; x++)
 	{
-		ULONG attribID;
 		// first triangle
 		pIndices[count++] = vIndex;
 		pIndices[count++] = vIndex+numVertsX + 2;
@@ -443,9 +458,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		pIndices[count++] = vIndex+numVertsX + 2 + 1;
 		pIndices[count++] = vIndex+1;
 
-		attribID = 0;
+		//attribID = 0;
 
-		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID) < 0)
+		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID++) < 0)
 			return E_OUTOFMEMORY;
 
 		delete []pIndices;
@@ -462,7 +477,6 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	//---------------------------------------------------------
 	for (UINT x = 0; x < numCellsWide + 1; x++)
 	{
-		ULONG attribID;
 		// first triangle
 		pIndices[count++] = vIndex;
 		pIndices[count++] = vIndex + 2;
@@ -473,9 +487,10 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		pIndices[count++] = vIndex+ 2 + 1;
 		pIndices[count++] = vIndex+1;
 
-		attribID = 0;
+		if (x == numCellsWide)
+			attribID = 9;
 
-		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID) < 0)
+		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID++) < 0)
 			return E_OUTOFMEMORY;
 
 		delete []pIndices;
@@ -491,6 +506,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	vIndex += 2;
 
 	SHORT upperStartingIndex = vIndex;
+	attribID = 0;
 
 	//---------------------------------------------------------
 	// upper part of the board frame indexes
@@ -498,7 +514,6 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	pIndices = new USHORT[6];
 	for (UINT x = 0; x < numCellsWide; x++)
 	{
-		ULONG attribID;
 		// first triangle
 		pIndices[count++] = vIndex;
 		pIndices[count++] = vIndex+numVertsX;
@@ -509,9 +524,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		pIndices[count++] = vIndex+numVertsX + 1;
 		pIndices[count++] = vIndex+1;
 
-		attribID = 0;
+		//attribID = 0;
 
-		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID) < 0)
+		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID++) < 0)
 			return E_OUTOFMEMORY;
 
 		delete []pIndices;
@@ -535,7 +550,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	pIndices[count++] = rightEndingIndex + 2;
 	pIndices[count++] = rightEndingIndex;
 
-	if ( m_boardFrameMesh->AddFace(2,pIndices,0) < 0)
+	if ( m_boardFrameMesh->AddFace(2,pIndices,attribID++) < 0)
 		return E_OUTOFMEMORY;
 
 	delete []pIndices;
@@ -545,33 +560,51 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	vIndex += numVertsX + 1;
 
+	attribID = 11;
 	//---------------------------------------------------------
 	// adding the connecting square between lower and left
 	//---------------------------------------------------------
 	// first triangle
-	pIndices[count++] = 0 +numVertsX + 2 ;
-	pIndices[count++] = vIndex;
-	pIndices[count++] = vIndex + 1;
+	 	pIndices[count++] = vIndex;
+	 	pIndices[count++] = vIndex + 2;
+	 	pIndices[count++] = vIndex + 2 + 1;
+	 
+	 // second triangle
+		pIndices[count++] = vIndex;
+		pIndices[count++] = vIndex+ 2 + 1;
+		pIndices[count++] = vIndex+1;
+	 
+	 	if ( m_boardFrameMesh->AddFace(2,pIndices,10) < 0)
+	 		return E_OUTOFMEMORY;
+	 
+	 	delete []pIndices;
+	 	count = 0;
+	 	pIndices = NULL;
+	 	pIndices = new USHORT[6];
 
-	// second triangle
-	pIndices[count++] = 0 +numVertsX + 2;
-	pIndices[count++] = vIndex + 1;
-	pIndices[count++] = 0 +numVertsX + 2 + 1;
-
-	if ( m_boardFrameMesh->AddFace(2,pIndices,0) < 0)
-		return E_OUTOFMEMORY;
-
-	delete []pIndices;
-	count = 0;
-	pIndices = NULL;
-	pIndices = new USHORT[6];
+		vIndex +=2;
+// 	pIndices[count++] = 0 +numVertsX + 2 ;
+// 	pIndices[count++] = vIndex;
+// 	pIndices[count++] = vIndex + 1;
+// 
+// 	// second triangle
+// 	pIndices[count++] = 0 +numVertsX + 2;
+// 	pIndices[count++] = vIndex + 1;
+// 	pIndices[count++] = 0 +numVertsX + 2 + 1;
+// 
+// 	if ( m_boardFrameMesh->AddFace(2,pIndices,10) < 0)
+// 		return E_OUTOFMEMORY;
+// 
+// 	delete []pIndices;
+// 	count = 0;
+// 	pIndices = NULL;
+// 	pIndices = new USHORT[6];
 
 	//---------------------------------------------------------
 	// right part of the board frame indexes
 	//---------------------------------------------------------
-	for (UINT x = 0; x < numCellsWide - 2; x++)
+	for (UINT x = 0; x < numCellsWide - 1; x++)
 	{
-		ULONG attribID;
 		// first triangle
 		pIndices[count++] = vIndex;
 		pIndices[count++] = vIndex + 2;
@@ -582,9 +615,9 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 		pIndices[count++] = vIndex+ 2 + 1;
 		pIndices[count++] = vIndex+1;
 
-		attribID = 0;
+		//attribID = 0;
 
-		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID) < 0)
+		if ( m_boardFrameMesh->AddFace(2,pIndices,attribID++) < 0)
 			return E_OUTOFMEMORY;
 
 		delete []pIndices;
@@ -599,20 +632,20 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	// adding the connecting square between left and upper
 	//---------------------------------------------------------
 	// first triangle
-	pIndices[count++] = vIndex;
-	pIndices[count++] = upperStartingIndex;
-	pIndices[count++] = upperStartingIndex + 1;
-
-	// second triangle
-	pIndices[count++] = vIndex;
-	pIndices[count++] = upperStartingIndex + 1;
-	pIndices[count++] = vIndex + 1;
-
-	if ( m_boardFrameMesh->AddFace(2,pIndices,0) < 0)
-		return E_OUTOFMEMORY;
-
-	delete []pIndices;
-	count = 0;
+// 	pIndices[count++] = vIndex;
+// 	pIndices[count++] = upperStartingIndex;
+// 	pIndices[count++] = upperStartingIndex + 1;
+// 
+// 	// second triangle
+// 	pIndices[count++] = vIndex;
+// 	pIndices[count++] = upperStartingIndex + 1;
+// 	pIndices[count++] = vIndex + 1;
+// 
+// 	if ( m_boardFrameMesh->AddFace(2,pIndices,attribID++) < 0)
+// 		return E_OUTOFMEMORY;
+// 
+// 	delete []pIndices;
+// 	count = 0;
 	pIndices = NULL;
 
 	//---------------------------------------------------------
@@ -627,7 +660,28 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	OBJMATERIAL matrial;
 
 	matrial = d3d::WHITE_MTRL;
-	m_boardFrameAttrib = assetManger.getAttributeID("woodFrame.png", &matrial, NULL);
+	//m_boardFrameAttrib = assetManger.getAttributeID("woodFrame.png", &matrial, NULL);
+	m_boardFrameAtribs[0] =  assetManger.getAttributeID("frameLowerLeft.png",&matrial, nullptr);
+	m_boardFrameAtribs[1] =  assetManger.getAttributeID("frameH.png",&matrial, nullptr);
+	m_boardFrameAtribs[2] =  assetManger.getAttributeID("frameG.png",&matrial, nullptr);
+	m_boardFrameAtribs[3] =  assetManger.getAttributeID("frameF.png",&matrial, nullptr);
+	m_boardFrameAtribs[4] =  assetManger.getAttributeID("frameE.png",&matrial, nullptr);
+	m_boardFrameAtribs[5] =  assetManger.getAttributeID("frameD.png",&matrial, nullptr);
+	m_boardFrameAtribs[6] =	 assetManger.getAttributeID("frameC.png",&matrial, nullptr);
+	m_boardFrameAtribs[7] =	 assetManger.getAttributeID("frameB.png",&matrial, nullptr);
+	m_boardFrameAtribs[8] =	 assetManger.getAttributeID("frameA.png",&matrial, nullptr);
+	m_boardFrameAtribs[9] =	 assetManger.getAttributeID("frameLowerRight.png",&matrial, nullptr);
+	m_boardFrameAtribs[10] = assetManger.getAttributeID("frame8.png",&matrial, nullptr);
+	m_boardFrameAtribs[11] = assetManger.getAttributeID("frame7.png",&matrial, nullptr);
+	m_boardFrameAtribs[12] = assetManger.getAttributeID("frame6.png",&matrial, nullptr);
+	m_boardFrameAtribs[13] = assetManger.getAttributeID("frame5.png",&matrial, nullptr);
+	m_boardFrameAtribs[14] = assetManger.getAttributeID("frame4.png",&matrial, nullptr);
+	m_boardFrameAtribs[15] = assetManger.getAttributeID("frame3.png",&matrial, nullptr);
+	m_boardFrameAtribs[16] = assetManger.getAttributeID("frame2.png",&matrial, nullptr);
+	m_boardFrameAtribs[17] = assetManger.getAttributeID("frame1.png",&matrial, nullptr);
+
+
+	//m_boardFrameAttrib = assetManger.getAttributeID("white.jpg", &matrial, NULL);
 
 	//---------------------------------------------------------
 	// Create a Square mesh for highlighting selected squares
@@ -767,21 +821,39 @@ void CTerrain::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3DX
 
 	CMyObject::drawSubset(pd3dDevice, AttributeID, effect , numPass, ViewProj);
 
-	if (AttributeID == m_boardFrameAttrib)
+	for (UINT i = 0; i < 18; i++)
 	{
-		HRESULT hRet;
+		if (AttributeID == m_boardFrameAtribs[i])
+		{
+			HRESULT hRet;
 
-		hRet = effect->SetMatrix(m_matWorldViewProjH, &(getWorldMatrix() * ViewProj) );
-		hRet = effect->SetMatrix(m_matWorldH, &getWorldMatrix());
+			hRet = effect->SetMatrix(m_matWorldViewProjH, &(getWorldMatrix() * ViewProj) );
+			hRet = effect->SetMatrix(m_matWorldH, &getWorldMatrix());
 
-		hRet = effect->BeginPass(numPass);
+			hRet = effect->BeginPass(numPass);
 
-		m_boardFrameMesh->DrawSubset(0);
-		//m_pMesh->DrawSubset(0);
+			m_boardFrameMesh->DrawSubset(i);
+			//m_pMesh->DrawSubset(0);
 
-		effect->EndPass();
-
+			effect->EndPass();
+		}
 	}
+
+// 	if (AttributeID == m_boardFrameAttrib)
+// 	{
+// 		HRESULT hRet;
+// 
+// 		hRet = effect->SetMatrix(m_matWorldViewProjH, &(getWorldMatrix() * ViewProj) );
+// 		hRet = effect->SetMatrix(m_matWorldH, &getWorldMatrix());
+// 
+// 		hRet = effect->BeginPass(numPass);
+// 
+// 		m_boardFrameMesh->DrawSubset(0);
+// 		//m_pMesh->DrawSubset(0);
+// 
+// 		effect->EndPass();
+// 
+// 	}
 
 	hr = pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 	pd3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCCOLOR);
