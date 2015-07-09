@@ -10,6 +10,7 @@ CTerrain::CTerrain(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger,CMyMesh
 	m_fraemSqaure = -1;
 
 	m_selectSquare = 1;
+	m_threatSquare = -1;
 	
 	std::vector<ULONG>& attackSquaresVec = m_attribSquares[ATTACK];
 	std::vector<ULONG>& moveSquaresVec = m_attribSquares[MOVE];
@@ -784,6 +785,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	matrial = d3d::RED_MTRL;
 	m_attribIDs[ATTACK] = assetManger.getAttributeID(NULL,&matrial,NULL);
+	m_attribIDs[THREAT] = assetManger.getAttributeID(nullptr, &matrial, nullptr);
 
 	matrial = d3d::WHITE_MTRL;
 	//matrial.Diffuse.w = 1.0;
@@ -915,6 +917,11 @@ void CTerrain::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3DX
 		pd3dDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
 		pd3dDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 		drawSquare(m_fraemSqaure, effect, numPass, ViewProj);
+	}
+
+	if (m_attribIDs[THREAT] == AttributeID && m_threatSquare != -1)
+	{
+		drawSquare(m_threatSquare, effect, numPass, ViewProj);
 	}
 
 	pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);

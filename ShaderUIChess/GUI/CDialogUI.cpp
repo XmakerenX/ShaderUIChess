@@ -552,7 +552,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	elementGFXvec.clear();
 	// sets what parts of the texture to use for the main element of the CheckBox
-	SetRect( &rcTexture, 0, 114, 16, 130 );
+	SetRect( &rcTexture, 0, 115, 17, 132 );
 	// add the main CheckBox element to the vector
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
@@ -575,13 +575,13 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	elementGFXvec.clear();
 
 	// sets what parts of the texture to use for the main element of the RadioButton
-	SetRect( &rcTexture, 1, 145, 17, 161 );
+	SetRect( &rcTexture, 1, 145, 17, 162 );
 	// add the main element of  RadioButton elements to the vector
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	// sets what parts of the texture to use for the mouse over element of the RadioButton
-	SetRect( &rcTexMouseOver, 61, 145, 76, 161 );
+	SetRect( &rcTexMouseOver, 61, 145, 77, 162 );
 	// add the mouse over element of  RadioButton elements to the vector
 	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
 	elementGFXvec.push_back(elementGFX);
@@ -856,7 +856,8 @@ HRESULT CDialogUI::OnRender(float fElapsedTime, D3DXVECTOR3 vPos, LPD3DXEFFECT e
 	pMySprite->setScale(fScaleX, fScaleY);
 	pMySprite->createQuad(pTexture, rcDialogBox, pos, m_dialogColor, BACKGROUND);
 	pMySprite->setScale(1.0f, 1.0f);
-	pMySprite->createQuad(NULL, m_rcCaptionBox, pos, D3DCOLOR_ARGB(200,255,0,0), TOP);
+	if (m_bCaption)
+		pMySprite->createQuad(NULL, m_rcCaptionBox, pos, D3DCOLOR_ARGB(200,255,0,0), TOP);
 
 	//sprite->Draw( texture, NULL, NULL, &vPos, d3d::WHITE);
 	//m_Controls[0]->Render(assetManger);
@@ -886,7 +887,8 @@ HRESULT CDialogUI::OnRender(float fElapsedTime, D3DXVECTOR3 vPos, LPD3DXEFFECT e
 	LPD3DXFONT pFont = assetManger.getFontPtr(0);
 	if (pFont)
 	{
-		pFont->DrawTextA(pTopSprite, m_captionText, -1, &m_rcCaptionBox, DT_LEFT, d3d::WHITE);
+		if (m_bCaption)
+			pFont->DrawTextA(pTopSprite, m_captionText, -1, &m_rcCaptionBox, DT_LEFT, d3d::WHITE);
 	}
 
 	//sprite->End();
@@ -1695,6 +1697,14 @@ void CDialogUI::setLocation(int x, int y)
 void CDialogUI::setVisible(bool bVisible)
 {
 	m_bVisible = bVisible;
+}
+
+//-----------------------------------------------------------------------------
+// Name : setCaption()
+//-----------------------------------------------------------------------------
+void CDialogUI::setCaption(bool bCaption)
+{
+	m_bCaption = bCaption;
 }
 
 //-----------------------------------------------------------------------------

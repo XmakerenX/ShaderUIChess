@@ -151,17 +151,18 @@ VS_OUTPUT VS(float4 posL : POSITION, float3 normalL : NORMAL, float2 texCord0 : 
 		
 	}
 
+	//float4 highlight = {1.0f, 1.0f, 1.0f, 1.0f};
 	float4 highlight = {1.0f, 1.0f, 1.0f, 1.0f};
 	if (bHighLight)
 	{
-		if (outputColor.r != 0)
-			outputColor.r = outputColor.r * 0.5 + highlight.r * 0.5;
+		//if (outputColor.r != 0)
+		//	outputColor.r = outputColor.r * 0.5 + highlight.r * 0.5;
 			
-		if (outputColor.g != 0)
-			outputColor.g  = outputColor.g * 0.5 + highlight.g * 0.5;
+		//if (outputColor.g != 0)
+		//	outputColor.g  = outputColor.g * 0.5 + highlight.g * 0.5;
 			
-		if (outputColor.b != 0)
-			outputColor.b = outputColor.b * 0.5 + highlight.b * 0.5;
+		//if (outputColor.b != 0)
+		//	outputColor.b = outputColor.b * 0.5 + highlight.b * 0.5;
 	}
 		
 	Out.color = outputColor;

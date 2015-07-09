@@ -19,7 +19,7 @@ COptionDialogUI::~COptionDialogUI(void)
 //-----------------------------------------------------------------------------
 void COptionDialogUI::CreateDialogUI()
 {
-	getComboBox(IDC_ADAPFORMATCOM)->setEnabled(false);
+	//getComboBox(IDC_ADAPFORMATCOM)->setEnabled(false);
 	getComboBox(IDC_RESOLUTIONCOM)->setEnabled(false);
 	getComboBox(IDC_REFRATECOM)->setEnabled(false);
 	getCheckBox(IDC_ASPECTCHECK)->setEnabled(false);
@@ -161,7 +161,7 @@ void COptionDialogUI::DeviceTypeSelChg(CComboBoxUI* pCombobox)
 //-----------------------------------------------------------------------------
 void COptionDialogUI::WindowedRadioClicked(CButtonUI* pRadio)
 {
-	getComboBox(IDC_ADAPFORMATCOM)->setEnabled(false);
+	//getComboBox(IDC_ADAPFORMATCOM)->setEnabled(false);
 	getComboBox(IDC_RESOLUTIONCOM)->setEnabled(false);
 	getComboBox(IDC_REFRATECOM)->setEnabled(false);
 	getCheckBox(IDC_ASPECTCHECK)->setEnabled(false);
@@ -174,7 +174,7 @@ void COptionDialogUI::WindowedRadioClicked(CButtonUI* pRadio)
 //-----------------------------------------------------------------------------
 void COptionDialogUI::FullscreenRadioClicked(CButtonUI* pRadio)
 {
-	getComboBox(IDC_ADAPFORMATCOM)->setEnabled(true);
+	//getComboBox(IDC_ADAPFORMATCOM)->setEnabled(true);
 	getComboBox(IDC_RESOLUTIONCOM)->setEnabled(true);
 	getComboBox(IDC_REFRATECOM)->setEnabled(true);
 	getCheckBox(IDC_ASPECTCHECK)->setEnabled(true);

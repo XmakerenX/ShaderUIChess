@@ -476,6 +476,7 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 			else
 				pressedSqaure.row = 0;
 			pressedSqaure.col = boardY - 1 - (squareNum / boardY); 
+			m_fraemSqaure = pressedSqaure.row + (7 - pressedSqaure.col) * m_numCellsWide;
 
 		}
 		else//if the pressed was not on the board than get the object position in the world and test if it is on the board
@@ -490,6 +491,8 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 		}
 		if (pressedSqaure.row == startSquare.row && pressedSqaure.col == startSquare.col)//the square was already selected
 			return;
+		else
+			m_fraemSqaure = pressedSqaure.row + (7 - pressedSqaure.col) * m_numCellsWide;
 
 		std::stringstream out,out2,out3,out4;
 
@@ -559,6 +562,54 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 		}
 	}
 
+}
+
+//-----------------------------------------------------------------------------
+// Name : setFrame ()
+//-----------------------------------------------------------------------------
+void board::setFrame(CMyObject * pickedObjected, ULONG pressedFace )
+{
+	BOARD_POINT pressedSqaure;
+
+	if (this == pickedObjected)				 //check if the press was on the board mesh itself
+	{
+		ULONG squareNum;
+		UINT  tempy;
+
+		if (pressedFace != 0)
+			squareNum   = pressedFace / 2; //finding the square number as every 2 faces make up a single square
+		else
+			squareNum = 0;
+
+		//retrieve the square coordinates from face number that was picked on the board mes
+		if (squareNum != 0)
+			pressedSqaure.row = squareNum - ( (squareNum / boardY) * boardY);
+		else
+			pressedSqaure.row = 0;
+		pressedSqaure.col = boardY - 1 - (squareNum / boardY); 
+		m_fraemSqaure = pressedSqaure.row + (7 - pressedSqaure.col) * m_numCellsWide;
+
+	}
+	else//if the pressed was not on the board than get the object position in the world and test if it is on the board
+	{	
+		//retrieve object position in the world
+		D3DMATRIX objWorldMat = pickedObjected->m_mtxWorld;
+		D3DXVECTOR3 objectPos = D3DXVECTOR3(objWorldMat._41,objWorldMat._42,objWorldMat._43);
+
+		//retrieve the square coordinates from the object position 
+		pressedSqaure.row = (objectPos.x - m_pos.x) / (m_stepX * m_meshScale.x); // ( object posX - board posX ) / (stepX * sclaeX) = row coordinate of the square 
+		pressedSqaure.col = ( ( m_pos.z - objectPos.z) / (m_stepZ * m_meshScale.z ) ) + (boardY - 1) + 0.5;
+	}
+
+	m_fraemSqaure = pressedSqaure.row + (7 - pressedSqaure.col) * m_numCellsWide;
+}
+
+//-----------------------------------------------------------------------------
+// Name : setThreatSquare ()
+//-----------------------------------------------------------------------------
+void board::setThreatSquare(BOARD_POINT kingPos)
+{
+	m_threatSquare = kingPos.row + (7 - kingPos.col) * m_numCellsWide;
 }
 
 /////////////////////////////////////////
@@ -644,10 +695,15 @@ bool board::isKingInThreat(int player,bool getAllAttackers)
 	if (threat > 0)
 	{
 		m_kingInThreat = true;
+		BOARD_POINT curKingSquare  = getPieceSquare(kings[kingSide]);
+		setThreatSquare(curKingSquare);
 		return true;
 	}
 	else
+	{
+		//m_threatSquare = -1;
 		return false;
+	}
 
 	return false;
 }
@@ -1458,13 +1514,28 @@ void board::endTurn()
 			m_gameActive= false;
 			m_curStatus = "CheckMate";
 		}
+		else
+		{
+			int kingSide;
+
+			if (currentPlayer == 1)
+				kingSide = BOTTOM;
+			else
+				kingSide = UPPER;
+
+			BOARD_POINT curKingSquare  = getPieceSquare(kings[kingSide]);
+			setThreatSquare(curKingSquare);
+		}
 	}
 	else
+	{
+		m_threatSquare = -1;
 		if (isDraw(currentPlayer))
 		{
 			m_gameActive = false;
 			m_curStatus = "Draw";
 		}
+	}
 
     startSquare.row = -1;
 	startSquare.col = -1;

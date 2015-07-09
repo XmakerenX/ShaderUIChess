@@ -134,6 +134,7 @@ public:
 
 	void		 OptionsControlClicked		(CButtonUI* pButton);
 	void		 OptionDialogOKClicked		(CButtonUI* pButton);
+	void		 OptionDialogCancelClicked	(CButtonUI* pButton);
 
 	int          BeginGame					( );
 	bool         ShutDown					( );

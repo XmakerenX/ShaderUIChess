@@ -35,7 +35,8 @@ CGameWin::CGameWin()
 
 	//TODO: add something that will check device caps of textureformat...
 	//m_fmtTexture = D3DFMT_DXT3;
-	m_assetManger.SetTextureFormat(D3DFMT_DXT3);
+	//m_assetManger.SetTextureFormat(D3DFMT_DXT3);
+	m_assetManger.SetTextureFormat(D3DFMT_A8R8G8B8);
 
 	// get a pointer to the game timer
 	m_timer = m_assetManger.getTimer();
@@ -363,6 +364,15 @@ void CGameWin::OptionDialogOKClicked(CButtonUI* pButton)
 	m_curD3dpp = deviceParams;
 	m_deviceReset = true;
 	resetDevice(m_curD3dpp);
+}
+
+//-----------------------------------------------------------------------------
+// Name : OptionDialogCancelClicked 
+//-----------------------------------------------------------------------------
+void CGameWin::OptionDialogCancelClicked(CButtonUI* pButton)
+{
+	m_OptionsDialog.setVisible(false);
+	m_MainMenu.setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -831,7 +841,9 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 	m_pCameras[0]->SetFOV( 45.0f );
 	m_pCameras[0]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
 	//m_pCameras[0]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
-	m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+	//m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+	m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+
 	m_pCameras[0]->SetLookAt( D3DXVECTOR3(9,0,24) );
 	m_pCameras[0]->UpdateRenderView( m_pD3DDevice );
 	m_pCameras[0]->UpdateRenderProj( m_pD3DDevice );
@@ -986,7 +998,8 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 			m_pCameras[m_cameraIndex]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f, m_pD3DDevice );
 			m_pCameras[m_cameraIndex]->SetFOV( 45.0f );
 			//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
-			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+			//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
 			m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 			m_pCameras[m_cameraIndex]->UpdateRenderView( m_pD3DDevice );
 			m_pCameras[m_cameraIndex]->UpdateRenderProj( m_pD3DDevice );
@@ -997,6 +1010,11 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 		//m_fpsFont->OnResetDevice();
 		m_outlineEffect->OnResetDevice();
 		m_highLightEffect->OnResetDevice();
+
+		m_OptionsDialog.setLocation( (m_nViewWidth / 2) - m_OptionsDialog.getWidth() / 2, m_nViewHeight / 2 - m_OptionsDialog.getHeight() / 2);
+		m_GuiSelectPawn.setLocation( (m_nViewWidth / 2) - m_GuiSelectPawn.getWidth() / 2, m_nViewHeight / 2 - m_GuiSelectPawn.getHeight() / 2);
+		m_MainMenu.setLocation( (m_nViewWidth / 2) - m_MainMenu.getWidth() / 2, m_nViewHeight / 2 - m_MainMenu.getHeight() / 2);
+
 
 		setRenderStates();
 	}
@@ -1049,7 +1067,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 
 	ProcessInput(timeDelta,angle,height);
 
-	if (m_MainMenu.getVisible())
+	if (m_MainMenu.getVisible() || m_OptionsDialog.getVisible())
 	{
 		m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 2 * timeDelta);
 		m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
@@ -1082,7 +1100,8 @@ void CGameWin::FrameAdvance(float timeDelta)
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
 			if (m_cameraDelta > 0)
 			{
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
 			}
@@ -1094,7 +1113,8 @@ void CGameWin::FrameAdvance(float timeDelta)
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
 			if (m_cameraDelta > 0)
 			{
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
 			}
@@ -1105,7 +1125,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 	addDebugText("cursor X:", cursor.x);
 	addDebugText("Y:", cursor.y);
 
-	if (m_bPicking)
+	//if (m_bPicking)
 		if (pick(cursor,faceCount))
 			m_debugString += " Hit!!";
 		else
@@ -1581,7 +1601,7 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 
 	CreateSkyBox();
 	createObject(m_skyboxMesh, &skyboxPrefs, skyboxAttrib, 6);
-
+	m_objects[33]->setObjectHidden(true);
 	return true;
 }
 
@@ -1593,16 +1613,25 @@ bool CGameWin::CreateGUIObjects()
 	//-----------------------------------------------------------------------------
 	// initialization of Options Dialog
 	//-----------------------------------------------------------------------------
-	m_OptionsDialog.init(100,100, 18, "Options", "dialog.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_OptionsDialog.init(100,100, 18, "Options", "woodBack.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
 	m_OptionsDialog.LoadDialogFromFile("settings.txt", m_timer);
 	m_OptionsDialog.CreateDialogUI();
+	m_OptionsDialog.setLocation( (m_nViewWidth / 2) - m_OptionsDialog.getWidth() / 2, m_nViewHeight / 2 - m_OptionsDialog.getHeight() / 2);
 	m_OptionsDialog.setVisible(false);
 
 	CButtonUI* pOptionsOKbutton = nullptr;
 	pOptionsOKbutton = m_OptionsDialog.getButton(IDC_OKBUTTON);
 	pOptionsOKbutton->connectToClick( boost::bind(&CGameWin::OptionDialogOKClicked, this, _1) );
 
-	m_GuiSelectPawn.init(500,100, 18, "Select Pawn", "dialog.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	CButtonUI* pOptionsCancelbutton = nullptr;
+	pOptionsOKbutton = m_OptionsDialog.getButton(IDC_CANCELBUTTON);
+	pOptionsOKbutton->connectToClick( boost::bind(&CGameWin::OptionDialogCancelClicked, this, _1) );
+
+
+	//-----------------------------------------------------------------------------
+	// initialization of GUI select pawn
+	//-----------------------------------------------------------------------------
+	m_GuiSelectPawn.init(500,100, 18, "Select Pawn", "woodBack.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
 	m_GuiSelectPawn.LoadDialogFromFile("pawns.txt", m_timer);
 	m_GuiSelectPawn.setVisible(false);
 	m_GuiSelectPawn.setLocation( (m_nViewWidth / 2) - m_GuiSelectPawn.getWidth() / 2, m_nViewHeight / 2 - m_GuiSelectPawn.getHeight() / 2);
@@ -1612,8 +1641,81 @@ bool CGameWin::CreateGUIObjects()
 	m_GuiSelectPawn.getButton(IDC_ROOK)->connectToClick( boost::bind(&CGameWin::PromoteUnitToRook, this, _1) );
 	m_GuiSelectPawn.getButton(IDC_QUEEN)->connectToClick( boost::bind(&CGameWin::PromoteUnitToQueen, this, _1) );
 
-	m_MainMenu.init(200,320, 18, "Main Menu", "dialog.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	UINT textureIndex = -1;
+	std::vector<ELEMENT_GFX>  elementGFXvec;
+	CONTROL_GFX	controlGFX;
+	ELEMENT_GFX elementGFX;
+	
+	RECT rcTexture, rcTexMouseOver;
+
+
+
+	if (!m_assetManger.getTexture("pawnsButtons.png", &textureIndex))
+		return false;
+
+	// sets what parts of the texture to use for the bishop button
+	SetRect(&rcTexture, 0, 0, 145, 59);
+	// add the main button element
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// add the mouse over button element
+	SetRect(&rcTexMouseOver, 0, 59, 145, 118);
+	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
+	elementGFXvec.push_back(elementGFX);
+
+	m_GuiSelectPawn.getButton(IDC_BISHOP)->setControlGFX(elementGFXvec);
+	elementGFXvec.clear();
+
+	// sets what parts of the texture to use for the knight button
+	SetRect(&rcTexture, 0, 118, 145, 177);
+	// add the main button element
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// add the mouse over button element
+	SetRect(&rcTexMouseOver, 0, 177, 145, 236);
+	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
+	elementGFXvec.push_back(elementGFX);
+
+	m_GuiSelectPawn.getButton(IDC_KNIGHT)->setControlGFX(elementGFXvec);
+	elementGFXvec.clear();
+
+	// sets what parts of the texture to use for the rook button
+	SetRect(&rcTexture, 145, 0, 290, 59);
+	// add the main button element
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// add the mouse over button element
+	SetRect(&rcTexMouseOver, 145, 59, 290, 118);
+	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
+	elementGFXvec.push_back(elementGFX);
+
+	m_GuiSelectPawn.getButton(IDC_ROOK)->setControlGFX(elementGFXvec);
+	elementGFXvec.clear();
+
+	// sets what parts of the texture to use for the queen button
+	SetRect(&rcTexture, 290, 0, 435, 59);
+	// add the main button element
+	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
+	elementGFXvec.push_back(elementGFX);
+
+	// add the mouse over button element
+	SetRect(&rcTexMouseOver, 290, 59, 435, 118);
+	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
+	elementGFXvec.push_back(elementGFX);
+
+	m_GuiSelectPawn.getButton(IDC_QUEEN)->setControlGFX(elementGFXvec);
+	elementGFXvec.clear();
+
+	//-----------------------------------------------------------------------------
+	// initialization of main menu
+	//-----------------------------------------------------------------------------
+	//m_MainMenu.init(200,320, 18, "Main Menu", "", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_MainMenu.init(200,320, 18, "Main Menu", "", D3DCOLOR_ARGB(0,255,255,255), m_hWnd, m_assetManger);
 	m_MainMenu.LoadDialogFromFile("MainMenu.txt", m_timer);
+	m_MainMenu.setCaption(false);
 	m_MainMenu.setLocation( (m_nViewWidth / 2) - m_MainMenu.getWidth() / 2, m_nViewHeight / 2 - m_MainMenu.getHeight() / 2);
 
 	WIN32_FIND_DATA FindFileData;
@@ -2461,9 +2563,16 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
  	}
 	if (activeMeshIndex > -1)
 	{
- 		m_gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
- 		if (m_gameBoard->isUnitPromotion())
- 			m_GuiSelectPawn.setVisible(true);
+		if (!m_MainMenu.getVisible() && !m_OptionsDialog.getVisible())
+		{
+			m_gameBoard->setFrame(m_objects[activeMeshIndex], activeFaceCount);
+			if (m_bPicking)
+			{
+				m_gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
+				if (m_gameBoard->isUnitPromotion())
+					m_GuiSelectPawn.setVisible(true);
+			}
+		}
 	}
 	return S_OK;
 }
@@ -2580,7 +2689,7 @@ void CGameWin::OptionsClicked(CButtonUI* pButton)
 {
 	m_OptionsDialog.setVisible(true);
 	m_MainMenu.setVisible(false);
-	m_bReturnCamera = true;
+	//m_bReturnCamera = true;
 }
 
 //-----------------------------------------------------------------------------
@@ -2875,7 +2984,9 @@ bool CGameWin::addLight(LIGHT_PREFS& light, ID3DXEffect * effect)
 void CGameWin::CreateLights(ID3DXEffect * effect)
 {
 	LIGHT_PREFS light;
- 	light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0, -0.0, 0.25f, 0.0), d3d::WHITE );
+ 	//light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0, -0.0, 0.25f, 0.0), d3d::WHITE );
+	//light = d3d::InitDirectionalLight(D3DXVECTOR4(0.5, 0.0, 0.5f, 0.0), d3d::WHITE );
+	light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0f, 0.2f, 0.2f, 0.0), d3d::WHITE );
  
  	addLight(light,effect);
 }

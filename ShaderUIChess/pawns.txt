@@ -12,7 +12,7 @@ Gendialog| Dialog Caption Text
 50| Control Height
 1| is Control Visible
 1| is Control Enabled
-Knight| Control Text
+| Control Text
 1 1 1 1| Control Text Color
 0| Button HotKey
 /////////////////////////////////////////////////////////////////////////////
@@ -24,7 +24,7 @@ Knight| Control Text
 50| Control Height
 1| is Control Visible
 1| is Control Enabled
-Bishop| Control Text
+| Control Text
 1 1 1 1| Control Text Color
 0| Button HotKey
 /////////////////////////////////////////////////////////////////////////////
@@ -36,7 +36,7 @@ Bishop| Control Text
 50| Control Height
 1| is Control Visible
 1| is Control Enabled
-Rook| Control Text
+| Control Text
 1 1 1 1| Control Text Color
 0| Button HotKey
 /////////////////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ Rook| Control Text
 50| Control Height
 1| is Control Visible
 1| is Control Enabled
-Queen| Control Text
+| Control Text
 1 1 1 1| Control Text Color
 0| Button HotKey
 /////////////////////////////////////////////////////////////////////////////

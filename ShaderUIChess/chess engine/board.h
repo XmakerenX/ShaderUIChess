@@ -75,7 +75,9 @@ public:
 	// Functions that control the pawn movement logic
 	//-------------------------------------------------------------------------
 	void processPress(CMyObject * pickedObjected, ULONG pressedFace );
-	bool PromoteUnit(PIECES type);
+	void setFrame	 (CMyObject * pickedObjected, ULONG pressedFace );
+	void setThreatSquare(BOARD_POINT kingPos);
+	bool PromoteUnit (PIECES type);
 	//BOOL validatePress(POINT pressLoc,int currentPlayer,HWND hwnd);
 	//void movePawn(POINT newLoc);
 	bool validateMove(BOARD_POINT startLoc,BOARD_POINT newLoc);

@@ -3,7 +3,13 @@ make main menu.		  -- Done :) just need better button graphic
 add options menu to main menu. -- Done :)
 make starting screen "animation". -- spinning around board need to figure what to do when it stops... -- works !
 fix the options menu to sussesfully change form fullscreen to windowed mode. -- UI and pick now work , works!!
+
 change the pieces meshs to the new ones.  -- changed sussessfully but still needs textures
-make the board look better , add wooden plate around it.
-make new UI textures. -- need to put it a power of 2 image to load. -- now in a power of 2 image 
-upgrade scene lighting to make everything look better.... 
+make the board look better , add wooden plate around it. --- done just need to tweak the frame a bit ... the numbers bit
+make new UI textures. -- need to put it a power of 2 image to load. -- now in a power of 2 image, UI texutres are still a bit meh.....
+upgrade scene lighting to make everything look better....  , still looks meh maybe tweaking the matrials and amient colors will help
+add nice background to options menu -- added and looks awesome
+put pawns symobs instead of text in the promotion menu -- added still need some slight tweaks and inscrease in size
+put good textures for the skybox
+add indicators when the king is in thereat for the end game -- done
+put something to tell the player the game is over!! or it is a draw!!!!!!!!!!!!!!!!!

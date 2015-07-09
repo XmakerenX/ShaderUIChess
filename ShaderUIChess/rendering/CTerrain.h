@@ -23,7 +23,7 @@ struct TERRAIN_PREFS //groups together all the preferences of the terrian
 class CTerrain : public CMyObject
 {
 public:
-	enum ATTRIBSQUARE{ATTACK,MOVE,SELECT,FRAME};
+	enum ATTRIBSQUARE{ATTACK,MOVE,SELECT,FRAME,THREAT};
 
 	CTerrain(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger,CMyMesh *pTerrainMesh,TERRAIN_PREFS& TerrianPref);
 	virtual ~CTerrain(void);
@@ -43,12 +43,13 @@ protected:
 	std::vector<ULONG>	m_attribSquares[2];
 	ULONG				m_selectSquare;
 	ULONG				m_fraemSqaure;
+	ULONG				m_threatSquare;
 
 	float				m_stepX;
 	float				m_stepZ;
 	D3DXVECTOR3		    m_meshScale; //stores the scale vector that was used during the creation of the board mesh
 
-	ULONG				m_attribIDs[4];
+	ULONG				m_attribIDs[5];
 
 	UINT				m_numCellsWide;
 	UINT				m_numCellsHigh;
