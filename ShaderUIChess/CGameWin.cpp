@@ -22,6 +22,9 @@ CGameWin::CGameWin()
 	m_windowed = true;
 	m_bReturnCamera = false;
 	m_bMoveCamera = false;
+	m_flipBoard = false;
+	m_flipMove = false;
+	m_flipDir = 0;
 
 	//clearing handles to win32 and directx objects
 	m_hWnd          = NULL;
@@ -84,6 +87,7 @@ CGameWin::CGameWin()
 
 	m_lightTechHnadle = NULL;
 	m_lightTexTechHandle = NULL;
+	m_texOnlyTechHandle = NULL;
 
 	m_UITexture = NULL;
 	m_bUIHighLight = NULL;
@@ -132,6 +136,10 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (m_GuiSelectPawn.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
 		return 0;
 
+	if (m_gameoverMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
+		return 0;
+
+
 // 	if (m_EditDialog.MsgProc(hWnd,message,wParam,lParam, m_timer) )
 // 		return 0;
 
@@ -151,7 +159,7 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_SIZE:
 		{
-			HRESULT hr;
+			//HRESULT hr;
 			if (m_pD3DDevice)
 			{
 
@@ -574,7 +582,7 @@ bool CGameWin::CreateDisplayWindow(HINSTANCE hInstance)
 // 		ReleaseDC(NULL, hDc);
 // 	}
 
-	m_hWnd = ::CreateWindowEx(WS_EX_CLIENTEDGE, "Direct3D9App","Direct3D9App", WS_OVERLAPPEDWINDOW|WS_VISIBLE , 0, 0, Width + 16 + 4, Height + 38 + 4, NULL, NULL, hInstance,(void*)this);
+	m_hWnd = ::CreateWindowEx(WS_EX_CLIENTEDGE, "Direct3D9App","3D Chess", WS_OVERLAPPEDWINDOW|WS_VISIBLE , 0, 0, Width + 16 + 4, Height + 38 + 4, NULL, NULL, hInstance,(void*)this);
 
 	if( !m_hWnd )
 	{
@@ -775,7 +783,7 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 	D3DPRESENT_PARAMETERS d3dpp;
 	d3dpp.BackBufferWidth            = Width;
 	d3dpp.BackBufferHeight           = Height;
-	d3dpp.BackBufferFormat           = D3DFMT_A8R8G8B8;
+	d3dpp.BackBufferFormat           = D3DFMT_X8R8G8B8;
 	d3dpp.BackBufferCount            = 1;
 	d3dpp.MultiSampleType            = D3DMULTISAMPLE_NONE;
 	d3dpp.MultiSampleQuality         = 0;
@@ -864,7 +872,7 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 
 	//Setting Text Font for debug text
 	UINT temp;
-	m_fpsFont = m_assetManger.getFont(-12, 0 ,FW_BOLD, FALSE, temp);
+	m_fpsFont = m_assetManger.getFont("times new roman", -12, 0 ,FW_BOLD, FALSE, temp);
 
 // 	if( FAILED( hr = D3DXCreateFont( m_pD3DDevice, -12, 0, FW_BOLD, 1, FALSE, DEFAULT_CHARSET,
 // 		OUT_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE,
@@ -914,7 +922,7 @@ void CGameWin::EnumMultiSample(UINT adapter, D3DDEVTYPE deviceType, D3DFORMAT ba
 	HRESULT hr;
 
 	DWORD quality;
-	D3DMULTISAMPLE_TYPE multisample;
+	//D3DMULTISAMPLE_TYPE multisample;
 
 	hr =  m_pD3D->CheckDeviceMultiSampleType( adapter, deviceType, backBufferFormat, windowed, D3DMULTISAMPLE_2_SAMPLES, &quality );
 	if (SUCCEEDED(hr))
@@ -1120,6 +1128,77 @@ void CGameWin::FrameAdvance(float timeDelta)
 			}
 		}
 	}
+
+	if (m_flipBoard)
+	{
+		if (m_flipDir == -1)
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 2 * timeDelta);
+		else
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_LEFT, 2 * timeDelta);
+
+		m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
+		m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
+
+		if (m_cameraDelta > 0)
+		{
+			if (m_flipDir == -1)
+				m_returnDir = true;
+			else
+				m_returnDir = false;
+
+			m_flipMove = true;
+			m_flipBoard = false;
+		}
+		else
+		{
+			if (m_flipDir == -1)
+				m_returnDir = true;
+			else
+				m_returnDir = false;
+
+			m_flipMove = true;
+			m_flipBoard = false;
+		}
+	}
+
+	if (m_flipMove)
+	{
+		if (!m_returnDir)
+		{
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 50 * timeDelta);
+			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
+
+			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
+			if (m_cameraDelta > 0)
+			{
+				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+				if (m_flipDir == -1)
+					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,78.0f));
+				else
+					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
+				m_flipMove = false;
+			}
+		}
+		else
+		{
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 50 * timeDelta);
+			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
+
+			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
+			if (m_cameraDelta < 0)
+			{
+				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
+				if (m_flipDir == -1)
+					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,78.0f));
+				else
+					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+
+				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
+				m_flipMove = false;
+			}
+		}
+	}
 	
 
 	addDebugText("cursor X:", cursor.x);
@@ -1199,9 +1278,32 @@ void CGameWin::FrameAdvance(float timeDelta)
 						else
 							m_outlineEffect->SetBool(m_bHighLightH, FALSE);
 
-						m_objects[objI]->drawSubset(m_pD3DDevice, atribNum, m_outlineEffect, numPass, ViewProj);
+						if (objI != 33)
+							m_objects[objI]->drawSubset(m_pD3DDevice, atribNum, m_outlineEffect, numPass, ViewProj);
 					}
 				}
+				m_outlineEffect->End();
+			}
+
+			for (UINT atribNum = 0; atribNum < m_assetManger.getAttribCount(); atribNum++)
+			{
+				setAttribute(atribNum);
+				m_outlineEffect->SetTechnique(m_texOnlyTechHandle);
+				m_outlineEffect->SetBool(m_bHighLightH, FALSE);
+
+				m_outlineEffect->Begin(&numPasses, 0);
+
+				for (UINT numPass = 0; numPass < numPasses; numPass++ )
+				{
+					D3DXMATRIX WorldViewProj;
+					D3DXMATRIX ViewProj;
+
+					WorldViewProj = m_objects[33]->getWorldMatrix() * m_pCameras[0]->GetViewMatrix() * m_pCameras[0]->GetProjMatrix();
+					ViewProj = m_pCameras[0]->GetViewMatrix() * m_pCameras[0]->GetProjMatrix();
+
+					m_objects[33]->drawSubset(m_pD3DDevice, atribNum, m_outlineEffect, numPass, ViewProj);
+				}
+
 				m_outlineEffect->End();
 			}
 		}break;
@@ -1257,6 +1359,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 	m_OptionsDialog.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 	m_GuiSelectPawn.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 	m_MainMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
+	m_gameoverMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 
  	CMySprite* pMySprite = m_assetManger.getMySprite();
  	pMySprite->render(m_highLightEffect);
@@ -1438,7 +1541,7 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 //-----------------------------------------------------------------------------
  bool CGameWin::BuildObjects()
 {
-	HRESULT hr;
+	//HRESULT hr;
 
 	ULONG			  AttribID;
 
@@ -1477,7 +1580,8 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	matrial.Specular.w = 0;
 
 	//m_attribIDs[FRAME] = assetManger.getAttributeID("frame.png",&matrial,NULL);
-	m_assetManger.getAttributeID("bla.png",&matrial,NULL);
+	m_assetManger.getAttributeID("data/textures/board/bla.png",&matrial,NULL);
+
 	//-----------------------------------------------------------------------------
 	// End of load objects attributes
 	//-----------------------------------------------------------------------------
@@ -1487,22 +1591,22 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	m_assetManger.AllocMesh(7);		//allocating space for 6 pieces meshes and 1 for the board mesh 
 
 	//creating chess pieces mesh
-	for (int i = 0; i < 6; i++)
-	{
-		//create an empty mesh in the data pool
-		m_assetManger.AddMesh(piecesMeshesPath[i]);
-		//gives the pointer to that new mesh we just created
-		piecesMesh[i] =  m_assetManger.getLastLoadedMesh();
-	}
+// 	for (int i = 0; i < 6; i++)
+// 	{
+// 		//create an empty mesh in the data pool
+// 		m_assetManger.AddMesh(piecesMeshesPath[i]);
+// 		//gives the pointer to that new mesh we just created
+// 		piecesMesh[i] =  m_assetManger.getLastLoadedMesh();
+// 	}
 
 	std::vector<CMyMesh*> lbxMeshes;
 
-	LoadFbxFile("pawn.fbx", lbxMeshes);
-	LoadFbxFile("knight.fbx", lbxMeshes);
-	LoadFbxFile("bishop.fbx", lbxMeshes);
-	LoadFbxFile("rook.fbx", lbxMeshes);
-	LoadFbxFile("queen.fbx", lbxMeshes);
-	LoadFbxFile("king.fbx", lbxMeshes);
+	LoadFbxFile("data/models/pawn.fbx", lbxMeshes);
+	LoadFbxFile("data/models/knight.fbx", lbxMeshes);
+	LoadFbxFile("data/models/bishop.fbx", lbxMeshes);
+	LoadFbxFile("data/models/rook.fbx", lbxMeshes);
+	LoadFbxFile("data/models/queen.fbx", lbxMeshes);
+	LoadFbxFile("data/models/king.fbx", lbxMeshes);
 
 	OBJECT_PREFS objPrefs;
 
@@ -1569,7 +1673,11 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 		boost::bind(&CGameWin::addObject, this, _1 ) );
 
 	if (pGameBoard)
+	{
 		m_gameBoard = static_cast<board*>(pGameBoard);
+		m_gameBoard->connectToGameOver( boost::bind(&CGameWin::ShowGameOver, this, _1) );
+		m_gameBoard->conntectToEndTurn( boost::bind(&CGameWin::TurnEnded, this, _1) );
+	}
 
 	addObject(pGameBoard);
 
@@ -1613,11 +1721,12 @@ bool CGameWin::CreateGUIObjects()
 	//-----------------------------------------------------------------------------
 	// initialization of Options Dialog
 	//-----------------------------------------------------------------------------
-	m_OptionsDialog.init(100,100, 18, "Options", "woodBack.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
-	m_OptionsDialog.LoadDialogFromFile("settings.txt", m_timer);
+	m_OptionsDialog.init(100,100, 18, "Options", "data/textures/woodBack.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_OptionsDialog.LoadDialogFromFile("data/dialogs/settings.txt", m_timer);
 	m_OptionsDialog.CreateDialogUI();
 	m_OptionsDialog.setLocation( (m_nViewWidth / 2) - m_OptionsDialog.getWidth() / 2, m_nViewHeight / 2 - m_OptionsDialog.getHeight() / 2);
 	m_OptionsDialog.setVisible(false);
+	m_OptionsDialog.setCaption(false);
 
 	CButtonUI* pOptionsOKbutton = nullptr;
 	pOptionsOKbutton = m_OptionsDialog.getButton(IDC_OKBUTTON);
@@ -1631,15 +1740,17 @@ bool CGameWin::CreateGUIObjects()
 	//-----------------------------------------------------------------------------
 	// initialization of GUI select pawn
 	//-----------------------------------------------------------------------------
-	m_GuiSelectPawn.init(500,100, 18, "Select Pawn", "woodBack.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
-	m_GuiSelectPawn.LoadDialogFromFile("pawns.txt", m_timer);
+	m_GuiSelectPawn.init(500,100, 18, "Select Pawn", "data/textures/woodBack.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_GuiSelectPawn.LoadDialogFromFile("data/dialogs/pawns.txt", m_timer);
 	m_GuiSelectPawn.setVisible(false);
 	m_GuiSelectPawn.setLocation( (m_nViewWidth / 2) - m_GuiSelectPawn.getWidth() / 2, m_nViewHeight / 2 - m_GuiSelectPawn.getHeight() / 2);
+	m_GuiSelectPawn.setCaption(false);
 
 	m_GuiSelectPawn.getButton(IDC_KNIGHT)->connectToClick( boost::bind(&CGameWin::PromoteUnitToKnight, this, _1) );
 	m_GuiSelectPawn.getButton(IDC_BISHOP)->connectToClick( boost::bind(&CGameWin::PromoteUnitToBishop, this, _1) );
 	m_GuiSelectPawn.getButton(IDC_ROOK)->connectToClick( boost::bind(&CGameWin::PromoteUnitToRook, this, _1) );
 	m_GuiSelectPawn.getButton(IDC_QUEEN)->connectToClick( boost::bind(&CGameWin::PromoteUnitToQueen, this, _1) );
+
 
 	UINT textureIndex = -1;
 	std::vector<ELEMENT_GFX>  elementGFXvec;
@@ -1650,7 +1761,7 @@ bool CGameWin::CreateGUIObjects()
 
 
 
-	if (!m_assetManger.getTexture("pawnsButtons.png", &textureIndex))
+	if (!m_assetManger.getTexture("data/textures/pawnsButtons.png", &textureIndex))
 		return false;
 
 	// sets what parts of the texture to use for the bishop button
@@ -1714,7 +1825,7 @@ bool CGameWin::CreateGUIObjects()
 	//-----------------------------------------------------------------------------
 	//m_MainMenu.init(200,320, 18, "Main Menu", "", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
 	m_MainMenu.init(200,320, 18, "Main Menu", "", D3DCOLOR_ARGB(0,255,255,255), m_hWnd, m_assetManger);
-	m_MainMenu.LoadDialogFromFile("MainMenu.txt", m_timer);
+	m_MainMenu.LoadDialogFromFile("data/dialogs/MainMenu.txt", m_timer);
 	m_MainMenu.setCaption(false);
 	m_MainMenu.setLocation( (m_nViewWidth / 2) - m_MainMenu.getWidth() / 2, m_nViewHeight / 2 - m_MainMenu.getHeight() / 2);
 
@@ -1727,7 +1838,36 @@ bool CGameWin::CreateGUIObjects()
 	m_MainMenu.getButton(IDC_Continue)->connectToClick( boost::bind(&CGameWin::ContinueClicked, this, _1) );
 	m_MainMenu.getButton(IDC_OPTIONS)->connectToClick( boost::bind(&CGameWin::OptionsClicked, this, _1 ) );
 	m_MainMenu.getButton(IDC_EXIT)->connectToClick( boost::bind(&CGameWin::ExitClicked, this, _1) );
-	
+
+	CStaticUI* pTitle;
+	UINT fontIndex;
+	std::vector<ELEMENT_FONT> elementFontVec;
+
+	m_MainMenu.addStatic(IDC_TITLE, "Chess", -90, -150, 380, 100, &pTitle);
+
+	//UINT temp  = AddFontResourceEx("Super Retro Italic M54.ttf",FR_PRIVATE,0);
+
+	if (!m_assetManger.getFont("Super Retro Italic M54",144, 64, FW_BOLD, FALSE, fontIndex))
+		return S_FALSE;
+
+	UINT nFontHeight = m_assetManger.getFontItem(fontIndex).height;
+	ELEMENT_FONT elementFont2(fontIndex,nFontHeight, m_assetManger.getFontItem(fontIndex).width);
+
+	elementFontVec.push_back(elementFont2);
+
+	pTitle->setControlFonts(elementFontVec);
+
+	//-----------------------------------------------------------------------------
+	// initialization of gameover menu
+	//-----------------------------------------------------------------------------
+	m_gameoverMenu.init(200,320, 18,"Game Over", "data/textures/woodBack.png", D3DCOLOR_ARGB(200,255,255,255), m_hWnd, m_assetManger);
+	m_gameoverMenu.LoadDialogFromFile("data/dialogs/gameover.txt", m_timer);
+	m_gameoverMenu.setVisible(false);
+	m_gameoverMenu.setCaption(false);
+	m_gameoverMenu.setLocation( (m_nViewWidth / 2) - m_gameoverMenu.getWidth() / 2, ( (m_nViewHeight / 2) - (m_gameoverMenu.getHeight() / 2)) - m_nViewHeight / 3);
+
+	m_gameoverMenu.getButton(IDC_MainMenu)->connectToClick( boost::bind(&CGameWin::MainMenuClicked, this, _1) );
+
 
 	return true;
 }
@@ -2005,6 +2145,8 @@ HRESULT CGameWin::CreateSkyBox()
 	m_skyboxMesh->setAttribMap(attribMap, 6);
 
 	delete []pVertices;
+
+	return S_OK;
 	
 }
 
@@ -2526,16 +2668,17 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
 	rayOrigin.y = m._42;
 	rayOrigin.z = m._43;
 
-  	for (ULONG i=0 ; i < m_objects.size() ; i++)
+  	//for (ULONG i=0 ; i < m_objects.size() ; i++)
   	{	
-		if (!m_objects[i]->isObjectHidden())
+		//if (!m_objects[i]->isObjectHidden())
+		if(!m_gameBoard->isObjectHidden())
 		{
 			//getting our mesh object 
-			CMyMesh* curMesh = m_objects[i]->getMesh();
+			CMyMesh* curMesh = m_gameBoard->getMesh();
 			// Use inverse of matrix
 			D3DXMATRIX matInverse;
 
-			D3DXMatrixInverse(&matInverse,NULL,&m_objects[i]->getWorldMatrix());
+			D3DXMatrixInverse(&matInverse,NULL,&m_gameBoard->getWorldMatrix());
 
 
 			// Transform ray origin and direction by inv matrix
@@ -2556,7 +2699,7 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
  				if (distanceToCollision < minDistance)
  				{
  					minDistance = distanceToCollision;
- 					activeMeshIndex = i;
+ 					activeMeshIndex = 32;
 					activeFaceCount = faceCount;
  				}
 		}
@@ -2702,6 +2845,33 @@ void CGameWin::ExitClicked(CButtonUI* pButton)
 	m_bReturnCamera = true;
 
 	SendMessage(m_hWnd, WM_CLOSE, 0, 0);
+}
+
+//-----------------------------------------------------------------------------
+// Name : MainMenuClicked() 
+//-----------------------------------------------------------------------------
+void CGameWin::MainMenuClicked(CButtonUI* pButton)
+{
+	m_gameoverMenu.setVisible(false);
+	m_MainMenu.setVisible(true);
+}
+
+//-----------------------------------------------------------------------------
+// Name : ShowGameOver() 
+//-----------------------------------------------------------------------------
+void CGameWin::ShowGameOver(std::string gameOverStatus)
+{
+	m_gameoverMenu.setVisible(true);
+	m_gameoverMenu.getStatic(IDC_ENDREASON)->setText(gameOverStatus.c_str());
+}
+
+//-----------------------------------------------------------------------------
+// Name : TurnEnded() 
+//-----------------------------------------------------------------------------
+void CGameWin::TurnEnded(int currentPlayer)
+{
+	m_flipBoard = true;
+	m_flipDir = currentPlayer;
 }
 
 //-----------------------------------------------------------------------------
@@ -2863,15 +3033,16 @@ bool CGameWin::initHandlesToShader()
 {
 	//HRESULT hr;
 	//loading the effect file for the scene
-	if (!loadEffectFile("light4.fx",&m_outlineEffect))
+	if (!loadEffectFile("data/shaders/light4.fx",&m_outlineEffect))
 		return false;
 
-	if (!loadEffectFile("liuminate.fx",&m_highLightEffect))
+	if (!loadEffectFile("data/shaders/liuminate.fx",&m_highLightEffect))
 		return false;
 
 	//get handles to techniques
 	m_lightTechHnadle = m_outlineEffect->GetTechniqueByName("lightShader");
 	m_lightTexTechHandle = m_outlineEffect->GetTechniqueByName("lightTexShader");
+	m_texOnlyTechHandle = m_outlineEffect->GetTechniqueByName("onlyTexShader");
 	//m_texProjHandle = m_texProjEffect->GetTechniqueByName("texProjShader");
 
 	m_matWorldH			= m_outlineEffect->GetParameterByName(NULL, "matWorld");

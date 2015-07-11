@@ -72,7 +72,7 @@ struct VS_OUTPUT
 // -------------------------------------------------------------
 // vertex shader function (input channels)
 // -------------------------------------------------------------
-VS_OUTPUT VS(float4 posL : POSITION, float3 normalL : NORMAL, float2 texCord0 : TEXCOORD0, uniform bool bTexture)
+VS_OUTPUT VS(float4 posL : POSITION, float3 normalL : NORMAL, float2 texCord0 : TEXCOORD0, uniform bool bTexture, uniform bool bLight)
 {
 	// Zero out our output
 	VS_OUTPUT Out = (VS_OUTPUT)0;  	
@@ -181,13 +181,19 @@ VS_OUTPUT VS(float4 posL : POSITION, float3 normalL : NORMAL, float2 texCord0 : 
 // -------------------------------------------------------------
 // Pixel Shader (input channels):output channel
 // -------------------------------------------------------------
-float4 PS(float2 texUV : TEXCOORD0, float3 posW : TEXCOORD1, float4 color   : TEXCOORD2, uniform bool bTexture) : COLOR
+float4 PS(float2 texUV : TEXCOORD0, float3 posW : TEXCOORD1, float4 color   : TEXCOORD2, uniform bool bTexture, uniform bool bLight) : COLOR
 {  
 
 	if (bTexture)
+	{
 		//return outputColor;
-		return color * 0.5 + tex2D(MeshTextureSampler, texUV) * 0.5;
+		if (bLight)
+			return color * 0.5 + tex2D(MeshTextureSampler, texUV) * 0.5;
+		else
+		//	return color * 0.5 + tex2D(MeshTextureSampler, texUV) * 0.5;
+			return tex2D(MeshTextureSampler, texUV);
 		//return tex2D(MeshTextureSampler, texUV);
+	}
 	else
 		return color;
 }
@@ -201,8 +207,8 @@ technique lightShader
     pass P0
     {
         // compile shaders
-        VertexShader = compile vs_3_0 VS(false);
-        PixelShader  = compile ps_3_0 PS(false);
+        VertexShader = compile vs_3_0 VS(false, true);
+        PixelShader  = compile ps_3_0 PS(false, true);
     }
 }
 
@@ -211,7 +217,16 @@ technique lightTexShader
 	pass P0
 	{
 		 // compile shaders
-        VertexShader = compile vs_3_0 VS(true);
-        PixelShader  = compile ps_3_0 PS(true);
+        VertexShader = compile vs_3_0 VS(true, true);
+        PixelShader  = compile ps_3_0 PS(true, true);
+	}
+}
+
+technique onlyTexShader
+{
+	pass P0
+	{
+		VertexShader = compile vs_3_0 VS(true, false);
+        PixelShader  = compile ps_3_0 PS(true, false);
 	}
 }

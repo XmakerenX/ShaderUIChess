@@ -48,7 +48,7 @@ Options| Control Text
 50| Control Height
 1| is Control Visible
 1| is Control Enabled
-EXIT| Control Text
+Exit| Control Text
 1 1 1 1| Control Text Color
 0| Button HotKey
 /////////////////////////////////////////////////////////////////////////////

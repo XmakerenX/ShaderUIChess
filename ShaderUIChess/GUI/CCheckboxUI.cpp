@@ -37,7 +37,7 @@ void CCheckboxUI::Render( CAssetManager& assetManger)
 {
 	if (m_bVisible)
 	{
-		HRESULT hr;
+		//HRESULT hr;
 		LPDIRECT3DTEXTURE9 pTexture;
 		RECT rcWindow;
 

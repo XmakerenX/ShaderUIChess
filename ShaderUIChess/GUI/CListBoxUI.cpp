@@ -289,7 +289,7 @@ bool CListBoxUI::Released( HWND hWnd, POINT pt)
 		// If m_nSelStart and m_nSelected are not the same,
 		// the user has dragged the mouse to make a selection.
 		// Notify the application of this.
-		if( m_nSelStart != m_nSelected );
+		//if( m_nSelStart != m_nSelected );
 		//m_pDialog->SendEvent( EVENT_LISTBOX_SELECTION, true, this );
 
 		//m_pDialog->SendEvent( EVENT_LISTBOX_SELECTION_END, true, this );
@@ -749,7 +749,7 @@ void CListBoxUI::CopyItemsFrom(CListBoxUI* sourceListBox)
 	// clears the items vector
 	RemoveAllItems();
 
-	for (UINT i = 0; i < sourceListBox->GetSize(); i++)
+	for (int i = 0; i < sourceListBox->GetSize(); i++)
 	{
 		AddItem( sourceListBox->GetItem(i)->strText, sourceListBox->GetItem(i)->pData );
 	}

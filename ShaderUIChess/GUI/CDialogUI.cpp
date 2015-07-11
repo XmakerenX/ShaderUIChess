@@ -177,7 +177,7 @@ HRESULT CDialogUI::initDefControlElements(CAssetManager& assetManger)
 	UINT textureIndex, fontIndex;
 
 	// create the controls font
-	if (!assetManger.getFont(12, 12, FW_BOLD, FALSE, fontIndex))
+	if (!assetManger.getFont("times new roman",12, 12, FW_BOLD, FALSE, fontIndex))
 		return S_FALSE;
 
 	UINT nFontHeight = assetManger.getFontItem(fontIndex).height;
@@ -191,7 +191,7 @@ HRESULT CDialogUI::initDefControlElements(CAssetManager& assetManger)
 	// sets the Static default font
 	// this font is also used for all other controls ... for now..
 	// create the controls font
-	if (!assetManger.getFont(16, 8, FW_BOLD, FALSE, fontIndex))
+	if (!assetManger.getFont("times new roman",16, 8, FW_BOLD, FALSE, fontIndex))
 		return S_FALSE;
 
 	nFontHeight = assetManger.getFontItem(fontIndex).height;
@@ -209,7 +209,7 @@ HRESULT CDialogUI::initDefControlElements(CAssetManager& assetManger)
 	// Init Button elements
 	//-------------------------------------
 	// loads the button default texture
-	if (!assetManger.getTexture("button.png", &textureIndex))
+	if (!assetManger.getTexture("data/textures/button.png", &textureIndex))
 		return S_FALSE;
 
 	// sets what parts of the texture to use for the button
@@ -237,7 +237,7 @@ HRESULT CDialogUI::initDefControlElements(CAssetManager& assetManger)
 	elementGFXvec.clear();
 
 	//loads the CheckBox default texture
-	if (!assetManger.getTexture("tex.dds", &textureIndex))
+	if (!assetManger.getTexture("data/textures/tex.dds", &textureIndex))
 		return S_FALSE;
 
 	// sets what parts of the texture to use for the main element of the CheckBox
@@ -474,6 +474,8 @@ HRESULT CDialogUI::initDefControlElements(CAssetManager& assetManger)
 	controlGFX.elementsGFXvec = elementGFXvec;
 	controlGFX.elementsFontVec = elementFontVec;
 	m_DefControlsGFX.push_back(controlGFX);
+
+	return S_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -488,7 +490,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	UINT textureIndex, fontIndex;
 
 	// create the controls font
-	if (!assetManager.getFont(12, 12, FW_BOLD, FALSE, fontIndex))
+	if (!assetManager.getFont("times new roman", 12, 12, FW_BOLD, FALSE, fontIndex))
 		return S_FALSE;
 
 	UINT nFontHeight = assetManager.getFontItem(fontIndex).height;
@@ -502,7 +504,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	// sets the Static default font
 	// this font is also used for all other controls ... for now..
 	// create the controls font
-	if (!assetManager.getFont(16, 8, FW_BOLD, FALSE, fontIndex))
+	if (!assetManager.getFont("times new roman", 16, 8, FW_BOLD, FALSE, fontIndex))
 		return S_FALSE;
 
 	nFontHeight = assetManager.getFontItem(fontIndex).height;
@@ -523,7 +525,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	// loads our wood GUI texture
 	elementGFXvec.clear();
 
-	if (!assetManager.getTexture("woodGUI.png", &textureIndex, true))
+	if (!assetManager.getTexture("data/textures/woodGUI.png", &textureIndex, true))
 		return S_FALSE;
 
 	// sets what parts of the texture to use for the button
@@ -751,7 +753,7 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	elementGFXvec.clear();
 
 	//loads the CheckBox default texture
-	if (!assetManager.getTexture("tex.dds", &textureIndex))
+	if (!assetManager.getTexture("data/textures/tex.dds", &textureIndex))
 		return S_FALSE;
 
 	//-------------------------------------
@@ -789,6 +791,8 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	controlGFX.elementsGFXvec = elementGFXvec;
 	controlGFX.elementsFontVec = elementFontVec;
 	m_DefControlsGFX.push_back(controlGFX);
+
+	return S_OK;
 }
 
 //-----------------------------------------------------------------------------
@@ -2091,6 +2095,8 @@ const char* CDialogUI::getControlIDText(int ID)
 		if (m_defInfo[i].controlID == ID)
 			return m_defInfo[i].controlIDText.c_str();
 	}
+
+	return nullptr;
 }
 
 //-----------------------------------------------------------------------------

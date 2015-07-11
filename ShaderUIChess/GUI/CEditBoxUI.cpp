@@ -303,7 +303,7 @@ bool CEditBoxUI::Pressed( HWND hWnd, POINT pt, INPUT_STATE inputState, CTimer* t
 	m_bMouseDrag = true;
 	SetCapture( hWnd );
 	// Determine the character corresponding to the coordinates.
- 	int nCP, nTrail, nX1st;
+ 	int nCP;//, nTrail, nX1st;
 // 	nCP = (pt.x - m_rcText.left) / m_elementsFonts[0].nFontWidth;
 // 
 // 	RECT rcFullText = {0, 0, 0, 0};
@@ -371,7 +371,7 @@ bool CEditBoxUI::Dragged( POINT pt)
 	if( m_bMouseDrag )
 	{
 		// Determine the character corresponding to the coordinates.
-		int nCP, nTrail, nX1st;
+		int nCP;//, nTrail, nX1st;
 		//nCP = (pt.x - m_rcText.left) / m_elementsFonts[0].nFontWidth;
 		nCP = CalcCaretPosByPoint(pt);
 
@@ -672,7 +672,7 @@ void CEditBoxUI::Render( CAssetManager& assetManger )
 	//std::cout << "m_nBackwardChars = " << m_nBackwardChars << std::endl;
 	//std::cout << "m_nCaret : " << m_nCaret << std::endl;
 
-	HRESULT hr;
+	//HRESULT hr;
 	LPDIRECT3DTEXTURE9 pTexture;
 	// acquire a pointer to the sprite to draw to
 	CMySprite* sprite = assetManger.getMySprite();
@@ -1270,6 +1270,8 @@ int CEditBoxUI::CalcFirstVisibleCharUp()
 	}
 	else
 		return m_nFirstVisible;
+	
+	return 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -1303,4 +1305,6 @@ int CEditBoxUI::CalcFirstVisibleCharDown()
 
 		return m_nFirstVisible;
 	}
+
+	return 0;
 }

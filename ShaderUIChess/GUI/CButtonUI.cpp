@@ -58,7 +58,7 @@ void CButtonUI::Render( CAssetManager& assetManger)
 {
 	if (m_bVisible)
 	{
-		HRESULT hr;
+		//HRESULT hr;
 		LPDIRECT3DTEXTURE9 pTexture;
 
 		//no texture was given abort rendering

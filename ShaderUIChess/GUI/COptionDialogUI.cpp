@@ -81,6 +81,7 @@ bool COptionDialogUI::ChangeDisplayAdapter(UINT adapterIndex, D3DDEVTYPE deviceT
 	}
 
 	ChangeDisplayDevice(adapterIndex, deviceType);
+	return true;
 }
 
 //-----------------------------------------------------------------------------
@@ -144,6 +145,8 @@ bool COptionDialogUI::ChangeDisplayDevice(UINT adapterIndex, D3DDEVTYPE deviceTy
 		if ( s_vertexProcString.find(curVpType) != s_vertexProcString.end() )
 			getComboBox(IDC_VERTEXPROCCOM)->AddItem(s_vertexProcString.at(curVpType), (void*)curVpType);
 	}
+
+	return true;
 }
 
 //-----------------------------------------------------------------------------

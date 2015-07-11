@@ -266,7 +266,7 @@ void CScrollBarUI::Render( CAssetManager& assetManger)
 		} // ends check if arrow buttons were held or 
 
 		// prepare to render all the elements of the scrollbar and gets a pointer to the sprite
-		HRESULT hr;
+		//HRESULT hr;
 		LPDIRECT3DTEXTURE9 pTexture;
 
 		CMySprite* sprite = assetManger.getMySprite();

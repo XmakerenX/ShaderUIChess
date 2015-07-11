@@ -47,9 +47,12 @@
 #include "settingsDef.h"
 #include "pawnsDef.h"
 #include "MainMenuDef.h"
+#include "gameoverDef.h"
 
 const UINT MAX_ACTIVE_LIGHTS = 4;
-const char	SkyboxTex[6][256] = {"posz.jpg","posy.jpg","posx.jpg","negx.jpg","negy.jpg","negz.jpg"};
+const char	SkyboxTex[6][256] = {"data/textures/skybox/posz.jpg","data/textures/skybox/posy.jpg",
+	"data/textures/skybox/posx.jpg","data/textures/skybox/negx.jpg","data/textures/skybox/negy.jpg",
+	"data/textures/skybox/negz.jpg"};
 
 class CMyObject;
 
@@ -206,6 +209,11 @@ private:
 	void		OptionsClicked	   (CButtonUI* pButton);
 	void		ExitClicked		   (CButtonUI* pButton);
 
+	void		MainMenuClicked	   (CButtonUI* pButton);
+
+	void		ShowGameOver	   (std::string gameOverStatus);
+	void		TurnEnded		   (int currentPlayer);
+
 	//-------------------------------------------------------------------------
 	// Functions that handle lights creation and shader handles
 	//-------------------------------------------------------------------------
@@ -282,6 +290,10 @@ private:
 	bool					 m_bReturnCamera;
 	bool					 m_bMoveCamera;
 	bool					 m_returnDir;
+	bool					 m_flipBoard;
+	bool					 m_flipMove;
+	int						 m_flipDir;
+
 	D3DVIEWPORT9			 m_viewPort;
 	CCamera				   * m_pProject;
 
@@ -344,6 +356,7 @@ private:
 
 	D3DXHANDLE				 m_lightTechHnadle;
 	D3DXHANDLE				 m_lightTexTechHandle;
+	D3DXHANDLE				 m_texOnlyTechHandle;
 
 	D3DXHANDLE				 m_UITexture;
 	D3DXHANDLE				 m_bUIHighLight;
@@ -363,6 +376,7 @@ private:
 
  	CDialogUI				 m_GuiSelectPawn;
 	CDialogUI				 m_MainMenu;
+	CDialogUI				 m_gameoverMenu;
 // 	CDialogResourceManager3D m_GuiDilaogResManger;
 
 };

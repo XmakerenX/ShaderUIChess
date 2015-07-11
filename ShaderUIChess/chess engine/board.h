@@ -40,7 +40,9 @@ enum SIDES {UPPER, BOTTOM};
 class board : public CTerrain
 {
 public:
-	typedef boost::signals2::signal<void (CMyObject*)>  singal_pieceCreated;
+	typedef boost::signals2::signal<void (CMyObject*)>   singal_pieceCreated;
+	typedef boost::signals2::signal<void (std::string)>  singal_gameover;
+	typedef boost::signals2::signal<void (int)>			 signal_endTurn;
 
 	//-------------------------------------------------------------------------
 	// Constructors & Destructors for This Class.
@@ -58,6 +60,8 @@ public:
 	CMyObject*    allocPiece(UINT pieceType, OBJECT_PREFS& curObjPrefs, int playerColor, ULONG blkAttribID);
 
 	void    connectToPieceCreated ( const singal_pieceCreated::slot_type& subscriber);
+	void	connectToGameOver	  ( const singal_gameover::slot_type& subscriber);
+	void	conntectToEndTurn	  (	const signal_endTurn::slot_type& subscriber );
 
 	BOARD_POINT	getPieceSquare(piece * pPiece);
 	void	killPiece(piece * pPieceToKill, BOARD_POINT pieceSquare);
@@ -164,6 +168,8 @@ private:
 	//CMyObject ** m_pPieceObj;//stores the pointer to allocated space of the pieces 
 	CMyMesh * m_pPiecesMeshs[6];
 
-	boost::signals2::signal<void (CMyObject*)> m_pieceCreatedSig;
+	boost::signals2::signal<void (CMyObject*)>	 m_pieceCreatedSig;
+	boost::signals2::signal<void (std::string)>	 m_gameOverSig;
+	boost::signals2::signal<void (int)>			 m_endTurnSig;
 };
 #endif // _BOARD_H_

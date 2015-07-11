@@ -101,8 +101,8 @@ public:
 	//-------------------------------------------------------------------------
 	// Functions that attributes,textures,materials and sprites allocation and storage 
 	//-------------------------------------------------------------------------
-	HRESULT				  addFont		   (int height, UINT width, UINT weight, BOOL Italic);
-	LPD3DXFONT			  getFont		   (int height, UINT width, UINT weight, BOOL Italic, UINT& fontIndex);
+	HRESULT				  addFont		   (char* font, int height, UINT width, UINT weight, BOOL Italic);
+	LPD3DXFONT			  getFont		   (char* font, int height, UINT width, UINT weight, BOOL Italic, UINT& fontIndex);
 	FONT_ITEM			  getFontItem	   (UINT fontIndex) const;
 	const LPD3DXFONT	  getFontPtr	   (UINT fontIndex) const;
 

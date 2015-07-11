@@ -233,7 +233,7 @@ void CSliderUI::Render( CAssetManager& assetManger )
 	if (!m_bVisible)
 		return;
 
-	HRESULT hr;
+	//HRESULT hr;
 	LPDIRECT3DTEXTURE9 pTexTrack, pTexButton;
 
 	//no texture was given abort rendering

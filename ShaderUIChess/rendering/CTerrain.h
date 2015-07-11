@@ -8,7 +8,7 @@
 #include <string>
 #include "d3d.h"
 //const vars
-const char	Textures[2][256] = {"black.png","white.jpg"};
+const char	Textures[2][256] = {"data/textures/board/black.png","data/textures/board/white.jpg"};
 
 struct TERRAIN_PREFS //groups together all the preferences of the terrian
 {

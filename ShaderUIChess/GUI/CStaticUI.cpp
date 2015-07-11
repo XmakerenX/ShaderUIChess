@@ -32,7 +32,7 @@ CStaticUI::CStaticUI(std::istream& inputFile)
 	:CControlUI(inputFile)
 {
 	m_type = STATIC;
-	char strText[MAX_PATH];
+	//char strText[MAX_PATH];
 
 	std::string controlText;
 	//std::string temp;

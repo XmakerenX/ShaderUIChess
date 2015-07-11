@@ -41,7 +41,7 @@ CMySprite::~CMySprite(void)
 //-----------------------------------------------------------------------------
 HRESULT CMySprite::render(ID3DXEffect * effect)
 {
-	HRESULT hRet;
+	//HRESULT hRet;
 	
 	LPVOID  pBufVertices   = NULL;
 	LPVOID  pBufIndices    = NULL;

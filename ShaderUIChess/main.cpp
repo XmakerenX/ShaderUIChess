@@ -11,7 +11,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 	if (AllocConsole()) {
 		std::string s = "I made a console window!\n";
 		DWORD n;
-		char c;
+		//char c;
 
 		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 	}

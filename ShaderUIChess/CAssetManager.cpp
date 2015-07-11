@@ -466,7 +466,7 @@ const OBJMATERIAL& CAssetManager::getMaterialItem(ULONG materialIndex) const
 // Name : addFont()
 // Desc : adds a new font to the fonts storage based on the received parameters
 //-----------------------------------------------------------------------------
-HRESULT CAssetManager::addFont(int height, UINT width, UINT weight, BOOL Italic)
+HRESULT CAssetManager::addFont(char* font, int height, UINT width, UINT weight, BOOL Italic)
 {
 	HRESULT hr;
 	ID3DXFont* pFont;
@@ -475,8 +475,11 @@ HRESULT CAssetManager::addFont(int height, UINT width, UINT weight, BOOL Italic)
 	//TODO: add something that will initialize the static values  
 	//hr = D3DXCreateFont(m_pD3DDevice, height, width, weight, 1, Italic, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY
 	//	,DEFAULT_PITCH | FF_DONTCARE, "Arial", &pFont);
+// 	hr = D3DXCreateFont(m_pD3DDevice, height, width, weight, 1, Italic, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY
+// 		,DEFAULT_PITCH | FF_DONTCARE, "times new roman", &pFont);
+
 	hr = D3DXCreateFont(m_pD3DDevice, height, width, weight, 1, Italic, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS, DEFAULT_QUALITY
-		,DEFAULT_PITCH | FF_DONTCARE, "times new roman", &pFont);
+		,DEFAULT_PITCH | FF_DONTCARE, font, &pFont);
 
 	if (FAILED(hr))
 	{
@@ -503,7 +506,7 @@ HRESULT CAssetManager::addFont(int height, UINT width, UINT weight, BOOL Italic)
 // Desc : returns a pointer to the font requested if the font doesn't exist 
 //	      in the storage it will create a new font with the requested parameters
 //-----------------------------------------------------------------------------
- LPD3DXFONT CAssetManager::getFont(int height, UINT width, UINT weight, BOOL Italic, UINT& fontIndex)
+ LPD3DXFONT CAssetManager::getFont(char* font, int height, UINT width, UINT weight, BOOL Italic, UINT& fontIndex)
 {
 	FONT_ITEM newFont(height, width, 0, weight, Italic, NULL);
 
@@ -521,7 +524,7 @@ HRESULT CAssetManager::addFont(int height, UINT width, UINT weight, BOOL Italic)
 	}
 
 	//no font was found create a new one
-	if ( FAILED(addFont(height,width,weight,Italic)) )
+	if ( FAILED(addFont(font,height,width,weight,Italic)) )
 		return NULL;
 
 	// returns the pointer to the font and its index

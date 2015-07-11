@@ -463,7 +463,7 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 		if (this == pickedObjected)				 //check if the press was on the board mesh itself
 		{
 			ULONG squareNum;
-			UINT  tempy;
+			//UINT  tempy;
 
 			if (pressedFace != 0)
 				squareNum   = pressedFace / 2; //finding the square number as every 2 faces make up a single square
@@ -480,7 +480,8 @@ void board::processPress(CMyObject * pickedObjected, ULONG pressedFace )
 
 		}
 		else//if the pressed was not on the board than get the object position in the world and test if it is on the board
-		{	
+		{
+			return;
 			//retrieve object position in the world
 			D3DMATRIX objWorldMat = pickedObjected->m_mtxWorld;
 			D3DXVECTOR3 objectPos = D3DXVECTOR3(objWorldMat._41,objWorldMat._42,objWorldMat._43);
@@ -574,7 +575,7 @@ void board::setFrame(CMyObject * pickedObjected, ULONG pressedFace )
 	if (this == pickedObjected)				 //check if the press was on the board mesh itself
 	{
 		ULONG squareNum;
-		UINT  tempy;
+		//UINT  tempy;
 
 		if (pressedFace != 0)
 			squareNum   = pressedFace / 2; //finding the square number as every 2 faces make up a single square
@@ -1442,9 +1443,9 @@ CMyObject* board::allocPiece(UINT pieceType, OBJECT_PREFS& curObjPrefs, int play
 	case ROOK:
 		{
 			// manual fix for rook scale...
-			curObjPrefs.scale.x *= 0.269;
-			curObjPrefs.scale.y *= 0.422;
-			curObjPrefs.scale.z *= 0.269;
+			curObjPrefs.scale.x *= 0.269f;
+			curObjPrefs.scale.y *= 0.422f;
+			curObjPrefs.scale.z *= 0.269f;
 
 // 			curObjPrefs.scale.x = 3.717f;
 // 			curObjPrefs.scale.y = 2.369f;
@@ -1501,6 +1502,22 @@ void board::connectToPieceCreated(const singal_pieceCreated::slot_type& subscrib
 }
 
 //-----------------------------------------------------------------------------
+// Name : connectToGameOver ()
+//-----------------------------------------------------------------------------
+void board::connectToGameOver(const singal_gameover::slot_type& subscriber)
+{
+	m_gameOverSig.connect(subscriber);
+}
+
+//-----------------------------------------------------------------------------
+// Name : conntectToEndTurn ()
+//-----------------------------------------------------------------------------
+void board::conntectToEndTurn( const signal_endTurn::slot_type& subscriber )
+{
+	m_endTurnSig.connect(subscriber);
+}
+
+//-----------------------------------------------------------------------------
 // Name : endTurn ()
 //-----------------------------------------------------------------------------
 void board::endTurn()
@@ -1513,6 +1530,25 @@ void board::endTurn()
 		{
 			m_gameActive= false;
 			m_curStatus = "CheckMate";
+
+			std::string endGameStatus;
+
+			if (currentPlayer == 1)
+				endGameStatus = "Black Wins!";
+			else
+				endGameStatus = "White Wins!";
+
+			m_gameOverSig(endGameStatus);
+
+			int kingSide;
+
+			if (currentPlayer == 1)
+				kingSide = BOTTOM;
+			else
+				kingSide = UPPER;
+
+			BOARD_POINT curKingSquare  = getPieceSquare(kings[kingSide]);
+			setThreatSquare(curKingSquare);
 		}
 		else
 		{
@@ -1525,6 +1561,7 @@ void board::endTurn()
 
 			BOARD_POINT curKingSquare  = getPieceSquare(kings[kingSide]);
 			setThreatSquare(curKingSquare);
+			m_endTurnSig(currentPlayer);
 		}
 	}
 	else
@@ -1534,6 +1571,13 @@ void board::endTurn()
 		{
 			m_gameActive = false;
 			m_curStatus = "Draw";
+
+			std::string endGameStatus = "Draw";
+			m_gameOverSig(endGameStatus);
+		}
+		else
+		{
+			m_endTurnSig(currentPlayer);
 		}
 	}
 
@@ -1704,6 +1748,8 @@ bool board::resetGame()
 	currentPlayer = 1;
 	m_gameActive = true;
 	m_kingInThreat = false;
+
+	m_threatSquare = -1;
 
 	return true;
 }

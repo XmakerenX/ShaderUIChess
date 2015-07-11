@@ -9,17 +9,16 @@ CTerrain::CTerrain(LPDIRECT3DDEVICE9 pDevice, CAssetManager& assetManger,CMyMesh
 	m_selectSquare = -1; //max the value which means nothing is selected
 	m_fraemSqaure = -1;
 
-	m_selectSquare = 1;
 	m_threatSquare = -1;
 	
-	std::vector<ULONG>& attackSquaresVec = m_attribSquares[ATTACK];
-	std::vector<ULONG>& moveSquaresVec = m_attribSquares[MOVE];
-
-	attackSquaresVec.push_back(20);
-	attackSquaresVec.push_back(22);
-
-	moveSquaresVec.push_back(16);
-	moveSquaresVec.push_back(17);
+// 	std::vector<ULONG>& attackSquaresVec = m_attribSquares[ATTACK];
+// 	std::vector<ULONG>& moveSquaresVec = m_attribSquares[MOVE];
+// 
+// 	attackSquaresVec.push_back(20);
+// 	attackSquaresVec.push_back(22);
+// 
+// 	moveSquaresVec.push_back(16);
+// 	moveSquaresVec.push_back(17);
 
 	m_squareMesh = new CMyMesh();
 	m_squareMesh->SetDataFormat(VERTEX_FVF, sizeof(USHORT) );
@@ -662,24 +661,24 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	matrial = d3d::WHITE_MTRL;
 	//m_boardFrameAttrib = assetManger.getAttributeID("woodFrame.png", &matrial, NULL);
-	m_boardFrameAtribs[0] =  assetManger.getAttributeID("frameLowerLeft.png",&matrial, nullptr);
-	m_boardFrameAtribs[1] =  assetManger.getAttributeID("frameH.png",&matrial, nullptr);
-	m_boardFrameAtribs[2] =  assetManger.getAttributeID("frameG.png",&matrial, nullptr);
-	m_boardFrameAtribs[3] =  assetManger.getAttributeID("frameF.png",&matrial, nullptr);
-	m_boardFrameAtribs[4] =  assetManger.getAttributeID("frameE.png",&matrial, nullptr);
-	m_boardFrameAtribs[5] =  assetManger.getAttributeID("frameD.png",&matrial, nullptr);
-	m_boardFrameAtribs[6] =	 assetManger.getAttributeID("frameC.png",&matrial, nullptr);
-	m_boardFrameAtribs[7] =	 assetManger.getAttributeID("frameB.png",&matrial, nullptr);
-	m_boardFrameAtribs[8] =	 assetManger.getAttributeID("frameA.png",&matrial, nullptr);
-	m_boardFrameAtribs[9] =	 assetManger.getAttributeID("frameLowerRight.png",&matrial, nullptr);
-	m_boardFrameAtribs[10] = assetManger.getAttributeID("frame8.png",&matrial, nullptr);
-	m_boardFrameAtribs[11] = assetManger.getAttributeID("frame7.png",&matrial, nullptr);
-	m_boardFrameAtribs[12] = assetManger.getAttributeID("frame6.png",&matrial, nullptr);
-	m_boardFrameAtribs[13] = assetManger.getAttributeID("frame5.png",&matrial, nullptr);
-	m_boardFrameAtribs[14] = assetManger.getAttributeID("frame4.png",&matrial, nullptr);
-	m_boardFrameAtribs[15] = assetManger.getAttributeID("frame3.png",&matrial, nullptr);
-	m_boardFrameAtribs[16] = assetManger.getAttributeID("frame2.png",&matrial, nullptr);
-	m_boardFrameAtribs[17] = assetManger.getAttributeID("frame1.png",&matrial, nullptr);
+	m_boardFrameAtribs[0] =  assetManger.getAttributeID("data\\textures\\board\\frameLowerLeft.png",&matrial, nullptr);
+	m_boardFrameAtribs[1] =  assetManger.getAttributeID("data\\textures\\board\\frameH.png",&matrial, nullptr);
+	m_boardFrameAtribs[2] =  assetManger.getAttributeID("data\\textures\\board\\frameG.png",&matrial, nullptr);
+	m_boardFrameAtribs[3] =  assetManger.getAttributeID("data\\textures\\board\\frameF.png",&matrial, nullptr);
+	m_boardFrameAtribs[4] =  assetManger.getAttributeID("data\\textures\\board\\frameE.png",&matrial, nullptr);
+	m_boardFrameAtribs[5] =  assetManger.getAttributeID("data\\textures\\board\\frameD.png",&matrial, nullptr);
+	m_boardFrameAtribs[6] =	 assetManger.getAttributeID("data\\textures\\board\\frameC.png",&matrial, nullptr);
+	m_boardFrameAtribs[7] =	 assetManger.getAttributeID("data\\textures\\board\\frameB.png",&matrial, nullptr);
+	m_boardFrameAtribs[8] =	 assetManger.getAttributeID("data\\textures\\board\\frameA.png",&matrial, nullptr);
+	m_boardFrameAtribs[9] =	 assetManger.getAttributeID("data\\textures\\board\\frameLowerRight.png",&matrial, nullptr);
+	m_boardFrameAtribs[10] = assetManger.getAttributeID("data\\textures\\board\\frame8.png",&matrial, nullptr);
+	m_boardFrameAtribs[11] = assetManger.getAttributeID("data\\textures\\board\\frame7.png",&matrial, nullptr);
+	m_boardFrameAtribs[12] = assetManger.getAttributeID("data\\textures\\board\\frame6.png",&matrial, nullptr);
+	m_boardFrameAtribs[13] = assetManger.getAttributeID("data\\textures\\board\\frame5.png",&matrial, nullptr);
+	m_boardFrameAtribs[14] = assetManger.getAttributeID("data\\textures\\board\\frame4.png",&matrial, nullptr);
+	m_boardFrameAtribs[15] = assetManger.getAttributeID("data\\textures\\board\\frame3.png",&matrial, nullptr);
+	m_boardFrameAtribs[16] = assetManger.getAttributeID("data\\textures\\board\\frame2.png",&matrial, nullptr);
+	m_boardFrameAtribs[17] = assetManger.getAttributeID("data\\textures\\board\\frame1.png",&matrial, nullptr);
 
 
 	//m_boardFrameAttrib = assetManger.getAttributeID("white.jpg", &matrial, NULL);
@@ -800,7 +799,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	matrial.Specular.w = 0;
 
 	//m_attribIDs[FRAME] = assetManger.getAttributeID("frame.png",&matrial,NULL);
-	m_attribIDs[FRAME] = assetManger.getAttributeID("bla.png",&matrial,NULL);
+	m_attribIDs[FRAME] = assetManger.getAttributeID("data/textures/board/bla.png",&matrial,NULL);
 
 	if (pVertices)
 		delete []pVertices;
