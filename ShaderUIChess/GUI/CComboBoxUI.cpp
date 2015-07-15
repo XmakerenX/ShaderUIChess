@@ -386,8 +386,16 @@ void    CComboBoxUI::Render( CAssetManager& assetManger)
 		//if the button is not pressed or doesn't have the cursor on it render it normally
 		if (!m_bMouseOver && !m_bOpened)
 		{
-			renderRect(m_elementsGFX[BUTTON].rcTexture, m_rcButton, sprite, pTexture, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos );
-			renderRect(m_elementsGFX[MAIN].rcTexture, m_rcText, sprite, pTexture2, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos );
+			if(m_bEnabled)
+			{
+				renderRect(m_elementsGFX[BUTTON].rcTexture, m_rcButton, sprite, pTexture, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos );
+				renderRect(m_elementsGFX[MAIN].rcTexture, m_rcText, sprite, pTexture2, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos );
+			}
+			else
+			{
+				renderRect(m_elementsGFX[BUTTON].rcTexture, m_rcButton, sprite, pTexture, D3DCOLOR_ARGB( 255, 100, 100, 100 ), REGLUAR, dialogPos );
+				renderRect(m_elementsGFX[MAIN].rcTexture, m_rcText, sprite, pTexture2, D3DCOLOR_ARGB( 255, 100, 100, 100 ), REGLUAR, dialogPos );
+			}
 		}
 		else
 		{

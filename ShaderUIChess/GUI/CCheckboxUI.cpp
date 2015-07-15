@@ -60,9 +60,18 @@ void CCheckboxUI::Render( CAssetManager& assetManger)
 
 		if (!m_bMouseOver)
 		{
-			renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos);
-			if (m_bChecked)
-				renderRect(m_elementsGFX[MOUSEOVER].rcTexMouseOver, rcWindow, sprite, pTexture,  D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos);
+			if (m_bEnabled)
+			{
+				renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos);
+				if (m_bChecked)
+					renderRect(m_elementsGFX[MOUSEOVER].rcTexMouseOver, rcWindow, sprite, pTexture,  D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos);
+			}
+			else
+			{
+				renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture, D3DCOLOR_ARGB( 255, 100, 100, 100 ), REGLUAR, dialogPos);
+				if (m_bChecked)
+					renderRect(m_elementsGFX[MOUSEOVER].rcTexMouseOver, rcWindow, sprite, pTexture,  D3DCOLOR_ARGB( 255, 100, 100, 100 ), REGLUAR, dialogPos);
+			}
 		}
 		else
 		{

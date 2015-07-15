@@ -87,7 +87,10 @@ void CButtonUI::Render( CAssetManager& assetManger)
 		//if the button is not pressed or doesn't have the cursor on it render it normally
 		if (!m_bMouseOver)
 		{
-			renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos );
+			if (!m_bEnabled)
+				renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture,D3DCOLOR_ARGB( 0, 0, 0, 0 ), REGLUAR, dialogPos);
+			else
+				renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos );
 		}
 		else
 		{

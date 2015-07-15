@@ -554,13 +554,13 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	elementGFXvec.clear();
 	// sets what parts of the texture to use for the main element of the CheckBox
-	SetRect( &rcTexture, 0, 115, 17, 132 );
+	SetRect( &rcTexture, 0, 115, 15, 130 );
 	// add the main CheckBox element to the vector
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	// sets what parts of the texture to use for the CheckBox mouse over
-	SetRect( &rcTexMouseOver, 60, 112, 77, 131 );
+	SetRect( &rcTexMouseOver, 60, 112, 76, 130 );
 	// add the mouse over CheckBox element to the vector
 	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
 	elementGFXvec.push_back(elementGFX);
@@ -577,13 +577,13 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	elementGFXvec.clear();
 
 	// sets what parts of the texture to use for the main element of the RadioButton
-	SetRect( &rcTexture, 1, 145, 17, 162 );
+	SetRect( &rcTexture, 1, 145, 19, 163 );
 	// add the main element of  RadioButton elements to the vector
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	// sets what parts of the texture to use for the mouse over element of the RadioButton
-	SetRect( &rcTexMouseOver, 61, 145, 77, 162 );
+	SetRect( &rcTexMouseOver, 61, 145, 79, 163 );
 	// add the mouse over element of  RadioButton elements to the vector
 	elementGFX.setGFX(textureIndex, rcTexMouseOver, rcTexMouseOver);
 	elementGFXvec.push_back(elementGFX);
@@ -617,14 +617,15 @@ HRESULT CDialogUI::initWoodControlElements(CAssetManager& assetManager)
 	//-------------------------------------
 	// ComboBox - Dropdown
 	//-------------------------------------
-	SetRect( &rcTexture, 102, 116, 461, 331 );
+	SetRect( &rcTexture, 102, 116, 461, 301 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 
 	//-------------------------------------
 	// ComboBox - Selection
 	//-------------------------------------
-	SetRect( &rcTexture, 359, 215, 586, 323 );
+	//SetRect( &rcTexture, 359, 215, 586, 323 );
+	SetRect( &rcTexture, 99, 304, 463, 326 );
 	elementGFX.setGFX(textureIndex, rcTexture, rcTexture);
 	elementGFXvec.push_back(elementGFX);
 

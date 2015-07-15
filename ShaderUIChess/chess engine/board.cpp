@@ -697,7 +697,7 @@ bool board::isKingInThreat(int player,bool getAllAttackers)
 	{
 		m_kingInThreat = true;
 		BOARD_POINT curKingSquare  = getPieceSquare(kings[kingSide]);
-		setThreatSquare(curKingSquare);
+		//setThreatSquare(curKingSquare);
 		return true;
 	}
 	else

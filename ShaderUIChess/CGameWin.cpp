@@ -734,7 +734,8 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 
 			  if (SUCCEEDED(hr))
 			  {
-				  curAdapterInfo.addDisplayMode(curMode);
+				  if (curMode.Width >= 1024 && curMode.Height >= 768)
+					curAdapterInfo.addDisplayMode(curMode);
 // 				  std::cout << "Width= "   << curMode.Width		  << std::endl;
 // 				  std::cout << "Height= "  << curMode.Height	  << std::endl;
 // 				  std::cout << "Format= "  << curMode.Format	  << std::endl;
@@ -850,7 +851,8 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 	m_pCameras[0]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
 	//m_pCameras[0]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
 	//m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
-	m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+	//m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+	m_pCameras[0]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
 
 	m_pCameras[0]->SetLookAt( D3DXVECTOR3(9,0,24) );
 	m_pCameras[0]->UpdateRenderView( m_pD3DDevice );
@@ -1007,7 +1009,8 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 			m_pCameras[m_cameraIndex]->SetFOV( 45.0f );
 			//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(0.0f,0.0f,-7.0f));
 			//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
-			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+			//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+			m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
 			m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 			m_pCameras[m_cameraIndex]->UpdateRenderView( m_pD3DDevice );
 			m_pCameras[m_cameraIndex]->UpdateRenderProj( m_pD3DDevice );
@@ -1109,7 +1112,8 @@ void CGameWin::FrameAdvance(float timeDelta)
 			if (m_cameraDelta > 0)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
 			}
@@ -1122,7 +1126,8 @@ void CGameWin::FrameAdvance(float timeDelta)
 			if (m_cameraDelta > 0)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
 			}
@@ -1131,33 +1136,44 @@ void CGameWin::FrameAdvance(float timeDelta)
 
 	if (m_flipBoard)
 	{
-		if (m_flipDir == -1)
-			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 2 * timeDelta);
-		else
-			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_LEFT, 2 * timeDelta);
+		static float timeDeltaCount = timeDelta;
 
-		m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
-		m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
-
-		if (m_cameraDelta > 0)
+		if (timeDeltaCount < 0.3f)
 		{
-			if (m_flipDir == -1)
-				m_returnDir = true;
-			else
-				m_returnDir = false;
-
-			m_flipMove = true;
-			m_flipBoard = false;
+			timeDeltaCount += timeDelta;
 		}
 		else
 		{
-			if (m_flipDir == -1)
-				m_returnDir = true;
-			else
-				m_returnDir = false;
+			timeDeltaCount = timeDelta;
 
-			m_flipMove = true;
-			m_flipBoard = false;
+			if (m_flipDir == -1)
+				m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 2 * timeDelta);
+			else
+				m_pCameras[m_cameraIndex]->Move(CCamera::DIR_LEFT, 2 * timeDelta);
+
+			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
+			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
+
+			if (m_cameraDelta > 0)
+			{
+				if (m_flipDir == -1)
+					m_returnDir = true;
+				else
+					m_returnDir = false;
+
+				m_flipMove = true;
+				m_flipBoard = false;
+			}
+			else
+			{
+				if (m_flipDir == -1)
+					m_returnDir = true;
+				else
+					m_returnDir = false;
+
+				m_flipMove = true;
+				m_flipBoard = false;
+			}
 		}
 	}
 
@@ -1165,7 +1181,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 	{
 		if (!m_returnDir)
 		{
-			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 50 * timeDelta);
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 70 * timeDelta);
 			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
 
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
@@ -1173,16 +1189,16 @@ void CGameWin::FrameAdvance(float timeDelta)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				if (m_flipDir == -1)
-					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,78.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,93.0f));
 				else
-					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_flipMove = false;
 			}
 		}
 		else
 		{
-			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 50 * timeDelta);
+			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 70 * timeDelta);
 			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
 
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
@@ -1190,9 +1206,9 @@ void CGameWin::FrameAdvance(float timeDelta)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				if (m_flipDir == -1)
-					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,78.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(8.0f,40.0f,93.0f));
 				else
-					;//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
 
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_flipMove = false;
@@ -3157,7 +3173,12 @@ void CGameWin::CreateLights(ID3DXEffect * effect)
 	LIGHT_PREFS light;
  	//light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0, -0.0, 0.25f, 0.0), d3d::WHITE );
 	//light = d3d::InitDirectionalLight(D3DXVECTOR4(0.5, 0.0, 0.5f, 0.0), d3d::WHITE );
-	light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0f, 0.2f, 0.2f, 0.0), d3d::WHITE );
+	D3DXCOLOR lightColor = d3d::WHITE;
+	lightColor.r = 0.7f; 
+	lightColor.g = 0.7f;
+	lightColor.b = 0.7f;
+
+	light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0f, 0.2f, 0.2f, 0.0), lightColor );
  
  	addLight(light,effect);
 }

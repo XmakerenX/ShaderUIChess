@@ -28,6 +28,7 @@ void COptionDialogUI::CreateDialogUI()
 	getComboBox(IDC_RENDERDEVCOM)->ConnectToSelectChg( boost::bind(&COptionDialogUI::DeviceTypeSelChg, this, _1 ) );
 	getComboBox(IDC_RESOLUTIONCOM)->ConnectToSelectChg( boost::bind(&COptionDialogUI::ResoulationSelChg, this, _1) );
 	getRadioButton(IDC_FULLSCREENRADIO)->connectToClick( boost::bind(&COptionDialogUI::FullscreenRadioClicked, this, _1 ) );
+	getRadioButton(IDC_WINRADIO)->connectToClick( boost::bind(&COptionDialogUI::WindowedRadioClicked, this, _1 ) );
 
 	getComboBox(IDC_APIVERCOM)->AddItem("Direct3D 9", nullptr);
 
