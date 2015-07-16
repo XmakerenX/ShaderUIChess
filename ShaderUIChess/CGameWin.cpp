@@ -143,8 +143,8 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (m_creditsMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
 		return 0;
 
-// 	if (m_keysMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
-// 		return 0;
+	if (m_keysMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
+		return 0;
 
 // 	if (m_EditDialog.MsgProc(hWnd,message,wParam,lParam, m_timer) )
 // 		return 0;
@@ -391,7 +391,7 @@ void CGameWin::OptionDialogCancelClicked(CButtonUI* pButton)
 {
 	m_OptionsDialog.setVisible(false);
 	m_MainMenu.setVisible(true);
-	//m_keysMenu.setVisible(true);
+	m_keysMenu.setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -1038,7 +1038,7 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 		m_MainMenu.setLocation( (m_nViewWidth / 2) - m_MainMenu.getWidth() / 2, m_nViewHeight / 2 - m_MainMenu.getHeight() / 2);
 		m_gameoverMenu.setLocation( (m_nViewWidth / 2) - m_gameoverMenu.getWidth() / 2, ( (m_nViewHeight / 2) - (m_gameoverMenu.getHeight() / 2)) - m_nViewHeight / 3);
 		m_creditsMenu.setLocation( (m_nViewWidth / 2) - m_creditsMenu.getWidth() / 2, m_nViewHeight / 2 - m_creditsMenu.getHeight() / 2);
-		//m_keysMenu.setLocation( m_nViewWidth - 400 , (m_nViewHeight / 2 - m_keysMenu.getHeight() / 2) - 130 );
+		m_keysMenu.setLocation( m_nViewWidth - 400 , (m_nViewHeight / 2 - m_keysMenu.getHeight() / 2) - 130 );
 
 
 		setRenderStates();
@@ -1419,7 +1419,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 	m_MainMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 	m_gameoverMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 	m_creditsMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
-	//m_keysMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
+	m_keysMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 
  	CMySprite* pMySprite = m_assetManger.getMySprite();
  	pMySprite->render(m_highLightEffect);
@@ -1964,12 +1964,12 @@ bool CGameWin::CreateGUIObjects()
 	m_creditsMenu.setLocation( (m_nViewWidth / 2) - m_creditsMenu.getWidth() / 2, m_nViewHeight / 2 - m_creditsMenu.getHeight() / 2);
 
 	m_creditsMenu.getButton(IDC_CREDITSOK)->connectToClick( boost::bind(&CGameWin::CreditsOkClicked, this, _1) );
-
-	//m_keysMenu.init(200, 320, 18, "Credits", "" ,D3DCOLOR_ARGB(0,255,255,255),m_hWnd, m_assetManger);
-	//m_keysMenu.LoadDialogFromFile("data/dialogs/keys.txt", m_timer);
-	//m_keysMenu.setVisible(true);
-	//m_keysMenu.setCaption(false);
-	//m_keysMenu.setLocation( m_nViewWidth - 400 , (m_nViewHeight / 2 - m_keysMenu.getHeight() / 2) - 130 );
+	
+	m_keysMenu.init(200, 320, 18, "Credits", "" ,D3DCOLOR_ARGB(0,255,255,255),m_hWnd, m_assetManger);
+	m_keysMenu.LoadDialogFromFile("data/dialogs/keys.txt", m_timer);
+	m_keysMenu.setVisible(true);
+	m_keysMenu.setCaption(false);
+	m_keysMenu.setLocation( m_nViewWidth - 400 , (m_nViewHeight / 2 - m_keysMenu.getHeight() / 2) - 130 );
 
 	return true;
 }
@@ -2564,7 +2564,7 @@ void CGameWin::ProcessInput(float timeDelta,float &angle,float &height)
 			if (!m_OptionsDialog.getVisible() && !m_gameoverMenu.getVisible() && !m_GuiSelectPawn.getVisible() && !m_creditsMenu.getVisible())
 			{
 				m_MainMenu.setVisible(!m_MainMenu.getVisible()); 
-				//m_keysMenu.setVisible(m_MainMenu.getVisible());
+				m_keysMenu.setVisible(m_MainMenu.getVisible());
 				m_bReturnCamera = !m_MainMenu.getVisible();
 			}
 		}
@@ -2871,7 +2871,7 @@ void CGameWin::NewGameClicked(CButtonUI* pButton)
 	{
 		m_objects.clear();
 		m_MainMenu.setVisible(false);
-		//m_keysMenu.setVisible(false);
+		m_keysMenu.setVisible(false);
 		m_bReturnCamera = true;
 		m_gameBoard->resetGame();
 		addObject(m_gameBoard);
@@ -2907,7 +2907,7 @@ void CGameWin::ContinueClicked(CButtonUI* pButton)
 	m_objects.clear();
 	m_gameBoard->LoadBoardFromFile();
 	m_MainMenu.setVisible(false);
-	//m_keysMenu.setVisible(false);
+	m_keysMenu.setVisible(false);
 	m_bReturnCamera = true;
 	m_doneRotating = false;
 	addObject(m_gameBoard);
@@ -2941,7 +2941,7 @@ void CGameWin::OptionsClicked(CButtonUI* pButton)
 {
 	m_OptionsDialog.setVisible(true);
 	m_MainMenu.setVisible(false);
-	//m_keysMenu.setVisible(false);
+	m_keysMenu.setVisible(false);
 	//m_bReturnCamera = true;
 }
 
@@ -2952,7 +2952,7 @@ void CGameWin::CreditsClicked(CButtonUI* pButton)
 {
 	m_creditsMenu.setVisible(true);
 	m_MainMenu.setVisible(false);
-	//m_keysMenu.setVisible(false);
+	m_keysMenu.setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2962,7 +2962,7 @@ void CGameWin::ExitClicked(CButtonUI* pButton)
 {
 	m_gameBoard->SaveBoardToFile();
 	m_MainMenu.setVisible(false);
-	//m_keysMenu.setVisible(false);
+	m_keysMenu.setVisible(false);
 	m_bReturnCamera = true;
 	m_doneRotating = false;
 
@@ -2976,7 +2976,7 @@ void CGameWin::MainMenuClicked(CButtonUI* pButton)
 {
 	m_gameoverMenu.setVisible(false);
 	m_MainMenu.setVisible(true);
-	//m_keysMenu.setVisible(true);
+	m_keysMenu.setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -2986,7 +2986,7 @@ void CGameWin::CreditsOkClicked(CButtonUI* pButton)
 {
 	m_creditsMenu.setVisible(false);
 	m_MainMenu.setVisible(true);
-	//m_keysMenu.setVisible(true);
+	m_keysMenu.setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
