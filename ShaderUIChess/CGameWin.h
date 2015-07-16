@@ -48,6 +48,7 @@
 #include "pawnsDef.h"
 #include "MainMenuDef.h"
 #include "gameoverDef.h"
+#include "creditsDef.h"
 
 const UINT MAX_ACTIVE_LIGHTS = 4;
 const char	SkyboxTex[6][256] = {"data/textures/skybox/posz.jpg","data/textures/skybox/posy.jpg",
@@ -207,9 +208,11 @@ private:
 	void		NewGameClicked	   (CButtonUI* pButton);
 	void		ContinueClicked	   (CButtonUI* pButton);
 	void		OptionsClicked	   (CButtonUI* pButton);
+	void		CreditsClicked	   (CButtonUI* pButton);
 	void		ExitClicked		   (CButtonUI* pButton);
 
 	void		MainMenuClicked	   (CButtonUI* pButton);
+	void		CreditsOkClicked   (CButtonUI* pButton);
 
 	void		ShowGameOver	   (std::string gameOverStatus);
 	void		TurnEnded		   (int currentPlayer);
@@ -293,6 +296,7 @@ private:
 	bool					 m_flipBoard;
 	bool					 m_flipMove;
 	int						 m_flipDir;
+	bool					 m_doneRotating;
 
 	D3DVIEWPORT9			 m_viewPort;
 	CCamera				   * m_pProject;
@@ -377,6 +381,8 @@ private:
  	CDialogUI				 m_GuiSelectPawn;
 	CDialogUI				 m_MainMenu;
 	CDialogUI				 m_gameoverMenu;
+	CDialogUI				 m_creditsMenu;
+	CDialogUI				 m_keysMenu;
 // 	CDialogResourceManager3D m_GuiDilaogResManger;
 
 };

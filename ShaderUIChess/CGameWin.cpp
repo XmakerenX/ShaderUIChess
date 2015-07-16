@@ -24,7 +24,8 @@ CGameWin::CGameWin()
 	m_bMoveCamera = false;
 	m_flipBoard = false;
 	m_flipMove = false;
-	m_flipDir = 0;
+	m_flipDir = 1;
+	m_doneRotating = false;
 
 	//clearing handles to win32 and directx objects
 	m_hWnd          = NULL;
@@ -139,6 +140,11 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	if (m_gameoverMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
 		return 0;
 
+	if (m_creditsMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
+		return 0;
+
+// 	if (m_keysMenu.MsgProc(hWnd, message, wParam, lParam, m_timer, m_windowed))
+// 		return 0;
 
 // 	if (m_EditDialog.MsgProc(hWnd,message,wParam,lParam, m_timer) )
 // 		return 0;
@@ -185,13 +191,14 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
-	case WM_LBUTTONDOWN:
+	//case WM_LBUTTONDOWN:
+	case WM_RBUTTONDOWN:
 		{
 			// Capture the mouse
 			/*m_hWnd=hWnd;*/
-			SetCapture( hWnd );
-			GetCursorPos( &m_OldCursorPos );
-			m_bCamRotate = true;
+// 			SetCapture( hWnd );
+// 			GetCursorPos( &m_OldCursorPos );
+// 			m_bCamRotate = true;
 		}
 		break;
 
@@ -200,21 +207,24 @@ LRESULT CGameWin::WinProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 // 
 // 		}break;
 
-	case WM_LBUTTONUP:
+	//case WM_LBUTTONUP:
+	case WM_RBUTTONUP:
 		{		
 			// Release the mouse
-			m_bCamRotate = false;
-			ReleaseCapture( );
+// 			m_bCamRotate = false;
+// 			ReleaseCapture( );
 		}
 		break;
 
-	case WM_RBUTTONDOWN:
+	//case WM_RBUTTONDOWN:
+	case WM_LBUTTONDOWN:
 		{
 			SetCapture( m_hWnd );
 			m_bPicking = true;
 		}break;
 
-	case WM_RBUTTONUP:
+	//case WM_RBUTTONUP:
+	case WM_LBUTTONUP:
 		{
 			m_bPicking = false;
 			ReleaseCapture( );
@@ -381,6 +391,7 @@ void CGameWin::OptionDialogCancelClicked(CButtonUI* pButton)
 {
 	m_OptionsDialog.setVisible(false);
 	m_MainMenu.setVisible(true);
+	//m_keysMenu.setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -771,13 +782,13 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 
 	DWORD quality;
 	D3DMULTISAMPLE_TYPE multisample;
-	if( m_pD3D->CheckDeviceMultiSampleType( 0, deviceType, D3DFMT_X8R8G8B8, windowed, D3DMULTISAMPLE_16_SAMPLES,
+	if( m_pD3D->CheckDeviceMultiSampleType( 0, deviceType, D3DFMT_X8R8G8B8, windowed, D3DMULTISAMPLE_2_SAMPLES,
 		&quality ) != D3D_OK )
 	{
-		;
-	} else
+		multisample = D3DMULTISAMPLE_NONE;
+	} else // D3DMULTISAMPLE_2_samples
 	{
-		multisample = D3DMULTISAMPLE_16_SAMPLES;
+		multisample = D3DMULTISAMPLE_2_SAMPLES;
 	}
 
 	//Filling out the D3DPRESENT_PARAMETERS structure.
@@ -786,7 +797,7 @@ HRESULT CGameWin::CreateDevice(bool windowed)
 	d3dpp.BackBufferHeight           = Height;
 	d3dpp.BackBufferFormat           = D3DFMT_X8R8G8B8;
 	d3dpp.BackBufferCount            = 1;
-	d3dpp.MultiSampleType            = D3DMULTISAMPLE_NONE;
+	d3dpp.MultiSampleType            = multisample;
 	d3dpp.MultiSampleQuality         = 0;
 	d3dpp.SwapEffect                 = D3DSWAPEFFECT_DISCARD; 
 	d3dpp.hDeviceWindow              = m_hWnd;
@@ -1025,6 +1036,9 @@ void CGameWin::resetDevice(D3DPRESENT_PARAMETERS& d3dpp)
 		m_OptionsDialog.setLocation( (m_nViewWidth / 2) - m_OptionsDialog.getWidth() / 2, m_nViewHeight / 2 - m_OptionsDialog.getHeight() / 2);
 		m_GuiSelectPawn.setLocation( (m_nViewWidth / 2) - m_GuiSelectPawn.getWidth() / 2, m_nViewHeight / 2 - m_GuiSelectPawn.getHeight() / 2);
 		m_MainMenu.setLocation( (m_nViewWidth / 2) - m_MainMenu.getWidth() / 2, m_nViewHeight / 2 - m_MainMenu.getHeight() / 2);
+		m_gameoverMenu.setLocation( (m_nViewWidth / 2) - m_gameoverMenu.getWidth() / 2, ( (m_nViewHeight / 2) - (m_gameoverMenu.getHeight() / 2)) - m_nViewHeight / 3);
+		m_creditsMenu.setLocation( (m_nViewWidth / 2) - m_creditsMenu.getWidth() / 2, m_nViewHeight / 2 - m_creditsMenu.getHeight() / 2);
+		//m_keysMenu.setLocation( m_nViewWidth - 400 , (m_nViewHeight / 2 - m_keysMenu.getHeight() / 2) - 130 );
 
 
 		setRenderStates();
@@ -1078,7 +1092,7 @@ void CGameWin::FrameAdvance(float timeDelta)
 
 	ProcessInput(timeDelta,angle,height);
 
-	if (m_MainMenu.getVisible() || m_OptionsDialog.getVisible())
+	if (m_MainMenu.getVisible() || m_OptionsDialog.getVisible() || m_creditsMenu.getVisible())
 	{
 		m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 2 * timeDelta);
 		m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
@@ -1088,17 +1102,24 @@ void CGameWin::FrameAdvance(float timeDelta)
 	else
 		if (m_bReturnCamera)
 		{
+
 			if (m_cameraDelta > 0)
 			{
-				m_bMoveCamera = true;
-				m_returnDir = false;
-				m_bReturnCamera = false;
+					m_bMoveCamera = true;
+					m_returnDir = false;
+					m_bReturnCamera = false;
+
+					if (m_flipDir == -1)
+						m_returnDir = !m_returnDir;
 			}
 			else
 			{
-				m_bMoveCamera = true;
-				m_returnDir = true;
-				m_bReturnCamera = false;
+					m_bMoveCamera = true;
+					m_returnDir = true;
+					m_bReturnCamera = false;
+
+					if (m_flipDir == -1)
+						m_returnDir = !m_returnDir;
 			}
 		}
 
@@ -1106,30 +1127,44 @@ void CGameWin::FrameAdvance(float timeDelta)
 	{
 		if (!m_returnDir)
 		{
+
 			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_LEFT, 24 * timeDelta);
 			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
-			if (m_cameraDelta > 0)
+			if ( (m_cameraDelta > 0 && m_flipDir == 1) || (m_cameraDelta < 0 && m_flipDir == -1) )
+			//if (m_cameraDelta > 0)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+				if (m_flipDir == 1)
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+				else
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(8.842f,40.0f,93.138f));
+
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
+				m_doneRotating = true;
 			}
 		}
 		else
 		{
+
 			m_pCameras[m_cameraIndex]->Move(CCamera::DIR_RIGHT, 24 * timeDelta);
 			m_cameraDelta = m_pCameras[m_cameraIndex]->GetPosition().z - m_prevCameraPos.z;
 			m_prevCameraPos = m_pCameras[m_cameraIndex]->GetPosition();
-			if (m_cameraDelta > 0)
+			if ( (m_cameraDelta > 0 && m_flipDir == 1) || (m_cameraDelta < 0 && m_flipDir == -1) )
+			//if (m_cameraDelta > 0)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,58.0f,-30.0f));
-				m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+				if (m_flipDir == 1)
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+				else
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(8.842f,40.0f,93.138f));
+
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_bMoveCamera = false;
+				m_doneRotating = true;
 			}
 		}
 	}
@@ -1189,11 +1224,15 @@ void CGameWin::FrameAdvance(float timeDelta)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				if (m_flipDir == -1)
-					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,93.0f));
+					//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,93.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(8.842f,40.0f,93.138f));
 				else
-					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+					//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.116f,40.0f,-45.276f));
+
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_flipMove = false;
+				m_doneRotating = true;
 			}
 		}
 		else
@@ -1206,12 +1245,15 @@ void CGameWin::FrameAdvance(float timeDelta)
 			{
 				//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,60.0f,-7.0f));
 				if (m_flipDir == -1)
-					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(8.0f,40.0f,93.0f));
+					//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(8.0f,40.0f,93.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(8.842f,40.0f,93.138f));
 				else
-					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+					//m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.0f,40.0f,-45.0f));
+					m_pCameras[m_cameraIndex]->SetPosition(D3DXVECTOR3(9.116f,40.0f,-45.276f));
 
 				m_pCameras[m_cameraIndex]->SetLookAt( D3DXVECTOR3(9,0,24) );
 				m_flipMove = false;
+				m_doneRotating = true;
 			}
 		}
 	}
@@ -1376,6 +1418,8 @@ void CGameWin::FrameAdvance(float timeDelta)
 	m_GuiSelectPawn.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 	m_MainMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 	m_gameoverMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
+	m_creditsMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
+	//m_keysMenu.OnRender(timeDelta, D3DXVECTOR3(m_nViewWidth - m_nViewX - 255, 0.0f, 0.0f), m_highLightEffect, m_assetManger);
 
  	CMySprite* pMySprite = m_assetManger.getMySprite();
  	pMySprite->render(m_highLightEffect);
@@ -1390,9 +1434,9 @@ void CGameWin::FrameAdvance(float timeDelta)
 	m_pD3DDevice->SetFVF(VERTEX_FVF);
 
 	SetRect( &rc, 0, 0, 30, 30 );
-	m_fpsFont->DrawText( NULL,
-		m_debugString.c_str(), -1, &rc,
-		DT_NOCLIP, D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
+// 	m_fpsFont->DrawText( NULL,
+// 		m_debugString.c_str(), -1, &rc,
+// 		DT_NOCLIP, D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 //	m_GuiDialog.OnRender(timeDelta);
 
@@ -1575,12 +1619,24 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	OBJMATERIAL matrial;
 
 	matrial = d3d::YELLOW_MTRL;
+	matrial.Emissive = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Specular = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Power = 0.0f;
+
 	m_assetManger.getAttributeID(NULL, &matrial, NULL);
 
 	matrial = d3d::BLUE_MTRL;
+	matrial.Emissive = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Specular = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Power = 0.0f;
+
 	m_assetManger.getAttributeID(NULL,&matrial,NULL);
 
 	matrial = d3d::RED_MTRL;
+	matrial.Emissive = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Specular = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Power = 0.0f;
+
 	m_assetManger.getAttributeID(NULL,&matrial,NULL);
 
 	matrial = d3d::WHITE_MTRL;
@@ -1676,10 +1732,17 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 
 	OBJMATERIAL m;
 	ZeroMemory(&m, sizeof(m));
-	m.Ambient = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
-	m.Diffuse = copyColorToVector(D3DCOLOR_RGBA(100, 63, 36, 255));
-	m.Emissive = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
-	m.Specular = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
+	m = d3d::WHITE_MTRL;
+// 	m.Ambient = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
+// 	m.Diffuse = copyColorToVector(D3DCOLOR_RGBA(100, 63, 36, 255));
+// 	m.Emissive = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
+// 	m.Specular = copyColorToVector(D3DCOLOR_XRGB(100, 63, 36));
+//	m.Ambient = copyColorToVector(D3DCOLOR_XRGB(58, 36, 24));
+	m.Ambient = copyColorToVector(D3DCOLOR_XRGB(98, 61, 40));
+	m.Diffuse = copyColorToVector(D3DCOLOR_RGBA(109, 68, 46, 255));
+	m.Emissive = copyColorToVector(D3DCOLOR_XRGB(109, 68, 46));
+	m.Specular = copyColorToVector(D3DCOLOR_XRGB(98, 61, 40));
+	m.Power = 8.0f;
 
 	//getting attribute ID of the black matrial
 	//AttribID   = m_assetManger.getAttributeID(NULL,&d3d::RED_MTRL,NULL);
@@ -1708,7 +1771,7 @@ void CGameWin::addDebugText(char* Text,ValueType value )
 	//m_pCameras[0]->SetLookAt( D3DXVECTOR3(9,0,24) );
 
 	skyboxPrefs.pos = D3DXVECTOR3(9.0f, -10.0f, 40.0f);
-	skyboxPrefs.scale = D3DXVECTOR3(200.0f, 200.0f, 200.0f);
+	skyboxPrefs.scale = D3DXVECTOR3(100.0f, 100.0f, 100.0f);
 	skyboxPrefs.rotAngels = D3DXVECTOR3(0.0f, 0.0f, 0.0f);
 	
 	ZeroMemory( &Material, sizeof(OBJMATERIAL));
@@ -1853,6 +1916,7 @@ bool CGameWin::CreateGUIObjects()
 	m_MainMenu.getButton(IDC_NEWGAME)->connectToClick( boost::bind(&CGameWin::NewGameClicked, this, _1) );
 	m_MainMenu.getButton(IDC_Continue)->connectToClick( boost::bind(&CGameWin::ContinueClicked, this, _1) );
 	m_MainMenu.getButton(IDC_OPTIONS)->connectToClick( boost::bind(&CGameWin::OptionsClicked, this, _1 ) );
+	m_MainMenu.getButton(IDC_CREDITS)->connectToClick( boost::bind(&CGameWin::CreditsClicked, this, _1) );
 	m_MainMenu.getButton(IDC_EXIT)->connectToClick( boost::bind(&CGameWin::ExitClicked, this, _1) );
 
 	CStaticUI* pTitle;
@@ -1861,9 +1925,15 @@ bool CGameWin::CreateGUIObjects()
 
 	m_MainMenu.addStatic(IDC_TITLE, "Chess", -90, -150, 380, 100, &pTitle);
 
-	//UINT temp  = AddFontResourceEx("Super Retro Italic M54.ttf",FR_PRIVATE,0);
+	UINT temp  = AddFontResourceEx("data/fonts/RosewoodStd-Regular.otf",FR_PRIVATE,0);
 
-	if (!m_assetManger.getFont("Super Retro Italic M54",144, 64, FW_BOLD, FALSE, fontIndex))
+// 	if (!m_assetManger.getFont("Super Retro Italic M54",144, 64, FW_BOLD, FALSE, fontIndex))
+// 		return S_FALSE;
+
+// 	if (!m_assetManger.getFont("Rosewood Std Regular",144, 64, FW_BOLD, FALSE, fontIndex))
+// 		return S_FALSE;
+
+	if (!m_assetManger.getFont("Rosewood Std Regular",144, 64, FW_BOLD, FALSE, fontIndex))
 		return S_FALSE;
 
 	UINT nFontHeight = m_assetManger.getFontItem(fontIndex).height;
@@ -1884,6 +1954,22 @@ bool CGameWin::CreateGUIObjects()
 
 	m_gameoverMenu.getButton(IDC_MainMenu)->connectToClick( boost::bind(&CGameWin::MainMenuClicked, this, _1) );
 
+	//-----------------------------------------------------------------------------
+	// initialization of credits menu
+	//-----------------------------------------------------------------------------
+	m_creditsMenu.init(200, 320, 18, "Credits", "data/textures/woodBack.png" ,D3DCOLOR_ARGB(200,255,255,255),m_hWnd, m_assetManger);
+	m_creditsMenu.LoadDialogFromFile("data/dialogs/credits.txt", m_timer);
+	m_creditsMenu.setVisible(false);
+	m_creditsMenu.setCaption(false);
+	m_creditsMenu.setLocation( (m_nViewWidth / 2) - m_creditsMenu.getWidth() / 2, m_nViewHeight / 2 - m_creditsMenu.getHeight() / 2);
+
+	m_creditsMenu.getButton(IDC_CREDITSOK)->connectToClick( boost::bind(&CGameWin::CreditsOkClicked, this, _1) );
+
+	//m_keysMenu.init(200, 320, 18, "Credits", "" ,D3DCOLOR_ARGB(0,255,255,255),m_hWnd, m_assetManger);
+	//m_keysMenu.LoadDialogFromFile("data/dialogs/keys.txt", m_timer);
+	//m_keysMenu.setVisible(true);
+	//m_keysMenu.setCaption(false);
+	//m_keysMenu.setLocation( m_nViewWidth - 400 , (m_nViewHeight / 2 - m_keysMenu.getHeight() / 2) - 130 );
 
 	return true;
 }
@@ -2445,25 +2531,25 @@ void CGameWin::ProcessInput(float timeDelta,float &angle,float &height)
 	// Retrieve keyboard state
 	if ( !GetKeyboardState( keysBuffer ) ) return;
 
-	if (keysBuffer[VK_UP] & 0xF0 )
-	{
-		direction |= CCamera::DIR_FORWARD;
-	}
-
-	if (keysBuffer[VK_DOWN] & 0xF0)
-	{
-		direction |= CCamera::DIR_BACKWARD;
-	}
-
-	if (keysBuffer[VK_LEFT] & 0xF0)
-	{
-		direction |= CCamera::DIR_LEFT;
-	}
-
-	if (keysBuffer[VK_RIGHT] & 0xF0)
-	{
-		direction |= CCamera::DIR_RIGHT;
-	}
+// 	if (keysBuffer[VK_UP] & 0xF0 )
+// 	{
+// 		direction |= CCamera::DIR_FORWARD;
+// 	}
+// 
+// 	if (keysBuffer[VK_DOWN] & 0xF0)
+// 	{
+// 		direction |= CCamera::DIR_BACKWARD;
+// 	}
+// 
+// 	if (keysBuffer[VK_LEFT] & 0xF0)
+// 	{
+// 		direction |= CCamera::DIR_LEFT;
+// 	}
+// 
+// 	if (keysBuffer[VK_RIGHT] & 0xF0)
+// 	{
+// 		direction |= CCamera::DIR_RIGHT;
+// 	}
 
 	if ( (keysBuffer[VK_ESCAPE] & 0xF0) )
 	{
@@ -2475,114 +2561,118 @@ void CGameWin::ProcessInput(float timeDelta,float &angle,float &height)
 		if (curTime - prevTime >= 0.25f)
 		{
 			prevTime = m_timer->getLastTime();
-			m_MainMenu.setVisible(!m_MainMenu.getVisible()); 
-			m_bReturnCamera = !m_MainMenu.getVisible();
+			if (!m_OptionsDialog.getVisible() && !m_gameoverMenu.getVisible() && !m_GuiSelectPawn.getVisible() && !m_creditsMenu.getVisible())
+			{
+				m_MainMenu.setVisible(!m_MainMenu.getVisible()); 
+				//m_keysMenu.setVisible(m_MainMenu.getVisible());
+				m_bReturnCamera = !m_MainMenu.getVisible();
+			}
 		}
 	}
 
 	m_pCameras[m_cameraIndex]->Move(direction, 2 * timeDelta);
 
-	if (keysBuffer['E'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->Rotate( (D3DX_PI /8) * m_timer->getTimeElapsed(), 0.0f, 0.0f);
-		//m_objects[activeMeshIndex]->Rotate( (D3DX_PI /8) * m_timer.getTimeElapsed(), (D3DX_PI /8) * m_timer.getTimeElapsed(), 0.0f);
-		//m_objects[activeMeshIndex]->m_rotAngle += (D3DX_PI /8) * m_timer.getTimeElapsed();
-	}
+// 	if (keysBuffer['E'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->Rotate( (D3DX_PI /8) * m_timer->getTimeElapsed(), 0.0f, 0.0f);
+// 		//m_objects[activeMeshIndex]->Rotate( (D3DX_PI /8) * m_timer.getTimeElapsed(), (D3DX_PI /8) * m_timer.getTimeElapsed(), 0.0f);
+// 		//m_objects[activeMeshIndex]->m_rotAngle += (D3DX_PI /8) * m_timer.getTimeElapsed();
+// 	}
+// 
+// 	if (keysBuffer['Q'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->Rotate( -(D3DX_PI /8) * m_timer->getTimeElapsed(), 0.0f, 0.0f);
+// 		//m_objects[activeMeshIndex]->Rotate( 0.0f, (D3DX_PI /8) * m_timer.getTimeElapsed(), 0.0f);
+// 		//m_objects[activeMeshIndex]->m_rotAngle += -(D3DX_PI /8) * m_timer.getTimeElapsed();
+// 	}
+// 
+// 	if (keysBuffer['D'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->m_mtxWorld._41+=0.001f;
+// 	}
+// 
+// 	if (keysBuffer['A'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->m_mtxWorld._41-=0.001f;
+// 	}
+// 
+// 	if (keysBuffer['W'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->m_mtxWorld._42+=0.001f;
+// 	}
+// 
+// 	if (keysBuffer['S'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->m_mtxWorld._42-=0.001f;
+// 	}
+// 
+// 	if (keysBuffer['Z'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->m_mtxWorld._43+=0.001f;
+// 	}
+// 
+// 	if (keysBuffer['X'] & 0xF0)
+// 	{
+// 		m_objects[activeMeshIndex]->m_mtxWorld._43-=0.001f;
+// 	}
+// 
+// 	if (keysBuffer[VK_NUMPAD4] & 0xF0)
+// 	{
+// 		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Yaw( -2 * timeDelta);
+// 	}
+// 
+// 	if (keysBuffer[VK_NUMPAD6] & 0xF0)
+// 	{
+// 		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Yaw( 2* timeDelta);
+// 	}
+// 
+// 	if (keysBuffer[VK_NUMPAD8] & 0xF0)
+// 	{
+// 		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Pitch( -2 * timeDelta);
+// 	}
+// 
+// 	if (keysBuffer[VK_NUMPAD2] & 0xF0)
+// 	{
+// 		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Pitch( 2* timeDelta);
+// 	}
 
-	if (keysBuffer['Q'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->Rotate( -(D3DX_PI /8) * m_timer->getTimeElapsed(), 0.0f, 0.0f);
-		//m_objects[activeMeshIndex]->Rotate( 0.0f, (D3DX_PI /8) * m_timer.getTimeElapsed(), 0.0f);
-		//m_objects[activeMeshIndex]->m_rotAngle += -(D3DX_PI /8) * m_timer.getTimeElapsed();
-	}
+// 	if (keysBuffer['M'] & 0xF0) //lets you advance to the next drawing method and loop it back to DRAW_SIMPLE if you pass the last method
+// 	{
+// 		if (m_DrawingMethod == DRAW_ATTRIBOBJECT)
+// 			m_DrawingMethod = DRAW_OBJECTATTRIB;
+// 		else
+// 			m_DrawingMethod = DRAW_ATTRIBOBJECT;
+// 	}
 
-	if (keysBuffer['D'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->m_mtxWorld._41+=0.001f;
-	}
-
-	if (keysBuffer['A'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->m_mtxWorld._41-=0.001f;
-	}
-
-	if (keysBuffer['W'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->m_mtxWorld._42+=0.001f;
-	}
-
-	if (keysBuffer['S'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->m_mtxWorld._42-=0.001f;
-	}
-
-	if (keysBuffer['Z'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->m_mtxWorld._43+=0.001f;
-	}
-
-	if (keysBuffer['X'] & 0xF0)
-	{
-		m_objects[activeMeshIndex]->m_mtxWorld._43-=0.001f;
-	}
-
-	if (keysBuffer[VK_NUMPAD4] & 0xF0)
-	{
-		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Yaw( -2 * timeDelta);
-	}
-
-	if (keysBuffer[VK_NUMPAD6] & 0xF0)
-	{
-		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Yaw( 2* timeDelta);
-	}
-
-	if (keysBuffer[VK_NUMPAD8] & 0xF0)
-	{
-		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Pitch( -2 * timeDelta);
-	}
-
-	if (keysBuffer[VK_NUMPAD2] & 0xF0)
-	{
-		((CCamSpaceCraft*)m_pCameras[m_cameraIndex])->Pitch( 2* timeDelta);
-	}
-
-	if (keysBuffer['M'] & 0xF0) //lets you advance to the next drawing method and loop it back to DRAW_SIMPLE if you pass the last method
-	{
-		if (m_DrawingMethod == DRAW_ATTRIBOBJECT)
-			m_DrawingMethod = DRAW_OBJECTATTRIB;
-		else
-			m_DrawingMethod = DRAW_ATTRIBOBJECT;
-	}
-
-	if (( keysBuffer['C'] & 0xF0 ))
-	{
-		float buttonPressTime;
-		static float buttonPrevPressTime;
-		float buttonPressDelta;
-
-		buttonPressTime = m_timer->getCurrentTime();
-		buttonPressDelta = buttonPressTime - buttonPrevPressTime;
-
-		if (buttonPressDelta > 0.017f)
-		{	
-			if (m_cameraIndex == 0)
-			{
-				m_cameraIndex = 1;
-				//m_pCameras[1]->SetViewport(0, 0, 1024, 768, 1.01f, 5000.0f, m_pD3DDevice);
-				//m_pCameras[1]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
-				m_pCameras[1]->UpdateRenderView( NULL );
-				m_pCameras[1]->UpdateRenderProj( NULL );
-			}
-			else	
-			{
-				m_cameraIndex = 0;
-				m_pCameras[0]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
-				m_pCameras[0]->UpdateRenderView( m_pD3DDevice );
-				m_pCameras[0]->UpdateRenderProj( m_pD3DDevice );
-			}
-		}
-		buttonPrevPressTime = buttonPressTime;
-	}
+// 	if (( keysBuffer['C'] & 0xF0 ))
+// 	{
+// 		float buttonPressTime;
+// 		static float buttonPrevPressTime;
+// 		float buttonPressDelta;
+// 
+// 		buttonPressTime = m_timer->getCurrentTime();
+// 		buttonPressDelta = buttonPressTime - buttonPrevPressTime;
+// 
+// 		if (buttonPressDelta > 0.017f)
+// 		{	
+// 			if (m_cameraIndex == 0)
+// 			{
+// 				m_cameraIndex = 1;
+// 				//m_pCameras[1]->SetViewport(0, 0, 1024, 768, 1.01f, 5000.0f, m_pD3DDevice);
+// 				//m_pCameras[1]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
+// 				m_pCameras[1]->UpdateRenderView( NULL );
+// 				m_pCameras[1]->UpdateRenderProj( NULL );
+// 			}
+// 			else	
+// 			{
+// 				m_cameraIndex = 0;
+// 				m_pCameras[0]->SetViewport( m_nViewX, m_nViewY, m_nViewWidth, m_nViewHeight, 1.01f, 5000.0f , m_pD3DDevice);
+// 				m_pCameras[0]->UpdateRenderView( m_pD3DDevice );
+// 				m_pCameras[0]->UpdateRenderProj( m_pD3DDevice );
+// 			}
+// 		}
+// 		buttonPrevPressTime = buttonPressTime;
+// 	}
 
 // 	if (keysBuffer['R'] & 0xF0)
 // 		if (gameBoard != NULL)
@@ -2725,7 +2815,7 @@ HRESULT CGameWin::pick(POINT& cursor,DWORD& faceCount)
 		if (!m_MainMenu.getVisible() && !m_OptionsDialog.getVisible())
 		{
 			m_gameBoard->setFrame(m_objects[activeMeshIndex], activeFaceCount);
-			if (m_bPicking)
+			if (m_bPicking && m_doneRotating)
 			{
 				m_gameBoard->processPress(m_objects[activeMeshIndex],activeFaceCount);
 				if (m_gameBoard->isUnitPromotion())
@@ -2781,6 +2871,7 @@ void CGameWin::NewGameClicked(CButtonUI* pButton)
 	{
 		m_objects.clear();
 		m_MainMenu.setVisible(false);
+		//m_keysMenu.setVisible(false);
 		m_bReturnCamera = true;
 		m_gameBoard->resetGame();
 		addObject(m_gameBoard);
@@ -2816,7 +2907,9 @@ void CGameWin::ContinueClicked(CButtonUI* pButton)
 	m_objects.clear();
 	m_gameBoard->LoadBoardFromFile();
 	m_MainMenu.setVisible(false);
+	//m_keysMenu.setVisible(false);
 	m_bReturnCamera = true;
+	m_doneRotating = false;
 	addObject(m_gameBoard);
 
 	OBJMATERIAL Material;
@@ -2848,7 +2941,18 @@ void CGameWin::OptionsClicked(CButtonUI* pButton)
 {
 	m_OptionsDialog.setVisible(true);
 	m_MainMenu.setVisible(false);
+	//m_keysMenu.setVisible(false);
 	//m_bReturnCamera = true;
+}
+
+//-----------------------------------------------------------------------------
+// Name : CreditsClicked() 
+//-----------------------------------------------------------------------------
+void CGameWin::CreditsClicked(CButtonUI* pButton)
+{
+	m_creditsMenu.setVisible(true);
+	m_MainMenu.setVisible(false);
+	//m_keysMenu.setVisible(false);
 }
 
 //-----------------------------------------------------------------------------
@@ -2858,7 +2962,9 @@ void CGameWin::ExitClicked(CButtonUI* pButton)
 {
 	m_gameBoard->SaveBoardToFile();
 	m_MainMenu.setVisible(false);
+	//m_keysMenu.setVisible(false);
 	m_bReturnCamera = true;
+	m_doneRotating = false;
 
 	SendMessage(m_hWnd, WM_CLOSE, 0, 0);
 }
@@ -2870,6 +2976,17 @@ void CGameWin::MainMenuClicked(CButtonUI* pButton)
 {
 	m_gameoverMenu.setVisible(false);
 	m_MainMenu.setVisible(true);
+	//m_keysMenu.setVisible(true);
+}
+
+//-----------------------------------------------------------------------------
+// Name : CreditsOkClicked() 
+//-----------------------------------------------------------------------------
+void CGameWin::CreditsOkClicked(CButtonUI* pButton)
+{
+	m_creditsMenu.setVisible(false);
+	m_MainMenu.setVisible(true);
+	//m_keysMenu.setVisible(true);
 }
 
 //-----------------------------------------------------------------------------
@@ -2887,6 +3004,7 @@ void CGameWin::ShowGameOver(std::string gameOverStatus)
 void CGameWin::TurnEnded(int currentPlayer)
 {
 	m_flipBoard = true;
+	m_doneRotating = false;
 	m_flipDir = currentPlayer;
 }
 
@@ -3174,11 +3292,12 @@ void CGameWin::CreateLights(ID3DXEffect * effect)
  	//light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0, -0.0, 0.25f, 0.0), d3d::WHITE );
 	//light = d3d::InitDirectionalLight(D3DXVECTOR4(0.5, 0.0, 0.5f, 0.0), d3d::WHITE );
 	D3DXCOLOR lightColor = d3d::WHITE;
-	lightColor.r = 0.7f; 
-	lightColor.g = 0.7f;
-	lightColor.b = 0.7f;
+	lightColor.r = 0.5f; //0.7
+	lightColor.g = 0.5f;
+	lightColor.b = 0.5f;
 
-	light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0f, 0.2f, 0.2f, 0.0), lightColor );
+	//light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0f, 0.2f, 0.2f, 0.0), lightColor );
+	light = d3d::InitDirectionalLight(D3DXVECTOR4(1.0f, 0.6f, 0.4f, 0.0), lightColor );
  
  	addLight(light,effect);
 }

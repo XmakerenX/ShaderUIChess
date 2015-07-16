@@ -659,7 +659,11 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	OBJMATERIAL matrial;
 
-	matrial = d3d::WHITE_MTRL;
+	ZeroMemory( &matrial, sizeof(OBJMATERIAL));
+	matrial.Diffuse = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+	matrial.Ambient = D3DXVECTOR4( 1.0, 1.0, 1.0, 1.0f );
+
+	//matrial = d3d::WHITE_MTRL;
 	//m_boardFrameAttrib = assetManger.getAttributeID("woodFrame.png", &matrial, NULL);
 	m_boardFrameAtribs[0] =  assetManger.getAttributeID("data\\textures\\board\\frameLowerLeft.png",&matrial, nullptr);
 	m_boardFrameAtribs[1] =  assetManger.getAttributeID("data\\textures\\board\\frameH.png",&matrial, nullptr);
@@ -772,17 +776,29 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	m_squareMesh->BuildMesh(D3DXMESH_MANAGED,pDevice);
 
 	//OBJMATERIAL matrial;
-
 	matrial = d3d::YELLOW_MTRL;
+	matrial.Emissive = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Specular = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Power = 0.0f;
+
 	m_attribIDs[SELECT] = assetManger.getAttributeID(NULL, &matrial, NULL);
 
+
 	matrial = d3d::BLUE_MTRL;
+	matrial.Emissive = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Specular = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Power = 0.0f;
+
 	m_attribIDs[MOVE] = assetManger.getAttributeID(NULL,&matrial,NULL);
 
 // 	matrial = d3d::YELLOW_MTRL;
 // 	m_attribIDs[SELECT] = assetManger.getAttributeID(NULL, &matrial, NULL);
 
 	matrial = d3d::RED_MTRL;
+	matrial.Emissive = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Specular = D3DXVECTOR4( 0.0f, 0.0f, 0.0f, 0.0f);
+	matrial.Power = 0.0f;
+
 	m_attribIDs[ATTACK] = assetManger.getAttributeID(NULL,&matrial,NULL);
 	m_attribIDs[THREAT] = assetManger.getAttributeID(nullptr, &matrial, nullptr);
 

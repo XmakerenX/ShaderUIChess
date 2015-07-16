@@ -88,7 +88,7 @@ void CButtonUI::Render( CAssetManager& assetManger)
 		if (!m_bMouseOver)
 		{
 			if (!m_bEnabled)
-				renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture,D3DCOLOR_ARGB( 0, 0, 0, 0 ), REGLUAR, dialogPos);
+				renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture,D3DCOLOR_ARGB( 255, 100, 100, 100 ), REGLUAR, dialogPos);
 			else
 				renderRect(m_elementsGFX[BUTTON].rcTexture, rcWindow, sprite, pTexture, D3DCOLOR_ARGB( 255, 200, 200, 200 ), REGLUAR, dialogPos );
 		}
