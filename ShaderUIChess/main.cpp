@@ -8,30 +8,33 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,LPSTR lpCmdLine,
 
 	//creating a debug console 
 	//TODO: create an actual developer console some day ...
-	if (AllocConsole()) {
-		std::string s = "I made a console window!\n";
-		DWORD n;
-		//char c;
-
-		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
-	}
-
-	// redirect unbuffered STDOUT to the console or in other words make cout print to the debug console
-	int hConHandle;
-	long lStdHandle;
-	FILE *fp;
-
-	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
-	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
-
-	fp = _fdopen( hConHandle, "w" );
-
-	*stdout = *fp;
-	setvbuf( stdout, NULL, _IONBF, 0 );
+// 	if (AllocConsole()) {
+// 		std::string s = "I made a console window!\n";
+// 		DWORD n;
+// 		//char c;
+// 
+// 		//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+// 	}
+// 
+// 	// redirect unbuffered STDOUT to the console or in other words make cout print to the debug console
+// 	int hConHandle;
+// 	long lStdHandle;
+// 	FILE *fp;
+// 
+// 	lStdHandle = (long)GetStdHandle(STD_OUTPUT_HANDLE);
+// 	hConHandle = _open_osfhandle(lStdHandle, _O_TEXT);
+// 
+// 	fp = _fdopen( hConHandle, "w" );
+// 
+// 	*stdout = *fp;
+// 	setvbuf( stdout, NULL, _IONBF, 0 );
 
 	// Initialise the engine.
 	if (!gameWin.InitInstance( hInstance, lpCmdLine, nCmdShow )) return 0;
 
+	std::string s = "Init Finished!\n";
+	DWORD n;
+	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 	// Begin the gameplay process. Will return when app due to exit.
 	retCode = gameWin.BeginGame();
 

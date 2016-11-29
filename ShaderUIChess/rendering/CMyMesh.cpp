@@ -13,7 +13,7 @@ CMyMesh::CMyMesh(void)
 	m_pIndex      = NULL;
 	m_pVertex     = NULL;
 	pAttribRemap  = NULL;
-	m_pAttribMap  = NULL;
+	m_pAttribMap  = nullptr;
 
     m_nVertexFVF = 0;
 	m_nVertexStride = 0;                // Stride of the vertices
@@ -25,6 +25,9 @@ CMyMesh::CMyMesh(void)
 	m_nAttribCount  = 0;
 
 	ZeroMemory( m_strMeshName, MAX_PATH * sizeof(char));
+
+	m_attributesCallBack.pContext = NULL;
+	m_attributesCallBack.pFunction = NULL;
 }
 
 //-----------------------------------------------------------------------------
@@ -767,16 +770,24 @@ ULONG CMyMesh::getAttributeCount( ) const
 
 void CMyMesh::setAttribMap( ULONG * pAttribmap, ULONG attribCount)
 {
-	if (m_pAttribMap)
+	if (m_pAttribMap != nullptr)
 		delete []m_pAttribMap;
 
 	m_pAttribMap = new ULONG[attribCount];
-	memcpy(m_pAttribMap,pAttribmap,sizeof(ULONG) * attribCount);
+	for (int i = 0; i < attribCount; i++)
+	{
+		m_pAttribMap[i] = pAttribmap[i];
+	}
+	//memcpy(m_pAttribMap,pAttribmap,sizeof(ULONG) * attribCount);
 	m_nAttribCount = attribCount;
 }
 
 bool CMyMesh::isMenageAtrributes()
 {
+// 	if (m_attributesCallBack.pFunction == NULL)
+// 		return true;
+// 	else
+// 		return false;
 	return m_attributesCallBack.pFunction == NULL;
 }
 

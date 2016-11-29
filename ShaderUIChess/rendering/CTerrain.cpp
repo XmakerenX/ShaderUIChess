@@ -86,6 +86,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 	//preparing the vertex buffer for the terrain mesh
 	CMyVertex* pVertices = new CMyVertex[numVertsX * numVertsZ];
+	//CMyVertex* pVertices = new CMyVertex[(numCellsWide + 1) * (numCellsHigh + 1)];
 	if (!pVertices) return E_OUTOFMEMORY;
 
 	ZeroMemory( pVertices,sizeof(CMyVertex) * (numVertsX * numVertsZ) );
@@ -98,17 +99,17 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	float Tv = 0.0f;
 
 	// Loop across and up
-	for (int z=0 ; z<numVertsZ ; z++)
+	for (int z = 0 ; z < numVertsZ ; z++)
 	{
 		Tu = 0.0f;
 		pos.x = minBounds.x;
 
-		for (int x=0 ; x<numVertsX ; x++)
+		for (int x = 0 ; x < numVertsX; x++)
 		{
 			// Create the verts
-			pVertices[VertexCount].x = pos.x ;//* vecScale.x;
-			pVertices[VertexCount].y = pos.y ;//* vecScale.y;
-			pVertices[VertexCount].z = pos.z ;//* vecScale.z;
+			pVertices[VertexCount].x = pos.x;//* vecScale.x;
+			pVertices[VertexCount].y = pos.y;//* vecScale.y;
+			pVertices[VertexCount].z = pos.z;//* vecScale.z;
 			pVertices[VertexCount].Normal = D3DXVECTOR3(0.0f , 1.0f ,0.0f);
 			pVertices[VertexCount].tu = Tu;
 			pVertices[VertexCount].tv = Tv;
@@ -134,7 +135,7 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 	// Create board Mesh attribute data
 	//-------------------------------------
 	//creating the attribute data 
-	MESH_ATTRIB_DATA* pAttribData;
+	//MESH_ATTRIB_DATA* pAttribData;
 	//ULONG AttribID[2]; not used anymore??
 	//creating a pure white material
 	OBJMATERIAL Material;
@@ -144,31 +145,45 @@ HRESULT CTerrain::createTerrain( LPDIRECT3DDEVICE9 pDevice, CAssetManager& asset
 
 
 	ULONG attribMap[2];
-
-	if (ManageAttribs)
-	{	
-		if ( m_pMesh->AddAttributeData(2) < 0)
-			return E_OUTOFMEMORY;
-
-		pAttribData = m_pMesh->GetAttributeData();
-
-		for (int i = 0; i < 2; i++)
-		{
-			pAttribData[i].Texture = assetManger.getTexture(Textures[i]);
-		 	pAttribData[i].Material = Material;
-		 	pAttribData[i].Effect = NULL;
-		}
-	}
-	else
+	//if (ManageAttribs)
 	{
 		for (int i = 0; i < 2; i++)
-		{
 			attribMap[i] = assetManger.getAttributeID(Textures[i], &Material, NULL);
-			//attribMap[i] = m_pMesh->getAttributes(Textures[i],&Material,NULL);
-		}
 
 		m_pMesh->setAttribMap(attribMap, 2);
 	}
+
+		//pP = m_pMesh->getAtrributeMap();
+
+	//}
+	// deprecated as I am not sure anyone the point of manageAttribs suppose the achieve
+// 		if (ManageAttribs)
+// 		{
+// 			if (m_pMesh->AddAttributeData(2) < 0)
+// 				return E_OUTOFMEMORY;
+// 
+// 			pAttribData = m_pMesh->GetAttributeData();
+// 
+// 			for (int i = 0; i < 2; i++)
+// 			{
+// 				pAttribData[i].Texture = assetManger.getTexture(Textures[i]);
+// 				pAttribData[i].Material = Material;
+// 				pAttribData[i].Effect = NULL;
+// 			}
+// 		}
+// 		else
+// 		{
+// 			for (int i = 0; i < 2; i++)
+// 			{
+// 				attribMap[i] = assetManger.getAttributeID(Textures[i], &Material, NULL);
+// 				//attribMap[i] = m_pMesh->getAttributes(Textures[i],&Material,NULL);
+// 			}
+// 
+// 			m_pMesh->setAttribMap(attribMap, 2);
+// 			ULONG* pP = m_pMesh->getAtrributeMap();
+// 			pP[0] = 0;
+// 
+// 		}
 
 	//-------------------------------------
 	// Create board Mesh index buffer

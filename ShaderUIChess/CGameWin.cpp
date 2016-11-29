@@ -336,12 +336,12 @@ void CGameWin::OptionDialogOKClicked(CButtonUI* pButton)
 		std::stringstream out;
 		out << m_nViewWidth;
 		s = out.str() + '\n';
-		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+		//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 
 		std::stringstream out2;
 		out2 << m_nViewHeight;
 		s = out2.str() + '\n';
-		WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+		//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 	}
 
 	deviceParams.BackBufferFormat = D3DFMT_A8R8G8B8;
@@ -1056,6 +1056,10 @@ void CGameWin::FrameAdvance(float timeDelta)
 {
 	m_debugString.clear();
 
+	//std::string s = "Frame Start\n";
+	//DWORD n;
+	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+
 	// check if the device need to be reset
 	if (m_deviceReset)
 	{
@@ -1258,6 +1262,8 @@ void CGameWin::FrameAdvance(float timeDelta)
 		}
 	}
 	
+	//s = "End of turning logic\n";
+	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 
 	addDebugText("cursor X:", cursor.x);
 	addDebugText("Y:", cursor.y);
@@ -1303,6 +1309,9 @@ void CGameWin::FrameAdvance(float timeDelta)
 
 	m_pD3DDevice->BeginScene();
 
+	//s = "start drawing scene\n";
+	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+
 	D3DXVECTOR3 cameraEye = m_pCameras[m_cameraIndex]->GetPosition();
 	m_outlineEffect->SetVector(m_vecEyeH, &D3DXVECTOR4(cameraEye.x, cameraEye.y, cameraEye.z, 0) );
 	//m_outlineEffect->SetVector("vecEye", &D3DXVECTOR4(cameraEye.x, cameraEye.y, cameraEye.z, 0) );
@@ -1336,12 +1345,29 @@ void CGameWin::FrameAdvance(float timeDelta)
 						else
 							m_outlineEffect->SetBool(m_bHighLightH, FALSE);
 
-						if (objI != 33)
+// 						char buffer[33];
+// 						itoa(objI, buffer, 10);
+// 						s = "drawing object ";
+// 						s.append(buffer);
+// 						s.append("\n");
+
+//						WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+
+						if (objI != 33 /*&& objI != 32*/)
+						//if (objI % 2 != 0 )
 							m_objects[objI]->drawSubset(m_pD3DDevice, atribNum, m_outlineEffect, numPass, ViewProj);
+
+// 						s = "finished drawing object ";
+// 						s.append(buffer);
+// 						s.append("\n");
+// 						WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 					}
 				}
 				m_outlineEffect->End();
 			}
+
+// 			s = "start drawing object 33 \n";
+// 			WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 
 			for (UINT atribNum = 0; atribNum < m_assetManger.getAttribCount(); atribNum++)
 			{
@@ -1363,6 +1389,9 @@ void CGameWin::FrameAdvance(float timeDelta)
 				}
 
 				m_outlineEffect->End();
+
+				//s = "finished drawing object 33\n";
+				//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
 			}
 		}break;
 
@@ -1406,6 +1435,9 @@ void CGameWin::FrameAdvance(float timeDelta)
 	LPD3DXSPRITE sprite = m_assetManger.getSprite();
 	LPD3DXSPRITE sprite2 = m_assetManger.getTopSprite();
 
+	//s = "drawing UI\n";
+	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), s.c_str(), s.size(), &n, 0);
+
 	sprite2->Begin(D3DXSPRITE_DONOTMODIFY_RENDERSTATE);
 
 	sprite->Begin(D3DXSPRITE_DONOTMODIFY_RENDERSTATE);
@@ -1433,10 +1465,10 @@ void CGameWin::FrameAdvance(float timeDelta)
 	m_pD3DDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 	m_pD3DDevice->SetFVF(VERTEX_FVF);
 
-	SetRect( &rc, 0, 0, 30, 30 );
-// 	m_fpsFont->DrawText( NULL,
-// 		m_debugString.c_str(), -1, &rc,
-// 		DT_NOCLIP, D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
+//  	SetRect( &rc, 0, 0, 30, 30 );
+//   	m_fpsFont->DrawText( NULL,
+//   		m_debugString.c_str(), -1, &rc,
+//   		DT_NOCLIP, D3DXCOLOR( 1.0f, 1.0f, 1.0f, 1.0f ) );
 
 //	m_GuiDialog.OnRender(timeDelta);
 

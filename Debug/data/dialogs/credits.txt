@@ -1,0 +1,117 @@
+180| Dialog Width
+290| Dialog Height
+18| Dialog Caption Height
+Gendialog| Dialog Caption Text
+210| Current Control ID
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+201| Control ID
+18| Control X
+5| Control Y
+120| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Game Made By:| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+202| Control ID
+14| Control X
+30| Control Y
+110| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Matan Keren| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+203| Control ID
+20| Control X
+55| Control Y
+120| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Pieces Made By:| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+204| Control ID
+9| Control X
+80| Control Y
+120| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Adin Schnall| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+205| Control ID
+20| Control X
+105| Control Y
+130| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+GUI Textures By:| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+206| Control ID
+20| Control X
+130| Control Y
+150| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+www.medialoot.com| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+1| Control Type
+207| Control ID
+36| Control X
+230| Control Y
+100| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+OK| Control Text
+1 1 1 1| Control Text Color
+0| Button HotKey
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+208| Control ID
+23| Control X
+155| Control Y
+150| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+SkyBox Textures By:| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+209| Control ID
+12| Control X
+180| Control Y
+120| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+Emil Persson| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////
+0| Control Type
+210| Control ID
+14| Control X
+205| Control Y
+150| Control Width
+25| Control Height
+1| is Control Visible
+1| is Control Enabled
+www.humus.name| Control Text
+1 1 1 1| Control Text Color
+/////////////////////////////////////////////////////////////////////////////

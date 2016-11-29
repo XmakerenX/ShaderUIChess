@@ -164,7 +164,7 @@ void CCamSpaceCraft::RotateAroundPoint(D3DXVECTOR3& point,float XDistance,float 
 
 	out << XDistance;
 	st = out.str() + "\n";
-	WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), st.c_str(), st.size(), NULL, NULL);
+	//WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), st.c_str(), st.size(), NULL, NULL);
 
 	//capping the XDistance Value to prevent going too much to the right
 // 	if (XDistance > 2)

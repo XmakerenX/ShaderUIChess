@@ -1,4 +1,5 @@
 #include "CMyObject.h"
+#include <assert.h>
 
 D3DXHANDLE CMyObject::m_matWorldViewProjH = NULL;
 D3DXHANDLE CMyObject::m_matWorldH = NULL;
@@ -103,7 +104,7 @@ void CMyObject::attachMesh(CMyMesh * pMesh)
 	
 void CMyObject::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3DXEffect * effect, UINT numPass, D3DXMATRIX ViewProj) 
 {
-	ULONG * pAtrributeMap;
+	ULONG * pAtrributeMap = nullptr;
 	ULONG nAttributeCount;
 	HRESULT hr;
 	//int wtf;
@@ -117,6 +118,7 @@ void CMyObject::drawSubset(IDirect3DDevice9* pd3dDevice, ULONG AttributeID, ID3D
 	{
 		pAtrributeMap   = m_pMesh->getAtrributeMap();
 		nAttributeCount = m_pMesh->getAttributeCount();
+
 	}
 
 	for (ULONG i = 0 ; i < nAttributeCount ; i++)
