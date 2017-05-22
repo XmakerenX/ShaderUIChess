@@ -4,14 +4,17 @@
   ----------------
 The 3D Chess is  a Chess game for 2 players made using directx and c++.
 
+  Screenshot
+  ---------------
+![Alt text](screenshot.png?raw=true "Chess")
   Installation
   ---------------
 Download the game from 
-
+https://www.dropbox.com/s/lna4i3tl89186dn/ChessSetup.exe?dl=0
+or form here if you don't want an installer
 https://www.dropbox.com/s/im8avpt6od3p2l6/chess.rar?dl=0
 
-and extract game folder to any location you like.
-the game also requies having installed the following files :
+The game also requies having installed the following dependencies(the intaller takes care of this):
 https://www.microsoft.com/en-us/download/details.aspx?id=35
 https://www.microsoft.com/en-us/download/details.aspx?id=40784
 
